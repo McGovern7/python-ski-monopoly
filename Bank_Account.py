@@ -30,6 +30,4 @@ class Bank_Account:
     #prints total amount in player's bank account
     def print(self):
         print(str(self.name) + ": $" + str(format(self.total,'.2f')))
-
-
-
+P1BA = Bank_Account("Player 1")
