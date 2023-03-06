@@ -1,4 +1,4 @@
-# Python 8-Ball Pool
+# Python Ski Monopoly
 
 
 
