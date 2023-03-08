@@ -1,3 +1,4 @@
+import sys
 import pygame
 
 #Initialize PyGame
@@ -7,8 +8,10 @@ pygame.init()
 screen = pygame.display.set_mode((1200,800))
 
 #constants
-font = pygame.font.SysFont("helveticaneue", 30)
-green = (34, 139, 34)
+#TODO - which font should we use?
+#print(pygame.font.get_fonts())
+font = pygame.font.SysFont("times", 30)
+green = (0, 100, 0)
 white = (255,255,255)
 
 
@@ -50,7 +53,6 @@ def board_screen():
 
 #card screen
 def card_screen():
-    print(pygame.font.get_fonts())
     pygame.display.set_caption("Your cards")
     text = font.render("Properties: ", True, white)
     while True:
@@ -63,4 +65,15 @@ def card_screen():
 
         pygame.display.update()
         return True
-card_screen()
+
+
+# Game loop
+while True:
+    card_screen()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+    pygame.display.update()
