@@ -16,9 +16,10 @@ white = (255,255,255)
 
 
 #game title and icon
-pygame.display.set_caption("Ski Monopoly!")
-icon = pygame.image.load("deposit.png")
+pygame.display.set_caption("Monopoly | Ski Resort Edition")
+icon = pygame.image.load("ski-resort.png")
 pygame.display.set_icon(icon)
+
 
 #TODO - was just messing around with player icons (definitely feel free to change)
 #Players
