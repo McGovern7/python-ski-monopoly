@@ -15,11 +15,6 @@ green = (0, 100, 0)
 white = (255,255,255)
 
 
-#game title and icon
-pygame.display.set_caption("Monopoly | Ski Resort Edition")
-icon = pygame.image.load("ski-resort.png")
-pygame.display.set_icon(icon)
-
 
 #TODO - was just messing around with player icons (definitely feel free to change)
 #Players
@@ -45,6 +40,10 @@ def player1():
 #SCREENS
 #start screen
 def start_screen():
+    # game title and icon
+    pygame.display.set_caption("Monopoly | Ski Resort Edition")
+    icon = pygame.image.load("ski-resort.png")
+    pygame.display.set_icon(icon)
     while True:
         return True
 #board screen
@@ -70,6 +69,7 @@ def card_screen():
 
 # Game loop
 while True:
+    #start_screen()
     card_screen()
 
     for event in pygame.event.get():
