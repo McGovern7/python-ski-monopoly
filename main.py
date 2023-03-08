@@ -1,5 +1,6 @@
 import sys
 import pygame
+from Bank_Account import Bank_Account
 
 #Initialize PyGame
 pygame.init()
@@ -11,8 +12,14 @@ screen = pygame.display.set_mode((1200,800))
 #TODO - which font should we use?
 #print(pygame.font.get_fonts())
 font = pygame.font.SysFont("times", 30)
+small_font_1 = pygame.font.SysFont("times", 16)
+small_font_2 = pygame.font.SysFont("times", 15)
+small_font_3 = pygame.font.SysFont("times", 12)
+small_font_4 = pygame.font.SysFont("times", 10)
 green = (0, 100, 0)
 white = (255,255,255)
+black = (0,0,0)
+blue = (30, 144, 225)
 
 
 
@@ -37,6 +44,32 @@ player1_y = 600
 def player1():
     screen.blit(player1_icon, (player1_x, player1_y))
 
+def create_card(x, y, region_color):
+    #text on every property card
+    deed_text = small_font_4.render("TITLE DEED", True, black)
+    property_text = small_font_1.render("Property Name", True, black)
+    rent_text = small_font_2.render("Rent: $", True, black)
+    house_1_text = small_font_3.render("With 1 House", True, black)
+    house_2_text = small_font_3.render("With 2 Houses", True, black)
+    house_3_text = small_font_3.render("With 3 Houses", True, black)
+    house_4_text = small_font_3.render("With 4 Houses", True, black)
+    hotel_text = small_font_3.render("With Hotel", True, black)
+    cost_text_1 = small_font_3.render("Houses cost $", True, black)
+    cost_text_2 = small_font_3.render("Hotel costs $", True, black)
+    #draw
+    pygame.draw.rect(screen, white, (x, y, 150, 200))
+    pygame.draw.rect(screen, region_color, (x+5, y+5, 140, 50))
+    screen.blit(deed_text, (90, 160))
+    screen.blit(property_text, (70, 180))
+    screen.blit(rent_text, (90, 215))
+    screen.blit(house_1_text, (60, 235))
+    screen.blit(house_2_text, (60, 250))
+    screen.blit(house_3_text, (60, 265))
+    screen.blit(house_4_text, (60, 280))
+    screen.blit(hotel_text, (60, 295))
+    screen.blit(cost_text_1, (60, 320))
+    screen.blit(cost_text_2, (60, 330))
+
 #SCREENS
 #start screen
 def start_screen():
@@ -54,10 +87,15 @@ def board_screen():
 #card screen
 def card_screen():
     pygame.display.set_caption("Your cards")
-    text = font.render("Properties: ", True, white)
+    text1 = font.render("Available money: ", True, white)
+    text2 = font.render("Properties: ", True, white)
     while True:
         screen.fill(green)
-        screen.blit(text, (50, 50))
+        screen.blit(text1, (50, 50))
+        screen.blit(text2, (50, 100))
+        #create card
+        create_card(50, 150, blue)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
