@@ -44,6 +44,16 @@ player1_y = 600
 def player1():
     screen.blit(player1_icon, (player1_x, player1_y))
 
+#house graphic
+def create_house(x,y):
+    house = pygame.image.load("home.png")
+    screen.blit(house, (x, y))
+
+#hotel graphic
+def create_hotel(x,y):
+    hotel = pygame.image.load("hotel.png.png")
+    screen.blit(hotel, (x, y))
+
 def create_card(x, y, region_color):
     #text on every property card
     deed_text = small_font_4.render("TITLE DEED", True, black)
@@ -95,6 +105,7 @@ def card_screen():
         screen.blit(text2, (50, 100))
         #create card
         create_card(50, 150, blue)
+        create_house(100, 500)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
