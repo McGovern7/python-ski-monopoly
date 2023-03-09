@@ -1,5 +1,6 @@
 import pygame
 import button
+import sys
 
 # Initialize PyGame
 pygame.init()
@@ -14,6 +15,8 @@ pygame.display.set_caption("Monopoly | Ski Resort Edition")
 icon = pygame.image.load("images/ski-resort.png")
 pygame.display.set_icon(icon)
 
+clock = pygame.time.Clock()
+
 # define colors
 TEXT_COL = (0, 0, 0)
 
@@ -24,6 +27,7 @@ def draw_text(text, font, text_col, x, y):
     screen.blit(img, (x, y))
 
 
+# menu screen
 def menu():
     # game type variables
     game_singleplayer = False
@@ -37,74 +41,62 @@ def menu():
     small_font = pygame.font.SysFont('Verdana', 15)
 
     # load button images
-    singleplayer_img = pygame.image.load("images/button_singleplayer.png").convert_alpha()
-    singleplayer_pressed_img = pygame.image.load("images/button_singleplayer_pressed.png").convert_alpha()
-    multiplayer_img = pygame.image.load("images/button_multiplayer.png").convert_alpha()
-    multiplayer_pressed_img = pygame.image.load("images/button_multiplayer_pressed.png").convert_alpha()
-    startgame_img = pygame.image.load("images/button_startgame.png").convert_alpha()
+    singleplayer_img = pygame.image.load("images/singleplayer.png").convert_alpha()
+    multiplayer_img = pygame.image.load("images/multiplayer.png").convert_alpha()
+    startgame_img = pygame.image.load("images/startgame.png").convert_alpha()
+    number_img = pygame.image.load("images/numplayer.png").convert_alpha()
 
-    zero_img = pygame.image.load("images/button_zero.png").convert_alpha()
-    zero_pressed_img = pygame.image.load("images/button_zero_pressed.png").convert_alpha()
+    # draw buttons
+    singleplayer_button = button.Button(singleplayer_img, 280, 210, "Single-Player", 1)
+    multiplayer_button = button.Button(multiplayer_img, 520, 210, "Multi-Player", 1)
+    startgame_button = button.Button(startgame_img, 400, 500, "Start Game", 1)
+    num_computers1_button = button.Button(number_img, 300, 310, "1", 1.5)
+    num_computers2_button = button.Button(number_img, 400, 310, "2", 1.5)
+    num_computers3_button = button.Button(number_img, 500, 310, "3", 1.5)
 
-    one_img = pygame.image.load("images/button_one.png").convert_alpha()
-    one_pressed_img = pygame.image.load("images/button_one_pressed.png").convert_alpha()
-
-    two_img = pygame.image.load("images/button_two.png").convert_alpha()
-    two_pressed_img = pygame.image.load("images/button_two_pressed.png").convert_alpha()
-
-    three_img = pygame.image.load("images/button_three.png").convert_alpha()
-    three_pressed_img = pygame.image.load("images/button_three_pressed.png").convert_alpha()
-
-    four_img = pygame.image.load("images/button_four.png").convert_alpha()
-    four_pressed_img = pygame.image.load("images/button_four_pressed.png").convert_alpha()
-
-    # create button instances
-    singleplayer_button = button.Button(260, 200, singleplayer_img, 1)
-    multiplayer_button = button.Button(400, 200, multiplayer_img, 1)
-    startgame_button = button.Button(330, 450, startgame_img, 1)
-
-    zero_button = button.Button(220, 285, zero_img, 1)
-    one_button = button.Button(280, 285, one_img, 1)
-    two_button = button.Button(340, 285, two_img, 1)
-    three_button = button.Button(400, 285, three_img, 1)
-    four_button = button.Button(460, 285, four_img, 1)
 
     while True:
         # Fill screen background
         screen.fill((135, 206, 235))
 
-        draw_text("Welcome to CS205 Project: Ski Resort Monopoly!", large_font, TEXT_COL, 70, 50)
+        draw_text("Welcome to CS205 Project: Ski Resort Monopoly!", large_font, TEXT_COL, 80, 50)
         draw_text("Press 'esc' to close the program", small_font, TEXT_COL, 25, 550)
-        draw_text('Game Setup', medium_font, TEXT_COL, 325, 150)
+        draw_text('Game Setup', medium_font, TEXT_COL, 335, 150)
 
-        if singleplayer_button.draw(screen):
+        singleplayer_button.draw()
+        multiplayer_button.draw()
+
+        if singleplayer_button.check_click():
             game_singleplayer = True
-
-        if multiplayer_button.draw(screen):
+        if multiplayer_button.check_click():
             game_multiplayer = True
 
         if game_singleplayer:
+            game_multiplayer = False
             num_players = 1
-            singleplayer_button = button.Button(260, 200, singleplayer_pressed_img, 1)
             draw_text("Number of Computers", medium_font, TEXT_COL, 285, 250)
-            if one_button.draw(screen):
-                one_button = button.Button(280, 285, one_pressed_img, 1)
+            num_computers1_button.draw()
+            num_computers2_button.draw()
+            num_computers3_button.draw()
+
+            # set number of computers
+            if num_computers1_button.check_click():
                 num_computers = 1
-            if two_button.draw(screen):
-                two_button = button.Button(340, 285, two_pressed_img, 1)
+            if num_computers2_button.check_click():
                 num_computers = 2
-            if three_button.draw(screen):
-                three_button = button.Button(400, 285, three_pressed_img, 1)
+            if num_computers3_button.check_click():
                 num_computers = 3
-            if four_button.draw(screen):
-                four_button = button.Button(460, 285, four_pressed_img, 1)
-                num_computers = 4
-            draw_text("Choose your Piece", medium_font, TEXT_COL, 295, 340)
-            if startgame_button.draw(screen):
-                # move to game start page
-                game()
+
+            if num_computers > 0:
+                draw_text("Choose your Piece", medium_font, TEXT_COL, 305, 350)
+                startgame_button.draw()
+
+                # if startgame button clicked and game setup, move to game screen
+                if startgame_button.check_click():
+                    game()
 
         # elif game_multiplayer:
+            # game_singleplayer = False
             # draw_text("Number of Players", medium_font, TEXT_COL, 300, 285)
             # draw_text("Number of Computers", medium_font, TEXT_COL, 285, 375)
 
@@ -113,13 +105,17 @@ def menu():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
+                    sys.exit()
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
 
         # Required to update screen
         pygame.display.update()
+        clock.tick(60)
 
 
+# game screen
 def game():
     while True:
         large_font = pygame.font.SysFont('Verdana', 25)
@@ -127,18 +123,21 @@ def game():
         # Fill screen background
         screen.fill((255, 255, 255))
 
-        draw_text('Game Menu', large_font, TEXT_COL, 300, 100)
+        draw_text('Game Menu', large_font, TEXT_COL, 325, 100)
 
         # Loop through all events
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
+                    sys.exit()
             if event.type == pygame.QUIT:
                 pygame.quit()
-
+                sys.exit()
 
         # Required to update screen
         pygame.display.update()
+        clock.tick(60)
+
 
 menu()
