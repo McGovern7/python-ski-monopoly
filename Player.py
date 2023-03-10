@@ -17,8 +17,11 @@ class Player:
         self.property_list.append(new_property)
 
     ##TODO -- Check if a certain property is owned
-
+    def check_properties(self, new_property):
+        pass
     ##TODO -- Remove a property
+    def remove_property(self, new_property):
+        pass
 
     ##TODO -- Update board position
 

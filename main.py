@@ -136,7 +136,7 @@ def card_screen():
 
         #create board
         create_board()
-        create_icon(200, 200, "icon1.png")
+        #create_icon(300, 200, "icon1.png")
 
         #create card
         create_card(50, 150, blue)
