@@ -81,7 +81,10 @@ def create_card(x, y, region_color):
     screen.blit(cost_text_2, (60, 330))
 
 def create_board():
-    pygame.draw.rect(screen, white, (100, 100, 150, 200))
+    pygame.draw.rect(screen, white, (260, 120, 870, 600))
+    pygame.draw.rect(screen, green, (460, 280, 480, 270))
+    pygame.draw.rect(screen, blue, (260, 120, 10, 10)) #USED FOR TEMP VISUAL
+    pygame.draw.rect(screen, blue, (1130, 720, 10, 10)) #USED FOR TEMP VISUAL
 
 #SCREENS
 #start screen
@@ -106,6 +109,7 @@ def card_screen():
         screen.fill(green)
         screen.blit(text1, (50, 50))
         screen.blit(text2, (50, 100))
+
         #create board
         create_board()
 
