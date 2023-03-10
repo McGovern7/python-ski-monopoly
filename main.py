@@ -107,21 +107,24 @@ def card_screen(screen, font):
 def main():
     # Constants
     DICE_DIMS = (40, 40)
+    TEST_DICE = True
 
     # Initializations
     # make screen
-    screen = pygame.display.set_mode((1200, 700))
+    screen = pygame.display.set_mode((1200, 800))
     is_rolling = False
+    done1 = False
+    done2 = False
     counter = 0
-    ret1 = -1
-    ret2 = -1
+    die1_value = -1
+    die2_value = -1
 
     die1 = Die(screen,
-               screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5 - 5,
+               screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
     die2 = Die(screen,
-               screen.get_width() - screen.get_width() * 0.1 + 5,
+               screen.get_width() - screen.get_width() * 0.1,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
 
@@ -146,7 +149,6 @@ def main():
     player1(screen, player1_icon, player1_x, player1_y)
 
     # Game loop
-    TEST_DICE = True
     while True:
         # start_screen()
         card_screen(screen, font)
@@ -156,7 +158,8 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        # Vector of all keys on keyboard. keys[pygame.K_SPACE] will return True if the spacebar is pressed. False if otehrwise
+        # Vector of all keys on keyboard.
+        # keys[pygame.K_SPACE] will return True if the space-bar is pressed; False if otherwise
         keys = pygame.key.get_pressed()
 
         if TEST_DICE:
@@ -165,18 +168,27 @@ def main():
                 if keys[pygame.K_SPACE]:
                     counter = 0
                     is_rolling = True
-                    die1.reset()
-                    die2.reset()
             else:
-                if ret1 == -1:
-                    ret1 = die1.roll(counter)
-                if ret2 == -1:
-                    ret2 = die2.roll(counter)
-                if ret1 != -1 and ret2 != -1:
-                    is_rolling = False
-                    print("You rolled a", ret1 + ret2)
-                    ret1 = -1
-                    ret2 = -1
+                # A die_value of -1 indicates the die is not done rolling.
+                # Otherwise, roll() returns a random value from 1 to 6.
+                if die1_value == -1:
+                    die1_value = die1.roll(counter)
+                if die2_value == -1:
+                    die2_value = die2.roll(counter)
+                if die1_value != -1 and die2_value != -1:
+                    # Both dice are done rolling
+
+                    # Return the dice to the start
+                    if not die1.at_start:
+                        die1.reset()
+                    if not die2.at_start:
+                        die2.reset()
+                    if die1.at_start and die2.at_start:
+                        # Both dice are at the start. Reset values
+                        is_rolling = False
+                        print("You rolled a", die1_value + die2_value)
+                        die1_value = -1
+                        die2_value = -1
 
                 counter += 1
             die1.draw(screen)
