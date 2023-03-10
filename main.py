@@ -89,7 +89,7 @@ def create_card(x, y, region_color):
 def create_board():
     screen.fill(green)
     #full board
-    pygame.draw.rect(screen, board_color, (260, 120, 870, 600))
+    pygame.draw.rect(screen, board_color, (35, 35, 715, 715))
     #center space
     pygame.draw.rect(screen, green, (460, 280, 480, 270))
 

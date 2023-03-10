@@ -1,5 +1,4 @@
 class Player:
-
     #Creates a player object
     #Player has a name, position on the board, bank account, property list, get out of jail free card,
     #and 'bankrupt' bool which signifies if they lose the game
