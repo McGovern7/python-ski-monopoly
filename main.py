@@ -85,9 +85,20 @@ def create_board():
     pygame.draw.rect(screen, white, (260, 120, 870, 600))
     #center space
     pygame.draw.rect(screen, green, (460, 280, 480, 270))
+
     #tile lines
+    #top left
     pygame.draw.rect(screen, black, (260, 280, 200, 1))
     pygame.draw.rect(screen, black, (460, 120, 1, 160))
+    #bottom left
+    pygame.draw.rect(screen, black, (260, 550, 200, 1))
+    pygame.draw.rect(screen, black, (460, 550, 1, 170))
+    #top right
+    pygame.draw.rect(screen, black, (940, 280, 190, 1))
+    pygame.draw.rect(screen, black, (940, 120, 1, 160))
+    #bottom right
+    pygame.draw.rect(screen, black, (940, 550, 190, 1))
+    pygame.draw.rect(screen, black, (940, 550, 1, 170))
 
     #temporary formatting blocks im using to visualize points
     pygame.draw.rect(screen, blue, (260, 120, 10, 10))
