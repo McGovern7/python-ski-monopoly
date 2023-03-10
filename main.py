@@ -3,7 +3,7 @@ import pygame
 import button
 from Bank_Account import Bank_Account
 
-#Initialize PyGame
+# Initialize PyGame
 pygame.init()
 
 # Create the screen
@@ -11,36 +11,36 @@ SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-#game title and icon
+# game title and icon
 pygame.display.set_caption("Ski Monopoly!")
 icon = pygame.image.load("images/deposit.png")
 pygame.display.set_icon(icon)
-#constants
-#TODO - which font should we use?
-#print(pygame.font.get_fonts())
+# constants
+# TODO - which font should we use?
+# print(pygame.font.get_fonts())
 font = pygame.font.SysFont("times", 30)
 small_font_1 = pygame.font.SysFont("times", 16)
 small_font_2 = pygame.font.SysFont("times", 15)
 small_font_3 = pygame.font.SysFont("times", 12)
 small_font_4 = pygame.font.SysFont("times", 10)
 green = (0, 100, 0)
-white = (255,255,255)
-black = (0,0,0)
+white = (255, 255, 255)
+black = (0, 0, 0)
 blue = (30, 144, 225)
-
 
 clock = pygame.time.Clock()
 
 # define colors
 TEXT_COL = (0, 0, 0)
 
-
-#TODO - was just messing around with player icons (definitely feel free to change)
-#Players
-#P1
+# TODO - was just messing around with player icons (definitely feel free to change)
+# Players
+# P1
 player1_icon = pygame.image.load("images/skiing.png")
 player1_x = 300
 player1_y = 600
+
+
 # #P2
 # player2_icon = pygame.image.load("deposit.png")
 # player2_x= 500
@@ -56,18 +56,21 @@ player1_y = 600
 def player1():
     screen.blit(player1_icon, (player1_x, player1_y))
 
-#house graphic
-def create_house(x,y):
+
+# house graphic
+def create_house(x, y):
     house = pygame.image.load("images/home.png")
     screen.blit(house, (x, y))
 
-#hotel graphic
-def create_hotel(x,y):
+
+# hotel graphic
+def create_hotel(x, y):
     hotel = pygame.image.load("images/hotel.png")
     screen.blit(hotel, (x, y))
 
+
 def create_card(x, y, region_color):
-    #text on every property card
+    # text on every property card
     deed_text = small_font_4.render("TITLE DEED", True, black)
     property_text = small_font_1.render("Property Name", True, black)
     rent_text = small_font_2.render("Rent: $", True, black)
@@ -78,9 +81,9 @@ def create_card(x, y, region_color):
     hotel_text = small_font_3.render("With Hotel", True, black)
     cost_text_1 = small_font_3.render("Houses cost $", True, black)
     cost_text_2 = small_font_3.render("Hotel costs $", True, black)
-    #draw
+    # draw
     pygame.draw.rect(screen, white, (x, y, 150, 200))
-    pygame.draw.rect(screen, region_color, (x+5, y+5, 140, 50))
+    pygame.draw.rect(screen, region_color, (x + 5, y + 5, 140, 50))
     screen.blit(deed_text, (90, 160))
     screen.blit(property_text, (70, 180))
     screen.blit(rent_text, (90, 215))
@@ -99,8 +102,8 @@ def draw_text(text, font, text_col, x, y):
     screen.blit(img, (x, y))
 
 
-#SCREENS
-#start screen
+# SCREENS
+# start screen
 def start_screen():
     # Title and Icon
     pygame.display.set_caption("Monopoly | Ski Resort Edition")
@@ -192,7 +195,7 @@ def start_screen():
         clock.tick(60)
 
 
-#board screen
+# board screen
 def board_screen():
     while True:
         large_font = pygame.font.SysFont('Verdana', 25)
@@ -208,6 +211,8 @@ def board_screen():
                 if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     sys.exit()
+                if event.key == pygame.K_c:
+                    card_screen()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -216,7 +221,8 @@ def board_screen():
         pygame.display.update()
         clock.tick(60)
 
-#card screen
+
+# card screen
 def card_screen():
     pygame.display.set_caption("Your cards")
     text1 = font.render("Available money: ", True, white)
@@ -225,17 +231,23 @@ def card_screen():
         screen.fill(green)
         screen.blit(text1, (50, 50))
         screen.blit(text2, (50, 100))
-        #create card
+        # create card
         create_card(50, 150, blue)
         create_house(100, 500)
 
+        # Loop through all events
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
+        # Required to update screen
         pygame.display.update()
-        return True
+        clock.tick(60)
 
 
 # Game loop
@@ -249,4 +261,3 @@ while True:
             sys.exit()
 
     pygame.display.update()
-
