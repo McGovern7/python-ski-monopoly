@@ -87,6 +87,7 @@ def create_card(x, y, region_color):
     screen.blit(cost_text_2, (60, 330))
 
 def create_board():
+    screen.fill(green)
     #full board
     pygame.draw.rect(screen, board_color, (260, 120, 870, 600))
     #center space
@@ -122,6 +123,9 @@ def start_screen():
 #board screen
 def board_screen():
     while True:
+        # create board
+        create_board()
+        # create_icon(300, 200, "icon1.png")
         return True
 
 #card screen
@@ -133,10 +137,6 @@ def card_screen():
         screen.fill(green)
         screen.blit(text1, (50, 50))
         screen.blit(text2, (50, 100))
-
-        #create board
-        create_board()
-        #create_icon(300, 200, "icon1.png")
 
         #create card
         create_card(50, 150, blue)
@@ -154,7 +154,8 @@ def card_screen():
 # Game loop
 while True:
     #start_screen()
-    card_screen()
+    #card_screen()
+    board_screen()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
