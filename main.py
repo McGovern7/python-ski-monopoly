@@ -5,17 +5,24 @@ import sys
 #Initialize PyGame
 pygame.init()
 
-#make screen
-screen = pygame.display.set_mode((1200,800))
+# Create the screen
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 #game title and icon
 pygame.display.set_caption("Ski Monopoly!")
-icon = pygame.image.load("deposit.png")
+icon = pygame.image.load("images/deposit.png")
 pygame.display.set_icon(icon)
+
+clock = pygame.time.Clock()
+
+# define colors
+TEXT_COL = (0, 0, 0)
 
 #Players
 #P1
-player1_icon = pygame.image.load("skiing.png")
+player1_icon = pygame.image.load("images/skiing.png")
 player1_x = 300
 player1_y = 600
 # #P2
@@ -31,36 +38,9 @@ player1_y = 600
 # player4_x = 300
 # player4_y = 300
 
+
 def player1():
     screen.blit(player1_icon, (player1_x, player1_y))
-
-#loop that runs the game
-running = True
-while running:
-    # screen color
-    screen.fill((0, 128, 0))
-
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-    player1()
-    pygame.display.update()
-
-# Create the screen
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-# Title and Icon
-pygame.display.set_caption("Monopoly | Ski Resort Edition")
-icon = pygame.image.load("images/ski-resort.png")
-pygame.display.set_icon(icon)
-
-clock = pygame.time.Clock()
-
-# define colors
-TEXT_COL = (0, 0, 0)
 
 
 # Function draws text with desired font, color, and location on page
@@ -71,6 +51,11 @@ def draw_text(text, font, text_col, x, y):
 
 # menu screen
 def menu():
+    # Title and Icon
+    pygame.display.set_caption("Monopoly | Ski Resort Edition")
+    icon = pygame.image.load("images/ski-resort.png")
+    pygame.display.set_icon(icon)
+
     # game type variables
     game_singleplayer = False
     game_multiplayer = False
@@ -95,7 +80,6 @@ def menu():
     num_computers1_button = button.Button(number_img, 300, 310, "1", 1.5)
     num_computers2_button = button.Button(number_img, 400, 310, "2", 1.5)
     num_computers3_button = button.Button(number_img, 500, 310, "3", 1.5)
-
 
     while True:
         # Fill screen background
@@ -177,6 +161,7 @@ def game():
                 pygame.quit()
                 sys.exit()
 
+        player1()
         # Required to update screen
         pygame.display.update()
         clock.tick(60)
