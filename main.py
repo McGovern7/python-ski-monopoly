@@ -58,12 +58,12 @@ def player1():
 
 #house graphic
 def create_house(x,y):
-    house = pygame.image.load("home.png")
+    house = pygame.image.load("images/home.png")
     screen.blit(house, (x, y))
 
 #hotel graphic
 def create_hotel(x,y):
-    hotel = pygame.image.load("hotel.png.png")
+    hotel = pygame.image.load("images/hotel.png")
     screen.blit(hotel, (x, y))
 
 def create_card(x, y, region_color):
