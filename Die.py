@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 
-FRICTION = 0.999
+FRICTION = 0.996
 
 
 class Die:
@@ -20,9 +20,14 @@ class Die:
 
         self.faces = []
         for i in range(1, 7):
-            self.faces.append(pygame.image.load("dice/" + str(i) + ".png"))
+            self.faces.append(pygame.image.load("dice/still/" + str(i) + ".png"))
             self.faces[i-1] = pygame.transform.scale(self.faces[i-1], dimensions)
-        self.face = random.randint(0, 5)
+        self.face = self.faces[0]
+
+        self.rolling = []
+        for i in range(1, 9):
+            self.rolling.append(pygame.image.load("dice/rolling/" + str(i) + ".png"))
+            self.rolling[i-1] = pygame.transform.scale(self.rolling[i-1], (dimensions[0] * 1.5, dimensions[1] * 1.5))
 
     def reset(self):
         self.x = self.start_x
@@ -34,31 +39,33 @@ class Die:
         return math.sqrt(self.x_vel**2 + self.y_vel**2)
 
     def roll(self, counter):
-        if -0.4 < self.get_vel() < 0.4:
+        if -0.2 < self.get_vel() < 0.2:
             self.x_vel = 0
             self.y_vel = 0
 
         self.x += self.x_vel
         self.y += self.y_vel
 
-        if self.x < self.left_bound or self.x + self.faces[0].get_width() > self.right_bound:
+        if self.x + self.face.get_width() > self.right_bound:
             self.x_vel *= -1
             self.x += self.x_vel
 
-        if self.y < self.upper_bound or self.y + self.faces[0].get_height() > self.lower_bound:
+        if self.y + self.face.get_height() > self.lower_bound:
             self.y_vel *= -1
             self.y += self.y_vel
 
         self.x_vel *= FRICTION
         self.y_vel *= FRICTION
 
-        if counter % 100 == 0:
-            self.face = random.randint(0, 5)
+        if counter % 25 == 0:
+            self.face = self.rolling[random.randint(0, 7)]
 
         if self.x_vel == 0 and self.y_vel == 0:
-            return self.face + 1
+            value = random.randint(0, 5)
+            self.face = self.faces[value]
+            return value + 1
         else:
             return -1
 
     def draw(self, screen):
-        screen.blit(self.faces[self.face], (self.x, self.y))
+        screen.blit(self.face, (self.x, self.y))

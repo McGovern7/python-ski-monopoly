@@ -110,17 +110,19 @@ def main():
 
     # Initializations
     # make screen
-    screen = pygame.display.set_mode((1200, 800))
+    screen = pygame.display.set_mode((1200, 700))
     is_rolling = False
     counter = 0
+    ret1 = -1
+    ret2 = -1
 
     die1 = Die(screen,
-               screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] - 5,
-               screen.get_height() - DICE_DIMS[0],
+               screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5 - 5,
+               screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
     die2 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 + 5,
-               screen.get_height() - DICE_DIMS[0],
+               screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
 
     # TODO - was just messing around with player icons (definitely feel free to change)
@@ -156,21 +158,26 @@ def main():
 
         # Vector of all keys on keyboard. keys[pygame.K_SPACE] will return True if the spacebar is pressed. False if otehrwise
         keys = pygame.key.get_pressed()
+
         if TEST_DICE:
+
             if not is_rolling:
                 if keys[pygame.K_SPACE]:
                     counter = 0
                     is_rolling = True
-                die1.reset()
-                die2.reset()
+                    die1.reset()
+                    die2.reset()
             else:
-                ret1 = die1.roll(counter)
-                ret2 = die2.roll(counter)
+                if ret1 == -1:
+                    ret1 = die1.roll(counter)
+                if ret2 == -1:
+                    ret2 = die2.roll(counter)
                 if ret1 != -1 and ret2 != -1:
                     is_rolling = False
                     print("You rolled a", ret1 + ret2)
-                else:
-                    pass
+                    ret1 = -1
+                    ret2 = -1
+
                 counter += 1
             die1.draw(screen)
             die2.draw(screen)
