@@ -81,10 +81,17 @@ def create_card(x, y, region_color):
     screen.blit(cost_text_2, (60, 330))
 
 def create_board():
+    #full board
     pygame.draw.rect(screen, white, (260, 120, 870, 600))
+    #center space
     pygame.draw.rect(screen, green, (460, 280, 480, 270))
-    pygame.draw.rect(screen, blue, (260, 120, 10, 10)) #USED FOR TEMP VISUAL
-    pygame.draw.rect(screen, blue, (1130, 720, 10, 10)) #USED FOR TEMP VISUAL
+    #tile lines
+    pygame.draw.rect(screen, black, (260, 280, 200, 1))
+    pygame.draw.rect(screen, black, (460, 120, 1, 160))
+
+    #temporary formatting blocks im using to visualize points
+    pygame.draw.rect(screen, blue, (260, 120, 10, 10))
+    pygame.draw.rect(screen, blue, (1130, 720, 10, 10))
 
 #SCREENS
 #start screen
