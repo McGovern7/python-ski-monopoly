@@ -3,8 +3,9 @@ class Player:
     #Creates a player object
     #Player has a name, position on the board, bank account, property list, get out of jail free card,
     #and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, player_name, board_position, bank_account):
+    def __init__(self, player_icon, player_name, board_position, bank_account):
         ##TODO -- Need a field for player vs computer
+        self.icon = player_icon
         self.name = player_name
         self.board_position = board_position
         self.bank_account = bank_account
