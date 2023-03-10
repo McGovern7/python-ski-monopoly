@@ -92,32 +92,6 @@ def create_card(x, y, region_color):
     screen.blit(cost_text_1, (60, 320))
     screen.blit(cost_text_2, (60, 330))
 
-#SCREENS
-#start screen
-def start_screen():
-    # game title and icon
-    pygame.display.set_caption("Monopoly | Ski Resort Edition")
-    icon = pygame.image.load("ski-resort.png")
-    pygame.display.set_icon(icon)
-    while True:
-        return True
-#board screen
-def board_screen():
-    while True:
-        return True
-
-#card screen
-def card_screen():
-    pygame.display.set_caption("Your cards")
-    text1 = font.render("Available money: ", True, white)
-    text2 = font.render("Properties: ", True, white)
-    while True:
-        screen.fill(green)
-        screen.blit(text1, (50, 50))
-        screen.blit(text2, (50, 100))
-        #create card
-        create_card(50, 150, blue)
-        create_house(100, 500)
 
 # Function draws text with desired font, color, and location on page
 def draw_text(text, font, text_col, x, y):
@@ -125,8 +99,9 @@ def draw_text(text, font, text_col, x, y):
     screen.blit(img, (x, y))
 
 
-# menu screen
-def menu():
+#SCREENS
+#start screen
+def start_screen():
     # Title and Icon
     pygame.display.set_caption("Monopoly | Ski Resort Edition")
     icon = pygame.image.load("images/ski-resort.png")
@@ -195,25 +170,12 @@ def menu():
 
                 # if startgame button clicked and game setup, move to game screen
                 if startgame_button.check_click():
-                    game()
+                    board_screen()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-
-        pygame.display.update()
-        return True
-
-
-# Game loop
-while True:
-    #start_screen()
-    card_screen()
         # elif game_multiplayer:
-            # game_singleplayer = False
-            # draw_text("Number of Players", medium_font, TEXT_COL, 300, 285)
-            # draw_text("Number of Computers", medium_font, TEXT_COL, 285, 375)
+        # game_singleplayer = False
+        # draw_text("Number of Players", medium_font, TEXT_COL, 300, 285)
+        # draw_text("Number of Computers", medium_font, TEXT_COL, 285, 375)
 
         # Loop through all events
         for event in pygame.event.get():
@@ -230,8 +192,8 @@ while True:
         clock.tick(60)
 
 
-# game screen
-def game():
+#board screen
+def board_screen():
     while True:
         large_font = pygame.font.SysFont('Verdana', 25)
 
@@ -250,6 +212,37 @@ def game():
                 pygame.quit()
                 sys.exit()
 
+        # Required to update screen
+        pygame.display.update()
+        clock.tick(60)
+
+#card screen
+def card_screen():
+    pygame.display.set_caption("Your cards")
+    text1 = font.render("Available money: ", True, white)
+    text2 = font.render("Properties: ", True, white)
+    while True:
+        screen.fill(green)
+        screen.blit(text1, (50, 50))
+        screen.blit(text2, (50, 100))
+        #create card
+        create_card(50, 150, blue)
+        create_house(100, 500)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        pygame.display.update()
+        return True
+
+
+# Game loop
+while True:
+    start_screen()
+    card_screen()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -257,10 +250,3 @@ def game():
 
     pygame.display.update()
 
-        player1()
-        # Required to update screen
-        pygame.display.update()
-        clock.tick(60)
-
-
-menu()
