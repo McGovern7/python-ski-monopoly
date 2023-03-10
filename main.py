@@ -80,6 +80,9 @@ def create_card(x, y, region_color):
     screen.blit(cost_text_1, (60, 320))
     screen.blit(cost_text_2, (60, 330))
 
+def create_board():
+    pygame.draw.rect(screen, white, (100, 100, 150, 200))
+
 #SCREENS
 #start screen
 def start_screen():
@@ -103,6 +106,9 @@ def card_screen():
         screen.fill(green)
         screen.blit(text1, (50, 50))
         screen.blit(text2, (50, 100))
+        #create board
+        create_board()
+
         #create card
         create_card(50, 150, blue)
         create_house(100, 500)
