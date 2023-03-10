@@ -91,13 +91,18 @@ def create_board():
     #full board
     pygame.draw.rect(screen, board_color, (35, 35, 715, 715))
     #center space
-    pygame.draw.rect(screen, green, (460, 280, 480, 270))
+    pygame.draw.rect(screen, green, (175, 175, 200, 200))
 
     #tile lines
-    #top left
-    pygame.draw.rect(screen, black, (260, 280, 200, 1))
-    pygame.draw.rect(screen, black, (460, 120, 1, 160))
-    #bottom left
+    pygame.draw.rect(screen, black, (35, 175, 140, 1))
+    pygame.draw.rect(screen, black, (35, 240, 140, 1))
+    pygame.draw.rect(screen, black, (35, 305, 140, 1))
+    pygame.draw.rect(screen, black, (35, 370, 140, 1))
+    pygame.draw.rect(screen, black, (35, 435, 140, 1))
+    pygame.draw.rect(screen, black, (35, 500, 140, 1))
+    pygame.draw.rect(screen, black, (35, 565, 140, 1))
+
+    pygame.draw.rect(screen, black, (175, 35, 1, 140))
     pygame.draw.rect(screen, black, (260, 550, 200, 1))
     pygame.draw.rect(screen, black, (460, 550, 1, 170))
     #top right
