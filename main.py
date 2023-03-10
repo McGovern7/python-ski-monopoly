@@ -20,6 +20,7 @@ green = (0, 100, 0)
 white = (255,255,255)
 black = (0,0,0)
 blue = (30, 144, 225)
+board_color = (191, 219, 174)
 
 
 
@@ -54,6 +55,11 @@ def create_hotel(x,y):
     hotel = pygame.image.load("hotel.png.png")
     screen.blit(hotel, (x, y))
 
+#player icon
+def create_icon(x,y, icon):
+    icon = pygame.image.load(icon)
+    screen.blit(icon, (x, y))
+
 def create_card(x, y, region_color):
     #text on every property card
     deed_text = small_font_4.render("TITLE DEED", True, black)
@@ -82,7 +88,7 @@ def create_card(x, y, region_color):
 
 def create_board():
     #full board
-    pygame.draw.rect(screen, white, (260, 120, 870, 600))
+    pygame.draw.rect(screen, board_color, (260, 120, 870, 600))
     #center space
     pygame.draw.rect(screen, green, (460, 280, 480, 270))
 
@@ -101,8 +107,8 @@ def create_board():
     pygame.draw.rect(screen, black, (940, 550, 1, 170))
 
     #temporary formatting blocks im using to visualize points
-    pygame.draw.rect(screen, blue, (260, 120, 10, 10))
-    pygame.draw.rect(screen, blue, (1130, 720, 10, 10))
+    #pygame.draw.rect(screen, blue, (260, 120, 10, 10))
+    #pygame.draw.rect(screen, blue, (1130, 720, 10, 10))
 
 #SCREENS
 #start screen
@@ -130,6 +136,7 @@ def card_screen():
 
         #create board
         create_board()
+        create_icon(200, 200, "icon1.png")
 
         #create card
         create_card(50, 150, blue)
