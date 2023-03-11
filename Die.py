@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 
-FRICTION = 0.996
+FRICTION = 0.95
 
 
 class Die:
@@ -11,8 +11,8 @@ class Die:
         self.start_y = self.y = start_y - 1
         self.at_start = True
 
-        self.x_vel = random.uniform(-2, 2)
-        self.y_vel = random.uniform(-2, -1)
+        self.x_vel = random.uniform(-10, 10)
+        self.y_vel = random.uniform(-20, -1)
 
         size = screen.get_size()
         self.left_bound = size[0] - (0.2 * size[0])
@@ -22,17 +22,17 @@ class Die:
 
         self.faces = []
         for i in range(1, 7):
-            self.faces.append(pygame.image.load("dice/still/" + str(i) + ".png"))
+            self.faces.append(pygame.image.load("images/dice/still/" + str(i) + ".png"))
             self.faces[i-1] = pygame.transform.scale(self.faces[i-1], dimensions)
         self.face = self.faces[0]
 
         self.rolling = []
         for i in range(1, 9):
-            self.rolling.append(pygame.image.load("dice/rolling/" + str(i) + ".png"))
+            self.rolling.append(pygame.image.load("images/dice/rolling/" + str(i) + ".png"))
             self.rolling[i-1] = pygame.transform.scale(self.rolling[i-1], (dimensions[0] * 1.5, dimensions[1] * 1.5))
 
     def reset(self):
-        mod = 100
+        mod = 10
         self.x_vel = (self.start_x - self.x) / mod
         self.y_vel = (self.start_y - self.y) / mod
 
@@ -57,7 +57,7 @@ class Die:
 
         self.move()
 
-        if counter % 25 == 0:
+        if counter % 4 == 0:
             self.face = self.rolling[random.randint(0, 7)]
 
         if -0.2 < self.get_vel() < 0.2:
@@ -81,8 +81,8 @@ class Die:
 
         if self.x == self.start_x and self.y == self.start_y:
             self.at_start = True
-            self.x_vel = random.uniform(-2, 2)
-            self.y_vel = random.uniform(-2, -1)
+            self.x_vel = random.uniform(-10, 10)
+            self.y_vel = random.uniform(-20, -1)
         else:
             self.at_start = False
 
