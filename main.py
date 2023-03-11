@@ -24,7 +24,6 @@ SCREEN_HEIGHT = 800
 clock = pygame.time.Clock()
 
 # define colors
-TEXT_COL = (0, 0, 0)
 green = (0, 100, 0)
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -48,30 +47,19 @@ def create_hotel(screen, x, y):
 
 
 def create_card(screen, x, y, region_color):
-    # text on every property card
-    deed_text = small_font_4.render("TITLE DEED", True, black)
-    property_text = small_font_1.render("Property Name", True, black)
-    rent_text = small_font_2.render("Rent: $", True, black)
-    house_1_text = small_font_3.render("With 1 House", True, black)
-    house_2_text = small_font_3.render("With 2 Houses", True, black)
-    house_3_text = small_font_3.render("With 3 Houses", True, black)
-    house_4_text = small_font_3.render("With 4 Houses", True, black)
-    hotel_text = small_font_3.render("With Hotel", True, black)
-    cost_text_1 = small_font_3.render("Houses cost $", True, black)
-    cost_text_2 = small_font_3.render("Hotel costs $", True, black)
-    # draw
+    # draw text on every property card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
     pygame.draw.rect(screen, region_color, (x + 5, y + 5, 140, 50))
-    screen.blit(deed_text, (90, 160))
-    screen.blit(property_text, (70, 180))
-    screen.blit(rent_text, (90, 215))
-    screen.blit(house_1_text, (60, 235))
-    screen.blit(house_2_text, (60, 250))
-    screen.blit(house_3_text, (60, 265))
-    screen.blit(house_4_text, (60, 280))
-    screen.blit(hotel_text, (60, 295))
-    screen.blit(cost_text_1, (60, 320))
-    screen.blit(cost_text_2, (60, 330))
+    draw_text(screen, "TITLE DEED", small_font_4, black, 90, 160)
+    draw_text(screen, "Property Name", small_font_2, black, 70, 180)
+    draw_text(screen, "Rent: $", small_font_3, black, 90, 215)
+    draw_text(screen, "With 1 House", small_font_3, black, 60, 235)
+    draw_text(screen, "With 2 Houses", small_font_3, black, 60, 250)
+    draw_text(screen, "With 3 Houses", small_font_3, black, 60, 265)
+    draw_text(screen, "With 4 Houses", small_font_3, black, 60, 280)
+    draw_text(screen, "With Hotel", small_font_3, black, 60, 295)
+    draw_text(screen, "Houses cost $", small_font_3, black, 60, 320)
+    draw_text(screen, "Hotel costs $", small_font_3, black, 60, 330)
 
 
 # Function draws text with desired font, color, and location on page
@@ -111,9 +99,9 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
     # Fill screen background
     screen.fill((135, 206, 235))
 
-    draw_text(screen, "Welcome to CS205 Project: Ski Resort Monopoly!", large_font, TEXT_COL, 80, 50)
-    draw_text(screen, "Press 'esc' to close the program", small_font, TEXT_COL, 25, 550)
-    draw_text(screen, 'Game Setup', medium_font, TEXT_COL, 335, 150)
+    draw_text(screen, "Welcome to CS205 Project: Ski Resort Monopoly!", large_font, black, 160, 50)
+    draw_text(screen, "Press 'esc' to close the program", small_font, black, 25, 750)
+    draw_text(screen, 'Game Setup', medium_font, black, 335, 150)
 
     singleplayer_button.draw()
     multiplayer_button.draw()
@@ -126,7 +114,7 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
     if game_singleplayer:
         game_multiplayer = False
         num_players = 1
-        draw_text(screen, "Number of Computers", medium_font, TEXT_COL, 285, 250)
+        draw_text(screen, "Number of Computers", medium_font, black, 285, 250)
         num_computers1_button.draw()
         num_computers2_button.draw()
         num_computers3_button.draw()
@@ -140,17 +128,17 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
             num_computers = 3
 
         if num_computers > 0:
-            draw_text(screen, "Choose your Piece", medium_font, TEXT_COL, 305, 350)
+            draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
             startgame_button.draw()
 
             # if startgame button clicked and game setup, move to game screen
             if startgame_button.check_click():
-                board_screen()
+                board_screen(screen)
 
     # elif game_multiplayer:
     # game_singleplayer = False
-    # draw_text("Number of Players", medium_font, TEXT_COL, 300, 285)
-    # draw_text("Number of Computers", medium_font, TEXT_COL, 285, 375)
+    # draw_text("Number of Players", medium_font, black, 300, 285)
+    # draw_text("Number of Computers", medium_font, black, 285, 375)
     return game_singleplayer, game_multiplayer
 
 
@@ -275,9 +263,9 @@ def main():
             # Fill screen background
             screen.fill((135, 206, 235))
 
-            draw_text(screen, "Welcome to CS205 Project: Ski Resort Monopoly!", large_font, TEXT_COL, 80, 50)
-            draw_text(screen, "Press 'esc' to close the program", small_font, TEXT_COL, 25, 550)
-            draw_text(screen, 'Game Setup', medium_font, TEXT_COL, 335, 150)
+            draw_text(screen, "Welcome to CS205 Project: Ski Resort Monopoly!", large_font, black, 80, 50)
+            draw_text(screen, "Press 'esc' to close the program", small_font, black, 25, 750)
+            draw_text(screen, 'Game Setup', medium_font, black, 335, 150)
 
             singleplayer_button.draw()
             multiplayer_button.draw()
@@ -290,7 +278,7 @@ def main():
             if game_singleplayer:
                 game_multiplayer = False
                 num_players = 1
-                draw_text(screen, "Number of Computers", medium_font, TEXT_COL, 285, 250)
+                draw_text(screen, "Number of Computers", medium_font, black, 285, 250)
                 num_computers1_button.draw()
                 num_computers2_button.draw()
                 num_computers3_button.draw()
@@ -304,7 +292,7 @@ def main():
                     num_computers = 3
 
                 if num_computers > 0:
-                    draw_text(screen, "Choose your Piece", medium_font, TEXT_COL, 305, 350)
+                    draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
                     startgame_button.draw()
 
                     # if startgame button clicked and game setup, move to game screen
@@ -313,8 +301,8 @@ def main():
 
             # elif game_multiplayer:
             # game_singleplayer = False
-            # draw_text("Number of Players", medium_font, TEXT_COL, 300, 285)
-            # draw_text("Number of Computers", medium_font, TEXT_COL, 285, 375)
+            # draw_text("Number of Players", medium_font, black, 300, 285)
+            # draw_text("Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
             board_screen(screen)
 
