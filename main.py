@@ -28,11 +28,21 @@ green = (0, 100, 0)
 white = (255, 255, 255)
 black = (0, 0, 0)
 blue = (30, 144, 225)
+board_color = (191, 219, 174)
 
-
-def player1(screen, player1_icon, player1_x, player1_y):
-    screen.blit(player1_icon, (player1_x, player1_y))
-
+#draw players
+def draw_player1(screen, x, y):
+    player1_icon = pygame.image.load("images/skiing.png")
+    screen.blit(player1_icon, (x, y))
+def draw_player2(screen, x, y):
+    player2_icon = pygame.image.load("images/skiing.png")
+    screen.blit(player2_icon, (x, y))
+def draw_player3(screen, x, y):
+    player3_icon = pygame.image.load("images/skiing.png")
+    screen.blit(player3_icon, (x, y))
+def draw_player4(screen, x, y):
+    player4_icon = pygame.image.load("images/skiing.png")
+    screen.blit(player4_icon, (x, y))
 
 # house graphic
 def create_house(screen, x, y):
@@ -149,7 +159,13 @@ def board_screen(screen):
     # Fill screen background
     screen.fill((127, 127, 127))
 
-    draw_text(screen, 'Board Screen Filler Window', large_font, white, 325, 100)
+    #draw board
+    board = pygame.image.load("images/board.png")
+    screen.blit(board, (0, 0))
+
+    #draw player icon
+    player1(screen, 40, 50)
+
 
 
 # card screen
@@ -223,25 +239,6 @@ def main():
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
 
-    # TODO - was just messing around with player icons (definitely feel free to change)
-    # Players
-    # P1
-    player1_icon = pygame.image.load("images/skiing.png")
-    player1_x = 300
-    player1_y = 600
-    # # P2
-    # player2_icon = pygame.image.load("deposit.png")
-    # player2_x= 500
-    # player2_y= 600
-    # # P3
-    # player3_icon = pygame.image.load("deposit.png")
-    # player3_x = 300
-    # player3_y = 300
-    # # P4
-    # player4_icon = pygame.image.load("deposit.png")
-    # player4_x = 300
-    # player4_y = 300
-    player1(screen, player1_icon, player1_x, player1_y)
 
     # Game loop
     while True:
