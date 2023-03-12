@@ -32,31 +32,81 @@ board_color = (191, 219, 174)
 
 #draw players
 def draw_player1(screen, x, y):
+    """
+    Function to draw player 1's icon
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     player1_icon = pygame.image.load("images/skiing.png")
     screen.blit(player1_icon, (x, y))
 def draw_player2(screen, x, y):
+    """
+    Function to draw player 2's icon
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     player2_icon = pygame.image.load("images/skiing.png")
     screen.blit(player2_icon, (x, y))
 def draw_player3(screen, x, y):
+    """
+    Function to draw player 3's icon
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     player3_icon = pygame.image.load("images/skiing.png")
     screen.blit(player3_icon, (x, y))
 def draw_player4(screen, x, y):
+    """
+    Function to draw player 4's icon
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     player4_icon = pygame.image.load("images/skiing.png")
     screen.blit(player4_icon, (x, y))
 
 # house graphic
 def create_house(screen, x, y):
+    """
+    Function to draw a house icon on a property
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     house = pygame.image.load("images/home.png")
     screen.blit(house, (x, y))
 
 
 # hotel graphic
 def create_hotel(screen, x, y):
+    """
+    Function to draw a hotel icon on a property
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     hotel = pygame.image.load("images/hotel.png")
     screen.blit(hotel, (x, y))
 
 
 def create_card(screen, x, y, region_color):
+    """
+    Function to create a card graphic for the card screen
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :param region_color: the color of the district the property is in
+    :return: nothing
+    """
     # draw text on every property card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
     pygame.draw.rect(screen, region_color, (x + 5, y + 5, 140, 50))
@@ -74,6 +124,16 @@ def create_card(screen, x, y, region_color):
 
 # Function draws text with desired font, color, and location on page
 def draw_text(screen, text, font, text_col, x, y):
+    """
+    Function to draww text on the game screen
+    :param screen: game screen
+    :param text: text that will be displayed on-screen
+    :param font: font that will be used
+    :param text_col: the color of the text
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :return: nothing
+    """
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
@@ -81,6 +141,13 @@ def draw_text(screen, text, font, text_col, x, y):
 # SCREENS
 # start screen
 def start_screen(screen, game_singleplayer, game_multiplayer):
+    """
+    Function to create the start screen graphic
+    :param screen: game screen
+    :param game_singleplayer: boolean to represent if the game is singleplayer
+    :param game_multiplayer: boolean to represent if the game is multiplayer
+    :return: nothing
+    """
     # game type variables
     # game_singleplayer = False
     # game_multiplayer = False
@@ -154,6 +221,11 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
 
 # board screen
 def board_screen(screen):
+    """
+    Function to display the screen with the monopolu board
+    :param screen: game screen
+    :return: nothing
+    """
     large_font = pygame.font.SysFont('Verdana', 25)
 
     # Fill screen background
@@ -164,12 +236,16 @@ def board_screen(screen):
     screen.blit(board, (0, 0))
 
     #draw player icon
-    player1(screen, 40, 50)
-
-
+    draw_player1(screen, 40, 50)
 
 # card screen
 def card_screen(screen, font):
+    """
+    Function to display a screen that shows you cards and gives more details about your properties
+    :param screen: game screen
+    :param font: font of the text
+    :return: nothing
+    """
     pygame.display.set_caption("Your cards")
     text1 = font.render("Available money: ", True, white)
     text2 = font.render("Properties: ", True, white)
@@ -184,8 +260,8 @@ def card_screen(screen, font):
 
 def main():
     """
-    Main function
-    :return: void
+    Main function to run the game
+    :return: nothing
     """
     # Constants
     DICE_DIMS = (40, 40)
