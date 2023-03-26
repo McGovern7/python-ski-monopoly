@@ -30,7 +30,8 @@ black = (0, 0, 0)
 blue = (30, 144, 225)
 board_color = (191, 219, 174)
 
-#draw players
+
+# draw players
 def draw_player1(screen, x, y):
     """
     Function to draw player 1's icon
@@ -41,6 +42,8 @@ def draw_player1(screen, x, y):
     """
     player1_icon = pygame.image.load("images/skiing.png")
     screen.blit(player1_icon, (x, y))
+
+
 def draw_player2(screen, x, y):
     """
     Function to draw player 2's icon
@@ -51,6 +54,8 @@ def draw_player2(screen, x, y):
     """
     player2_icon = pygame.image.load("images/skiing.png")
     screen.blit(player2_icon, (x, y))
+
+
 def draw_player3(screen, x, y):
     """
     Function to draw player 3's icon
@@ -61,6 +66,8 @@ def draw_player3(screen, x, y):
     """
     player3_icon = pygame.image.load("images/skiing.png")
     screen.blit(player3_icon, (x, y))
+
+
 def draw_player4(screen, x, y):
     """
     Function to draw player 4's icon
@@ -71,6 +78,7 @@ def draw_player4(screen, x, y):
     """
     player4_icon = pygame.image.load("images/skiing.png")
     screen.blit(player4_icon, (x, y))
+
 
 # house graphic
 def create_house(screen, x, y):
@@ -140,6 +148,7 @@ def draw_text(screen, text, font, text_col, x, y):
 
 # SCREENS
 # start screen
+'''
 def start_screen(screen, game_singleplayer, game_multiplayer):
     """
     Function to create the start screen graphic
@@ -217,6 +226,7 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
     # draw_text("Number of Players", medium_font, black, 300, 285)
     # draw_text("Number of Computers", medium_font, black, 285, 375)
     return game_singleplayer, game_multiplayer
+'''
 
 
 # board screen
@@ -231,12 +241,13 @@ def board_screen(screen):
     # Fill screen background
     screen.fill((127, 127, 127))
 
-    #draw board
+    # draw board
     board = pygame.image.load("images/board.png")
     screen.blit(board, (0, 0))
 
-    #draw player icon
+    # draw player icon
     draw_player1(screen, 40, 50)
+
 
 # card screen
 def card_screen(screen, font):
@@ -297,14 +308,19 @@ def main():
     multiplayer_img = pygame.image.load("images/multiplayer.png").convert_alpha()
     startgame_img = pygame.image.load("images/startgame.png").convert_alpha()
     number_img = pygame.image.load("images/numplayer.png").convert_alpha()
+    properties_img = pygame.image.load("images/properties.png").convert_alpha()
+    roll_img = pygame.image.load("images/roll.png").convert_alpha()
+
 
     # draw buttons
-    singleplayer_button = button.Button(singleplayer_img, 280, 210, "Single-Player", 1)
-    multiplayer_button = button.Button(multiplayer_img, 520, 210, "Multi-Player", 1)
-    startgame_button = button.Button(startgame_img, 400, 500, "Start Game", 1)
-    num_computers1_button = button.Button(number_img, 300, 310, "1", 1.5)
-    num_computers2_button = button.Button(number_img, 400, 310, "2", 1.5)
-    num_computers3_button = button.Button(number_img, 500, 310, "3", 1.5)
+    singleplayer_button = button.Button(singleplayer_img, 280, 210, "Single-Player", white,  1)
+    multiplayer_button = button.Button(multiplayer_img, 520, 210, "Multi-Player", white, 1)
+    startgame_button = button.Button(startgame_img, 400, 500, "Start Game", white, 1)
+    num_computers1_button = button.Button(number_img, 300, 310, "1", white, 1.5)
+    num_computers2_button = button.Button(number_img, 400, 310, "2", white, 1.5)
+    num_computers3_button = button.Button(number_img, 500, 310, "3", white, 1.5)
+    properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
+    roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
 
     die1 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
@@ -314,7 +330,6 @@ def main():
                screen.get_width() - screen.get_width() * 0.1,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
-
 
     # Game loop
     while True:
@@ -378,12 +393,15 @@ def main():
             # draw_text("Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
             board_screen(screen)
+            # load roll dice image (eventually only loads during player's turn
+            roll_button.draw()
+            properties_button.draw()
 
-            if keys[pygame.K_c]:
-                card_screen(screen, font)
+            if keys[pygame.K_c] or properties_button.check_click():
+                current_screen = 2
             else:
                 if not is_rolling:
-                    if keys[pygame.K_SPACE]:
+                    if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
                         counter = 0
                         is_rolling = True
                 else:
@@ -411,6 +429,12 @@ def main():
                     counter += 1
                 die1.draw(screen)
                 die2.draw(screen)
+
+        elif current_screen == 2:
+            card_screen(screen, font)
+
+            if keys[pygame.K_g]:  # press g to return to game
+                current_screen = 1
 
         # Required to update screen
         pygame.display.update()
