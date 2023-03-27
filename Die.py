@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 
-FRICTION = 0.95
+FRICTION = 0.94
 
 
 class Die:
@@ -57,10 +57,10 @@ class Die:
 
         self.move()
 
-        if counter % 4 == 0:
+        if counter % 3 == 0:
             self.face = self.rolling[random.randint(0, 7)]
 
-        if -0.2 < self.get_vel() < 0.2:
+        if -0.3 < self.get_vel() < 0.3:
             value = random.randint(0, 5)
             self.face = self.faces[value]
             return value + 1
