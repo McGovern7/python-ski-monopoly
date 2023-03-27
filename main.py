@@ -4,6 +4,8 @@ import button
 import random
 from Bank_Account import Bank_Account
 from Die import Die
+from Property import Property
+from Player import Player
 
 # Initialize PyGame
 pygame.init()
@@ -145,6 +147,32 @@ def draw_text(screen, text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
+def load_properties():
+    """
+    Function to load in property information and create objects of Propery class
+    :return: list of property objects
+    """
+    #initialize list to put properties in
+    properties = []
+    file = open('property_cards.txt', 'r')
+    lines = file.readlines()
+    count = 0
+    # Strips the newline character
+    for line in lines:
+        count += 1
+        #DEBUGGING
+        #print("Line{}: {}".format(count, line.strip()))
+        #split the line by commas
+        property_features = line.split(',')
+        #create a property object
+        new_prop = Property(property_features[0], property_features[1], property_features[2], property_features[3],
+                            property_features[4], property_features[5], property_features[6], property_features[7],
+                            property_features[8], property_features[9], property_features[10])
+        properties.append(new_prop)
+
+    file.close()
+    return properties
+
 
 # SCREENS
 # start screen
@@ -274,7 +302,7 @@ def main():
     Main function to run the game
     :return: nothing
     """
-    # Constants
+    #Constants
     DICE_DIMS = (40, 40)
     TEST_DICE = True
 
