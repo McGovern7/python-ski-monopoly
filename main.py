@@ -311,7 +311,7 @@ def board_screen(screen):
         x += centerDimension / 9  # Spaces all the squares evenly
 
     #board = pygame.image.load("images/board.png")
-    screen.blit(board, (0, 0))
+    #screen.blit(board, (0, 0))
 
     # draw player icon
     draw_player1(screen, 40, 50)
