@@ -132,6 +132,7 @@ def create_card(screen, x, y, region_color):
     draw_text(screen, "Hotel costs $", small_font_3, black, 60, 330)
 
 
+
 # Function draws text with desired font, color, and location on page
 def draw_text(screen, text, font, text_col, x, y):
     """
@@ -154,7 +155,7 @@ def load_properties():
     """
     #initialize list to put properties in
     properties = []
-    file = open('property_cards.txt', 'r')
+    file = open('text/property_cards.txt', 'r')
     lines = file.readlines()
     count = 0
     # Strips the newline character
