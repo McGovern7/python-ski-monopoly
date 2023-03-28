@@ -295,7 +295,7 @@ def board_screen(screen):
     centerDimension = 575  # Used for the height and width of the center space
     centerX = 110
     centerY = 110
-    pygame.draw.rect(screen, 127, 127, 127, (centerX, centerY, centerDimension, centerDimension))
+    pygame.draw.rect(screen, green, (centerX, centerY, centerDimension, centerDimension))
 
     # tile lines
     y = centerY
