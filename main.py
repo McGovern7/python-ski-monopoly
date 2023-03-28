@@ -289,6 +289,27 @@ def board_screen(screen):
     screen.fill((127, 127, 127))
 
     # draw board
+    # full board
+    pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
+    # center space
+    centerDimension = 575  # Used for the height and width of the center space
+    centerX = 110
+    centerY = 110
+    pygame.draw.rect(screen, 127, 127, 127, (centerX, centerY, centerDimension, centerDimension))
+
+    # tile lines
+    y = centerY
+    for i in range(10):
+        pygame.draw.rect(screen, black, (0, y, centerY, 1))
+        pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
+        y += centerDimension / 9  # Spaces all the squares evenly
+
+    x = centerX
+    for i in range(10):
+        pygame.draw.rect(screen, black, (x, 0, 1, centerX))
+        pygame.draw.rect(screen, black, (x, centerY + centerDimension, 1, centerX))
+        x += centerDimension / 9  # Spaces all the squares evenly
+
     #board = pygame.image.load("images/board.png")
     screen.blit(board, (0, 0))
 
