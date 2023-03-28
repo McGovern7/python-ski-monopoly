@@ -20,4 +20,3 @@ Smugglers' Notch,light_blue,100,50,50,6,30,90,270,400,550
 Mad River Glen,light_blue,100,50,50,6,30,90,270,400,550
 Sugar Mountain Resort,brown,60,50,50,4,20,60,180,320,450
 Arizona Skibowl,brown,60,50,50,2,10,30,90,160,250
-

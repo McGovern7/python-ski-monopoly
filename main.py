@@ -5,6 +5,7 @@ import random
 from Bank_Account import Bank_Account
 from Die import Die
 from Property import Property
+from Card import Card
 from Player import Player
 
 # Initialize PyGame
@@ -173,7 +174,24 @@ def load_properties():
 
     file.close()
     return properties
+def load_cards():
+    cards = []
+    file = open('text/cards.txt', 'r')
+    lines = file.readlines()
+    count = 0
+    # Strips the newline character
+    for line in lines:
+        count += 1
+        # DEBUGGING
+        #print("Line{}: {}".format(count, line.strip()))
+        # split the line by commas
+        card_features = line.split(',')
+        # create a property object
+        new_card = Card(card_features[0], card_features[1], card_features[2], card_features[3])
+        cards.append(new_card)
 
+    file.close()
+    return cards
 
 # SCREENS
 # start screen
@@ -303,6 +321,7 @@ def main():
     Main function to run the game
     :return: nothing
     """
+
     #Constants
     DICE_DIMS = (40, 40)
     TEST_DICE = True
