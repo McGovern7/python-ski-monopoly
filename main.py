@@ -289,7 +289,7 @@ def board_screen(screen):
     screen.fill((127, 127, 127))
 
     # draw board
-    board = pygame.image.load("images/board.png")
+    #board = pygame.image.load("images/board.png")
     screen.blit(board, (0, 0))
 
     # draw player icon
