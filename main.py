@@ -31,6 +31,7 @@ green = (0, 100, 0)
 white = (255, 255, 255)
 black = (0, 0, 0)
 blue = (30, 144, 225)
+red = (255,0,0)
 board_color = (191, 219, 174)
 
 
@@ -43,7 +44,7 @@ def draw_player1(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player1_icon = pygame.image.load("images/skiing.png")
+    player1_icon = pygame.image.load("images/icon1.png")
     screen.blit(player1_icon, (x, y))
 
 
@@ -55,7 +56,7 @@ def draw_player2(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player2_icon = pygame.image.load("images/skiing.png")
+    player2_icon = pygame.image.load("images/icon2.png")
     screen.blit(player2_icon, (x, y))
 
 
@@ -67,7 +68,7 @@ def draw_player3(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player3_icon = pygame.image.load("images/skiing.png")
+    player3_icon = pygame.image.load("images/icon3.png")
     screen.blit(player3_icon, (x, y))
 
 
@@ -79,7 +80,7 @@ def draw_player4(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player4_icon = pygame.image.load("images/skiing.png")
+    player4_icon = pygame.image.load("images/icon4.png")
     screen.blit(player4_icon, (x, y))
 
 
@@ -279,7 +280,7 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
 # board screen
 def board_screen(screen):
     """
-    Function to display the screen with the monopolu board
+    Function to display the screen with the monopoly board
     :param screen: game screen
     :return: nothing
     """
@@ -299,8 +300,11 @@ def board_screen(screen):
 
     # tile lines
     y = centerY
+    y_icon = centerY/18
     for i in range(10):
         pygame.draw.rect(screen, black, (0, y, centerY, 1))
+        #trying to find spot
+        pygame.draw.rect(screen, blue, (55, 55, 4, 4))
         pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
         y += centerDimension / 9  # Spaces all the squares evenly
 
@@ -314,7 +318,9 @@ def board_screen(screen):
     #screen.blit(board, (0, 0))
 
     # draw player icon
-    draw_player1(screen, 40, 50)
+    #draw_player1(screen, 40, 50)
+    #draw_player2(screen, 70, 50)
+    #draw_player3(screen, 100, 50)
 
 
 # card screen
