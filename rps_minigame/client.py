@@ -21,13 +21,13 @@ class Button:
     def draw(self, win):
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height))
         font = pygame.font.SysFont("comicsans", 20)
-        text = font.render(self.text, 1, (255, 255, 255))
+        text = font.render(self.text, True, (255, 255, 255))
         win.blit(text, (self.x + round(self.width/2) - round(text.get_width()/2), (self.y + round(self.height/2) - round(text.get_height()/2))))
 
     def click(self, pos):
-        x1 = pos[0]
-        y1 = pos[1]
-        if self.x <= x1 <= self.x + self.width and self.y <= y1 <= self.y + self.height:
+        mouse_x = pos[0]
+        mouse_y = pos[1]
+        if self.x <= mouse_x <= self.x + self.width and self.y <= mouse_y <= self.y + self.height:
             return True
         else:
             return False
@@ -90,8 +90,7 @@ btns = [Button("Rock", 50, 500, (0, 0, 0)), Button("Scissors", 250, 500, (255, 0
 def main():
     run = True
     clock = pygame.time.Clock()
-    ip = input("Input your ip: ")
-    n = Network(ip)
+    n = Network()
     player = int(n.get_p())
     print("You are player", player)
 
@@ -106,7 +105,7 @@ def main():
 
         if game.both_went():
             redraw_window(win, game, player)
-            pygame.time.delay(2000)
+            pygame.time.delay(200)
             try:
                 game = n.send("reset")
             except:
