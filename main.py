@@ -319,6 +319,10 @@ def board_screen(screen):
     #and put each coordinate into list  clockwise starting at bottom left "GO"
     icon_positions = []
     coordLocation = centerX
+    #first position
+    pygame.draw.rect(screen, red, (55, 800-55, 4, 4))
+    icon_positions.append((55, 745))
+    #add next positions
     pygame.draw.rect(screen, red, (55, 55, 4, 4))
     for i in range(9):
         pygame.draw.rect(screen, red, (coordLocation + (575 / 9) / 2, 55, 4, 4))
