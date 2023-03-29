@@ -290,9 +290,9 @@ def board_screen(screen):
     screen.fill((127, 127, 127))
 
     # draw board
-    # full board
+    # full board (outer square)
     pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
-    # center space
+    # center square
     centerDimension = 575  # Used for the height and width of the center space
     centerX = 110
     centerY = 110
@@ -300,24 +300,30 @@ def board_screen(screen):
 
     # tile lines
     y = centerY
-    #y_icon = centerY/18
     for i in range(10):
+        #lines going down the left side of the board
         pygame.draw.rect(screen, black, (0, y, centerY, 1))
+        #lines going down the right side of the board
         pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
         y += centerDimension / 9  # Spaces all the squares evenly
 
     x = centerX
-    coordLocation = centerX
-    # trying to find spot
-    pygame.draw.rect(screen, red, (55, 55, 4, 4))
-    for i in range(9):
-        pygame.draw.rect(screen, red, (coordLocation + (575/9)/2, 55, 4, 4))
-        coordLocation += (centerDimension/9)
-
     for i in range(10):
+        #going across top of board
         pygame.draw.rect(screen, black, (x, 0, 1, centerX))
+        #lines going across bottom of board
         pygame.draw.rect(screen, black, (x, centerY + centerDimension, 1, centerX))
         x += centerDimension / 9  # Spaces all the squares evenly
+
+    # trying to find the middle of each space's coordinate spot
+    #and put each coordinate into list  clockwise starting at bottom left "GO"
+    icon_positions = []
+    coordLocation = centerX
+    pygame.draw.rect(screen, red, (55, 55, 4, 4))
+    for i in range(9):
+        pygame.draw.rect(screen, red, (coordLocation + (575 / 9) / 2, 55, 4, 4))
+        coordLocation += (centerDimension / 9)
+
 
     #board = pygame.image.load("images/board.png")
     #screen.blit(board, (0, 0))
