@@ -90,7 +90,8 @@ btns = [Button("Rock", 50, 500, (0, 0, 0)), Button("Scissors", 250, 500, (255, 0
 def main():
     run = True
     clock = pygame.time.Clock()
-    n = Network()
+    ip = input("Input your ip: ")
+    n = Network(ip)
     player = int(n.get_p())
     print("You are player", player)
 

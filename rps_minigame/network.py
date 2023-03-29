@@ -3,10 +3,11 @@ import pickle
 
 
 class Network:
-    def __init__(self):
+    def __init__(self, ip):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # self.server = "65.183.148.49"  # Lofts
-        self.server = "10.245.232.222"  # UVM
+        # self.server = "10.245.232.222"  # UVM
+        self.server = ip
         self.port = 5555
         self.addr = (self.server, self.port)
         self.p = self.connect()
