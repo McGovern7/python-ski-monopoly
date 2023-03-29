@@ -25,7 +25,7 @@ id_count = 0
 
 def threaded_client(conn, p, game_id):
     global id_count
-    conn.send(str.encode(str(p)))
+    conn.send(str.encode(str(p) + "," + str(game_id)))
 
     reply = ""
     while True:

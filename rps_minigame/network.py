@@ -8,15 +8,19 @@ class Network:
         self.server = socket.gethostname()
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.p = self.connect()
+        self.p, self.game_id = self.connect()
 
     def get_p(self):
         return self.p
 
+    def get_game_id(self):
+        return self.game_id
+
     def connect(self):
         try:
             self.client.connect(self.addr)
-            return self.client.recv(4096).decode()
+            response = self.client.recv(4096).decode().split(',')
+            return int(response[0]), response[1]
         except:
             pass
 

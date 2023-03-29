@@ -33,7 +33,7 @@ class Button:
             return False
 
 
-def redraw_window(win, game, p):
+def redraw_window(win, game, p, game_id):
     win.fill((128, 128, 128))
 
     if not game.connected():
@@ -42,6 +42,9 @@ def redraw_window(win, game, p):
         win.blit(text, (width/2 - text.get_width()/2, height/2 - text.get_height()/2))
     else:
         font = pygame.font.SysFont("comicsans", 30)
+
+        text = font.render("Game " + str(game_id + 1), 1, (0, 255, 255))
+        win.blit(text, (width / 2 - text.get_width() / 2, 50))
 
         text = font.render("You are player " + str(p + 1), 1, (0, 255, 255))
         win.blit(text, (width/2 - text.get_width()/2, 100))
@@ -92,6 +95,7 @@ def main():
     clock = pygame.time.Clock()
     n = Network()
     player = int(n.get_p())
+    game_id = int(n.get_game_id())
     print("You are player", player)
 
     while run:
@@ -141,7 +145,7 @@ def main():
                             if not game.p2_went:
                                 n.send(btn.text)
 
-        redraw_window(win, game, player)
+        redraw_window(win, game, player, game_id)
 
 
 main()
