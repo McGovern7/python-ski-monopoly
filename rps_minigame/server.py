@@ -5,7 +5,7 @@ from game import Game
 
 # server = "162.247.88.151" # Lofts
 # server = "10.245.202.223" # UVM
-server = ""
+server = socket.gethostname()
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +16,8 @@ except socket.error as e:
     str(e)
 
 s.listen(2)
-print("Server started. Waiting for a connection...")
+print("Server started on address:", str(s.getsockname()))
+print("Waiting for a connection...")
 
 connected = set()
 games = {}

@@ -93,9 +93,10 @@ btns = [Button("Rock", 50, 500, (0, 0, 0)), Button("Scissors", 250, 500, (255, 0
 def main():
     run = True
     clock = pygame.time.Clock()
-    n = Network()
-    player = int(n.get_p())
-    game_id = int(n.get_game_id())
+    ip = input("Enter your ip: ")
+    n = Network(ip)
+    player = n.get_p()
+    game_id = n.get_game_id()
     print("You are player", player)
 
     while run:
@@ -108,7 +109,7 @@ def main():
             break
 
         if game.both_went():
-            redraw_window(win, game, player)
+            redraw_window(win, game, player, game_id)
             pygame.time.delay(200)
             try:
                 game = n.send("reset")
