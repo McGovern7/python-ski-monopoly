@@ -5,8 +5,6 @@ pygame.font.init()
 
 width = 700
 height = 700
-win = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Client")
 
 
 class Button:
@@ -98,6 +96,9 @@ def main():
     player = n.get_p()
     game_id = n.get_game_id()
     print("You are player", player)
+
+    win = pygame.display.set_mode((width, height))
+    pygame.display.set_caption("Client")
 
     while run:
         clock.tick(60)

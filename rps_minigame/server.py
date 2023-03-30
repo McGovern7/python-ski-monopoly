@@ -16,7 +16,7 @@ except socket.error as e:
     str(e)
 
 s.listen(2)
-print("Server started on address:", str(s.getsockname()))
+print("Server started on address:", str(s.getsockname()[0]))
 print("Waiting for a connection...")
 
 connected = set()
@@ -35,7 +35,6 @@ def threaded_client(conn, p, game_id):
 
             if game_id in games:
                 game = games[game_id]
-                print("Data:", data)
 
                 if not data:
                     break
