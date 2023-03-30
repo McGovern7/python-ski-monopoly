@@ -318,7 +318,8 @@ def board_screen(screen):
     # trying to find the middle of each space's coordinate spot
     #and put each coordinate into list  clockwise starting at bottom left "GO"
     icon_positions = []
-    coordLocation = centerX
+    XcoordLocation = centerX
+    YcoordLocation = centerY
 
     #add next positions
     #Top row
@@ -327,10 +328,17 @@ def board_screen(screen):
     pygame.draw.rect(screen, red, (55, 745, 4, 4)) #bottom left
     pygame.draw.rect(screen, red, (745, 55, 4, 4)) #top right
     pygame.draw.rect(screen, red, (745, 745, 4, 4)) #bottom right
+
     for i in range(9):
-        pygame.draw.rect(screen, red, (coordLocation + (575 / 9) / 2, 55, 4, 4)) #top row of horizontal coords
-        pygame.draw.rect(screen, red, (coordLocation + (575 / 9) / 2, 745, 4, 4)) #bottom row of horizontal coords
-        coordLocation += (centerDimension / 9)
+        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 55, 4, 4)) #top row of horizontal coords
+        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 745, 4, 4)) #bottom row of horizontal coords
+        XcoordLocation += (centerDimension / 9)
+
+
+    for i in range(9):
+        pygame.draw.rect(screen, red, (55, YcoordLocation + (575 / 9) / 2, 4, 4)) #left row of vertical coords
+        pygame.draw.rect(screen, red, (745, YcoordLocation + (575 / 9) / 2, 4, 4)) #right row of vertical coords
+        YcoordLocation += (centerDimension / 9)
 
     # first position bottom row
     #pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
