@@ -341,7 +341,7 @@ def board_screen(screen):
         pygame.draw.rect(screen, red, (745, YcoordLocation + (575 / 9) / 2, 4, 4)) #right row of vertical coords
         YcoordLocation += (centerDimension / 9)
 
-    --------------------------------------------------------------------------------------------------------------------
+   # --------------------------------------------------------------------------------------------------------------------
 
     # first position bottom row
     #pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
