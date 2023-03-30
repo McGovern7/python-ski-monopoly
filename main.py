@@ -289,6 +289,7 @@ def board_screen(screen):
     # Fill screen background
     screen.fill((127, 127, 127))
 
+#-------------------------------------------------------------------------------------------------------
     # draw board
     # full board (outer square)
     pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
@@ -339,6 +340,8 @@ def board_screen(screen):
         pygame.draw.rect(screen, red, (55, YcoordLocation + (575 / 9) / 2, 4, 4)) #left row of vertical coords
         pygame.draw.rect(screen, red, (745, YcoordLocation + (575 / 9) / 2, 4, 4)) #right row of vertical coords
         YcoordLocation += (centerDimension / 9)
+
+    --------------------------------------------------------------------------------------------------------------------
 
     # first position bottom row
     #pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
