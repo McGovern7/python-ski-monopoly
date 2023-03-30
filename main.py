@@ -5,6 +5,7 @@ import random
 from Bank_Account import Bank_Account
 from Die import Die
 from Property import Property
+from Card import Card
 from Player import Player
 
 # Initialize PyGame
@@ -30,6 +31,7 @@ green = (0, 100, 0)
 white = (255, 255, 255)
 black = (0, 0, 0)
 blue = (30, 144, 225)
+red = (255,0,0)
 board_color = (191, 219, 174)
 
 
@@ -42,7 +44,7 @@ def draw_player1(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player1_icon = pygame.image.load("images/skiing.png")
+    player1_icon = pygame.image.load("images/icon1.png")
     screen.blit(player1_icon, (x, y))
 
 
@@ -54,7 +56,7 @@ def draw_player2(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player2_icon = pygame.image.load("images/skiing.png")
+    player2_icon = pygame.image.load("images/icon2.png")
     screen.blit(player2_icon, (x, y))
 
 
@@ -66,7 +68,7 @@ def draw_player3(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player3_icon = pygame.image.load("images/skiing.png")
+    player3_icon = pygame.image.load("images/icon3.png")
     screen.blit(player3_icon, (x, y))
 
 
@@ -78,7 +80,7 @@ def draw_player4(screen, x, y):
     :param y: y coordinate where icon will be drawn
     :return: nothing
     """
-    player4_icon = pygame.image.load("images/skiing.png")
+    player4_icon = pygame.image.load("images/icon4.png")
     screen.blit(player4_icon, (x, y))
 
 
@@ -132,6 +134,7 @@ def create_card(screen, x, y, region_color):
     draw_text(screen, "Hotel costs $", small_font_3, black, 60, 330)
 
 
+
 # Function draws text with desired font, color, and location on page
 def draw_text(screen, text, font, text_col, x, y):
     """
@@ -154,7 +157,7 @@ def load_properties():
     """
     #initialize list to put properties in
     properties = []
-    file = open('property_cards.txt', 'r')
+    file = open('text/property_cards.txt', 'r')
     lines = file.readlines()
     count = 0
     # Strips the newline character
@@ -172,7 +175,24 @@ def load_properties():
 
     file.close()
     return properties
+def load_cards():
+    cards = []
+    file = open('text/cards.txt', 'r')
+    lines = file.readlines()
+    count = 0
+    # Strips the newline character
+    for line in lines:
+        count += 1
+        # DEBUGGING
+        #print("Line{}: {}".format(count, line.strip()))
+        # split the line by commas
+        card_features = line.split(',')
+        # create a property object
+        new_card = Card(card_features[0], card_features[1], card_features[2], card_features[3])
+        cards.append(new_card)
 
+    file.close()
+    return cards
 
 # SCREENS
 # start screen
@@ -260,7 +280,7 @@ def start_screen(screen, game_singleplayer, game_multiplayer):
 # board screen
 def board_screen(screen):
     """
-    Function to display the screen with the monopolu board
+    Function to display the screen with the monopoly board
     :param screen: game screen
     :return: nothing
     """
@@ -270,11 +290,52 @@ def board_screen(screen):
     screen.fill((127, 127, 127))
 
     # draw board
-    board = pygame.image.load("images/board.png")
-    screen.blit(board, (0, 0))
+    # full board (outer square)
+    pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
+    # center square
+    centerDimension = 575  # Used for the height and width of the center space
+    centerX = 110
+    centerY = 110
+    pygame.draw.rect(screen, green, (centerX, centerY, centerDimension, centerDimension))
+
+    # tile lines
+    y = centerY
+    for i in range(10):
+        #lines going down the left side of the board
+        pygame.draw.rect(screen, black, (0, y, centerY, 1))
+        #lines going down the right side of the board
+        pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
+        y += centerDimension / 9  # Spaces all the squares evenly
+
+    x = centerX
+    for i in range(10):
+        #going across top of board
+        pygame.draw.rect(screen, black, (x, 0, 1, centerX))
+        #lines going across bottom of board
+        pygame.draw.rect(screen, black, (x, centerY + centerDimension, 1, centerX))
+        x += centerDimension / 9  # Spaces all the squares evenly
+
+    # trying to find the middle of each space's coordinate spot
+    #and put each coordinate into list  clockwise starting at bottom left "GO"
+    icon_positions = []
+    coordLocation = centerX
+    #first position
+    pygame.draw.rect(screen, red, (55, 800-55, 4, 4))
+    icon_positions.append((55, 745))
+    #add next positions
+    pygame.draw.rect(screen, red, (55, 55, 4, 4))
+    for i in range(9):
+        pygame.draw.rect(screen, red, (coordLocation + (575 / 9) / 2, 55, 4, 4))
+        coordLocation += (centerDimension / 9)
+
+
+    #board = pygame.image.load("images/board.png")
+    #screen.blit(board, (0, 0))
 
     # draw player icon
-    draw_player1(screen, 40, 50)
+    #draw_player1(screen, 40, 50)
+    #draw_player2(screen, 70, 50)
+    #draw_player3(screen, 100, 50)
 
 
 # card screen
@@ -302,6 +363,7 @@ def main():
     Main function to run the game
     :return: nothing
     """
+
     #Constants
     DICE_DIMS = (40, 40)
     TEST_DICE = True
