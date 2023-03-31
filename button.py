@@ -1,18 +1,15 @@
 import pygame
 
 pygame.init()
-# Create the screen
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 button_font = pygame.font.SysFont('Verdana', 20)
 
 white = (255, 255, 255)
 gray = (170, 170, 170)
 
+
 # button class
-class Button():
+class Button:
     # initializes all button attributes
     def __init__(self, image, x, y, text_input, text_color, scale):
         width = image.get_width()
@@ -28,7 +25,7 @@ class Button():
         self.clicked = False
 
     # draws the button
-    def draw(self):
+    def draw(self, screen):
         screen.blit(self.image, self.rect)
         screen.blit(self.text, self.text_rect)
         self.check_click()
