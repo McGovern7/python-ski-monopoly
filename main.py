@@ -197,23 +197,28 @@ def board_screen(screen):
     YcoordLocation = centerY
 
     #add next positions
-    #Top row
-    #Next 4 rects are corner squares
-    pygame.draw.rect(screen, red, (55, 55, 4, 4)) #top left
-    pygame.draw.rect(screen, red, (55, 745, 4, 4)) #bottom left
-    pygame.draw.rect(screen, red, (745, 55, 4, 4)) #top right
-    pygame.draw.rect(screen, red, (745, 745, 4, 4)) #bottom right
-
+    pygame.draw.rect(screen, red, (75, 725, 4, 4)) #bottom left
+    icon_positions.append((75, 725))
+    y_coord = 745
     for i in range(9):
-        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 55, 4, 4)) #top row of horizontal coords
-        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 745, 4, 4)) #bottom row of horizontal coords
-        XcoordLocation += (centerDimension / 9)
-
-
+        pygame.draw.rect(screen, red, (75, 655-(centerDimension / 9)*i, 4, 4)) #left row of vertical coords
+        icon_positions.append((75, 655-(centerDimension / 9)*i))
+    pygame.draw.rect(screen, red, (75, 75, 4, 4)) #top left
+    icon_positions.append((75,75))
     for i in range(9):
-        pygame.draw.rect(screen, red, (55, YcoordLocation + (575 / 9) / 2, 4, 4)) #left row of vertical coords
-        pygame.draw.rect(screen, red, (745, YcoordLocation + (575 / 9) / 2, 4, 4)) #right row of vertical coords
-        YcoordLocation += (centerDimension / 9)
+        pygame.draw.rect(screen, red, (142+ (575 / 9)*i, 75, 4, 4)) #top row of horizontal coords
+        icon_positions.append((142+ (575 / 9)*i, 75))
+    pygame.draw.rect(screen, red, (725, 75, 4, 4)) #top right
+    icon_positions.append((725, 75))
+    for i in range(9):
+        pygame.draw.rect(screen, red, (725, 142+ (575 / 9)*i, 4, 4)) #right row of vertical coords
+        icon_positions.append((725, 142+ (575 / 9)*i))
+    pygame.draw.rect(screen, red, (745, 725, 4, 4))  # bottom right
+    icon_positions.append((745, 725))
+    for i in range(9):
+        pygame.draw.rect(screen, red, (655 - (575 / 9)*i, 725, 4, 4)) #bottom row of horizontal coords
+        icon_positions.append((655 - (575 / 9)*i, 725))
+    print(icon_positions)
 
    # --------------------------------------------------------------------------------------------------------------------
 
