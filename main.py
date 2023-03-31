@@ -162,77 +162,49 @@ def board_screen(screen):
 
     # Fill screen background
     screen.fill((127, 127, 127))
-
-#-------------------------------------------------------------------------------------------------------
     # draw board
     # full board (outer square)
     pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
     # center square
-    centerDimension = 575  # Used for the height and width of the center space
-    centerX = 110
-    centerY = 110
-    pygame.draw.rect(screen, green, (centerX, centerY, centerDimension, centerDimension))
+    center_dimension = 575  # Used for the height and width of the center space
+    center_x = 110
+    center_y = 110
+    pygame.draw.rect(screen, green, (center_x, center_y, center_dimension, center_dimension))
 
     # tile lines
-    y = centerY
+    y = center_y
     for i in range(10):
         #lines going down the left side of the board
-        pygame.draw.rect(screen, black, (0, y, centerY, 1))
+        pygame.draw.rect(screen, black, (0, y, center_y, 1))
         #lines going down the right side of the board
-        pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
-        y += centerDimension / 9  # Spaces all the squares evenly
+        pygame.draw.rect(screen, black, (center_x + center_dimension, y, center_y, 1))
+        y += center_dimension / 9  # Spaces all the squares evenly
 
-    x = centerX
+    x = center_x
     for i in range(10):
         #going across top of board
-        pygame.draw.rect(screen, black, (x, 0, 1, centerX))
+        pygame.draw.rect(screen, black, (x, 0, 1, center_x))
         #lines going across bottom of board
-        pygame.draw.rect(screen, black, (x, centerY + centerDimension, 1, centerX))
-        x += centerDimension / 9  # Spaces all the squares evenly
+        pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
+        x += center_dimension / 9  # Spaces all the squares evenly
 
     # trying to find the middle of each space's coordinate spot
     #and put each coordinate into list  clockwise starting at bottom left "GO"
     icon_positions = []
-    XcoordLocation = centerX
-    YcoordLocation = centerY
-
-    #add next positions
-    pygame.draw.rect(screen, red, (75, 725, 4, 4)) #bottom left
-    icon_positions.append((75, 725))
+    #first position (start)
+    icon_positions.append((75, 725)) #bottom left
     y_coord = 745
     for i in range(9):
-        pygame.draw.rect(screen, red, (75, 655-(centerDimension / 9)*i, 4, 4)) #left row of vertical coords
-        icon_positions.append((75, 655-(centerDimension / 9)*i))
-    pygame.draw.rect(screen, red, (75, 75, 4, 4)) #top left
-    icon_positions.append((75,75))
+        icon_positions.append((75, 655-(center_dimension / 9)*i)) #left row of vertical coords
+    icon_positions.append((75, 75)) #top left
     for i in range(9):
-        pygame.draw.rect(screen, red, (142+ (575 / 9)*i, 75, 4, 4)) #top row of horizontal coords
-        icon_positions.append((142+ (575 / 9)*i, 75))
-    pygame.draw.rect(screen, red, (725, 75, 4, 4)) #top right
-    icon_positions.append((725, 75))
+        icon_positions.append((142+ (575 / 9)*i, 75)) #top row of horizontal coords
+    icon_positions.append((725, 75)) #top right
     for i in range(9):
-        pygame.draw.rect(screen, red, (725, 142+ (575 / 9)*i, 4, 4)) #right row of vertical coords
-        icon_positions.append((725, 142+ (575 / 9)*i))
-    pygame.draw.rect(screen, red, (745, 725, 4, 4))  # bottom right
-    icon_positions.append((745, 725))
+        icon_positions.append((725, 142+ (575 / 9)*i))#right row of vertical coords
+    icon_positions.append((745, 725))  # bottom right
     for i in range(9):
-        pygame.draw.rect(screen, red, (655 - (575 / 9)*i, 725, 4, 4)) #bottom row of horizontal coords
-        icon_positions.append((655 - (575 / 9)*i, 725))
-    print(icon_positions)
-
-   # --------------------------------------------------------------------------------------------------------------------
-
-    # first position bottom row
-    #pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
-    icon_positions.append((55, 745))
-
-    # board = pygame.image.load("images/board.png")
-    # screen.blit(board, (0, 0))
-
-    # draw player icon
-    # draw_player1(screen, 40, 50)
-    # draw_player2(screen, 70, 50)
-    # draw_player3(screen, 100, 50)
+        icon_positions.append((655 - (575 / 9)*i, 725)) #bottom row of horizontal coords
 
 
 # card screen
