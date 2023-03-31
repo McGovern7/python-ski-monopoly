@@ -108,7 +108,7 @@ def load_properties():
     Function to load in property information and create objects of Propery class
     :return: list of property objects
     """
-    # initialize list to put properties in
+    #initialize list to put properties in
     properties = []
     file = open('text/property_cards.txt', 'r')
     lines = file.readlines()
@@ -116,11 +116,11 @@ def load_properties():
     # Strips the newline character
     for line in lines:
         count += 1
-        # DEBUGGING
-        # print("Line{}: {}".format(count, line.strip()))
-        # split the line by commas
+        #DEBUGGING
+        #print("Line{}: {}".format(count, line.strip()))
+        #split the line by commas
         property_features = line.split(',')
-        # create a property object
+        #create a property object
         new_prop = Property(property_features[0], property_features[1], property_features[2], property_features[3],
                             property_features[4], property_features[5], property_features[6], property_features[7],
                             property_features[8], property_features[9], property_features[10])
@@ -139,7 +139,7 @@ def load_cards():
     for line in lines:
         count += 1
         # DEBUGGING
-        # print("Line{}: {}".format(count, line.strip()))
+        #print("Line{}: {}".format(count, line.strip()))
         # split the line by commas
         card_features = line.split(',')
         # create a property object
@@ -163,6 +163,7 @@ def board_screen(screen):
     # Fill screen background
     screen.fill((127, 127, 127))
 
+#-------------------------------------------------------------------------------------------------------
     # draw board
     # full board (outer square)
     pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
@@ -175,32 +176,50 @@ def board_screen(screen):
     # tile lines
     y = centerY
     for i in range(10):
-        # lines going down the left side of the board
+        #lines going down the left side of the board
         pygame.draw.rect(screen, black, (0, y, centerY, 1))
-        # lines going down the right side of the board
+        #lines going down the right side of the board
         pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
         y += centerDimension / 9  # Spaces all the squares evenly
 
     x = centerX
     for i in range(10):
-        # going across top of board
+        #going across top of board
         pygame.draw.rect(screen, black, (x, 0, 1, centerX))
-        # lines going across bottom of board
+        #lines going across bottom of board
         pygame.draw.rect(screen, black, (x, centerY + centerDimension, 1, centerX))
         x += centerDimension / 9  # Spaces all the squares evenly
 
     # trying to find the middle of each space's coordinate spot
-    # and put each coordinate into list  clockwise starting at bottom left "GO"
+    #and put each coordinate into list  clockwise starting at bottom left "GO"
     icon_positions = []
-    coordLocation = centerX
-    # first position
-    pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
-    icon_positions.append((55, 745))
-    # add next positions
-    pygame.draw.rect(screen, red, (55, 55, 4, 4))
+    XcoordLocation = centerX
+    YcoordLocation = centerY
+
+    #add next positions
+    #Top row
+    #Next 4 rects are corner squares
+    pygame.draw.rect(screen, red, (55, 55, 4, 4)) #top left
+    pygame.draw.rect(screen, red, (55, 745, 4, 4)) #bottom left
+    pygame.draw.rect(screen, red, (745, 55, 4, 4)) #top right
+    pygame.draw.rect(screen, red, (745, 745, 4, 4)) #bottom right
+
     for i in range(9):
-        pygame.draw.rect(screen, red, (coordLocation + (575 / 9) / 2, 55, 4, 4))
-        coordLocation += (centerDimension / 9)
+        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 55, 4, 4)) #top row of horizontal coords
+        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 745, 4, 4)) #bottom row of horizontal coords
+        XcoordLocation += (centerDimension / 9)
+
+
+    for i in range(9):
+        pygame.draw.rect(screen, red, (55, YcoordLocation + (575 / 9) / 2, 4, 4)) #left row of vertical coords
+        pygame.draw.rect(screen, red, (745, YcoordLocation + (575 / 9) / 2, 4, 4)) #right row of vertical coords
+        YcoordLocation += (centerDimension / 9)
+
+   # --------------------------------------------------------------------------------------------------------------------
+
+    # first position bottom row
+    #pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
+    icon_positions.append((55, 745))
 
     # board = pygame.image.load("images/board.png")
     # screen.blit(board, (0, 0))
