@@ -7,40 +7,42 @@ class Player:
     # Creates a player object
     # Player has a name, position on the board, bank account, property list, get out of jail free card,
     # and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, player_icon, player_name, x, y, scale):
+    def __init__(self, player_icon, player_name, bank_account, coordinate, scale, icon_positions):
         # TODO -- Need a field for player vs computer
         width = player_icon.get_width()
         height = player_icon.get_height()
         self.player_icon = pygame.transform.scale(player_icon, (int(width * scale), int(height * scale)))
         self.name = player_name
-        self.x = x
-        self.y = y
-        self.rect = self.player_icon.get_rect(center=(self.x, self.y))
+        self.bank = bank_account
+        #start location is at icon_positions[0] (this is a coordinate)
+        self.location = 0
+        self.board_positions = icon_positions
+        self.property_list = []
+        #self.rect = self.player_icon.get_rect(center=(self.x, self.y))
         # self.property_list = []
         # self.jail_free = False
         # self.bankrupt = False
         # self.cash = 300000
 
     def draw(self, screen):
-        screen.blit(self.player_icon, self.rect)
+        screen.blit(self.player_icon, self.board_positions[self.location])
 
     # TODO -- Update the property list
-    def update_properties(self, new_property):
-        pass
-        # self.property_list.append(new_property)
+    def add_property(self, new_property):
+        self.property_list.append(new_property)
 
     # TODO -- Check if a certain property is owned
     def check_properties(self, new_property):
-        pass
+        return self.property_list
 
     # TODO -- Remove a property
     def remove_property(self, new_property):
         pass
 
     # TODO -- Update board position
-    def movement(self, ):
-        # if self.turn = True:
-        pass
+    def movement(self, spaces_moved):
+        self.location + spaces_moved
+
     # TODO -- Check board position
 
     # Check if the player currently has a get out of jail free card
