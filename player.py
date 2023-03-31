@@ -7,7 +7,7 @@ class Player:
     # Creates a player object
     # Player has a name, position on the board, bank account, property list, get out of jail free card,
     # and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, player_icon, player_name, bank_account, coordinate, scale, icon_positions):
+    def __init__(self, player_icon, player_name, bank_account, scale, icon_positions):
         # TODO -- Need a field for player vs computer
         width = player_icon.get_width()
         height = player_icon.get_height()
@@ -27,7 +27,6 @@ class Player:
     def draw(self, screen):
         screen.blit(self.player_icon, self.board_positions[self.location])
 
-    # TODO -- Update the property list
     def add_property(self, new_property):
         self.property_list.append(new_property)
 
@@ -39,9 +38,9 @@ class Player:
     def remove_property(self, new_property):
         pass
 
-    # TODO -- Update board position
+    # TODO -- fix-- how does this work with the timer??
     def movement(self, spaces_moved):
-        self.location + spaces_moved
+        self.location += spaces_moved
 
     # TODO -- Check board position
 

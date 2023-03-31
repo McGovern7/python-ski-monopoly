@@ -149,6 +149,25 @@ def load_cards():
     file.close()
     return cards
 
+def get_icon_positions():
+    # trying to find the middle of each space's coordinate spot
+    #and put each coordinate into list  clockwise starting at bottom left "GO"
+    icon_positions = []
+    #first position (start)
+    icon_positions.append((75, 725)) #bottom left
+    y_coord = 745
+    for i in range(9):
+        icon_positions.append((75, 655-(575 / 9)*i)) #left row of vertical coords
+    icon_positions.append((75, 75)) #top left
+    for i in range(9):
+        icon_positions.append((142+ (575 / 9)*i, 75)) #top row of horizontal coords
+    icon_positions.append((725, 75)) #top right
+    for i in range(9):
+        icon_positions.append((725, 142+ (575 / 9)*i))#right row of vertical coords
+    icon_positions.append((745, 725))  # bottom right
+    for i in range(9):
+        icon_positions.append((655 - (575 / 9)*i, 725)) #bottom row of horizontal coords
+    return icon_positions
 
 # SCREENS
 # board screen
@@ -187,24 +206,6 @@ def board_screen(screen):
         #lines going across bottom of board
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
-
-    # trying to find the middle of each space's coordinate spot
-    #and put each coordinate into list  clockwise starting at bottom left "GO"
-    icon_positions = []
-    #first position (start)
-    icon_positions.append((75, 725)) #bottom left
-    y_coord = 745
-    for i in range(9):
-        icon_positions.append((75, 655-(center_dimension / 9)*i)) #left row of vertical coords
-    icon_positions.append((75, 75)) #top left
-    for i in range(9):
-        icon_positions.append((142+ (575 / 9)*i, 75)) #top row of horizontal coords
-    icon_positions.append((725, 75)) #top right
-    for i in range(9):
-        icon_positions.append((725, 142+ (575 / 9)*i))#right row of vertical coords
-    icon_positions.append((745, 725))  # bottom right
-    for i in range(9):
-        icon_positions.append((655 - (575 / 9)*i, 725)) #bottom row of horizontal coords
 
 
 # card screen
@@ -281,15 +282,25 @@ def main():
     properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
     roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
 
+    #load board positions
+    icon_positions = get_icon_positions()
+
     # load player data
     player1_icon = pygame.image.load("images/icon1.png").convert_alpha()
     player2_icon = pygame.image.load("images/icon2.png").convert_alpha()
     player3_icon = pygame.image.load("images/icon3.png").convert_alpha()
     player4_icon = pygame.image.load("images/icon4.png").convert_alpha()
-    player1 = player.Player(player1_icon, "player1", 35, 35, .6)
-    player2 = player.Player(player2_icon, "player2", 75, 35, .6)
-    player3 = player.Player(player3_icon, "player3", 35, 75, .6)
-    player4 = player.Player(player4_icon, "player4", 75, 75, .6)
+    #Bank accounts
+    bank1 = Bank_Account("player1")
+    bank2 = Bank_Account("player2")
+    bank3 = Bank_Account("player3")
+    bank4 = Bank_Account("player4")
+    #create player objects
+    player1 = player.Player(player1_icon, "player1", bank1, .6, icon_positions)
+    player2 = player.Player(player2_icon, "player2", bank2, .6, icon_positions)
+    player3 = player.Player(player3_icon, "player3", bank3, .6, icon_positions)
+    player4 = player.Player(player4_icon, "player4", bank4, .6, icon_positions)
+
 
     die1 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
@@ -370,6 +381,10 @@ def main():
 
             player1.draw(screen)
             player2.draw(screen)
+
+            #TODO - figure out how this works with the timer
+            #TEST MOVE
+            #player1.movement(1) #moves player1 forward 1 space
             if total_players > 2:
                 player3.draw(screen)
                 if total_players > 3:
