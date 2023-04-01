@@ -30,19 +30,32 @@ class Player:
     def add_property(self, new_property):
         self.property_list.append(new_property)
 
-    # TODO -- Check if a certain property is owned
     def check_properties(self, new_property):
-        return self.property_list
+        if new_property in self.property_list:
+            return True
+        else:
+            return False
 
-    # TODO -- Remove a property
     def remove_property(self, new_property):
-        pass
+        #make sure this property is in the list
+        if new_property not in self.property_list:
+            print("this property is not in the list of owned properties")
+            return
+        else:
+            index = self.property_list.index(new_property)
+            self.property_list.remove(new_property)
+
 
     # TODO -- fix-- how does this work with the timer??
     def movement(self, spaces_moved):
-        self.location += spaces_moved
+        #make sure icon loops back to beginning of list if it reaches the end
+        if (self.location + spaces_moved) > 39:
+            self.location = (self.location + spaces_moved) % 40
+        else:
+            self.location += spaces_moved
 
-    # TODO -- Check board position
+    def check_position(self):
+        return self.board_positions[self.location]
 
     # Check if the player currently has a get out of jail free card
     def check_jail_free(self):

@@ -384,7 +384,7 @@ def main():
 
             #TODO - figure out how this works with the timer
             #TEST MOVE
-            #player1.movement(1) #moves player1 forward 1 space
+            player1.movement(1) #moves player1 forward 1 space
             if total_players > 2:
                 player3.draw(screen)
                 if total_players > 3:
