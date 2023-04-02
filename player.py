@@ -7,7 +7,7 @@ class Player:
     # Creates a player object
     # Player has a name, position on the board, bank account, property list, get out of jail free card,
     # and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, player_icon, player_name, x, y, scale):
+    def __init__(self, player_icon, player_name, x, y, turn, is_computer, scale):
         # TODO -- Need a field for player vs computer
         width = player_icon.get_width()
         height = player_icon.get_height()
@@ -16,6 +16,8 @@ class Player:
         self.x = x
         self.y = y
         self.rect = self.player_icon.get_rect(center=(self.x, self.y))
+        self.turn = turn
+        self.is_computer = is_computer
         # self.property_list = []
         # self.jail_free = False
         # self.bankrupt = False

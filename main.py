@@ -250,6 +250,30 @@ def card_screen(screen, font):
     create_house(screen, 100, 500)
 
 
+def create_players(screen, player1, player2, player3, player4, total_players):
+    """
+    Function which creates and draws the player icons as the game starts
+    :param screen:
+    :param player1:
+    :param player2:
+    :param player3:
+    :param player4:
+    :param total_players:
+    :return:
+    """
+    players = [player1, player2]
+    player1.draw(screen)
+    player2.draw(screen)
+    if total_players > 2:
+        player3.draw(screen)
+        players.append(player3)
+        if total_players > 3:
+            player4.draw(screen)
+            players.append(player4)
+
+    return players
+
+
 def main():
     """
     Main function to run the game
@@ -309,10 +333,10 @@ def main():
     player2_icon = pygame.image.load("images/icon2.png").convert_alpha()
     player3_icon = pygame.image.load("images/icon3.png").convert_alpha()
     player4_icon = pygame.image.load("images/icon4.png").convert_alpha()
-    player1 = player.Player(player1_icon, "player1", 35, 35, .6)
-    player2 = player.Player(player2_icon, "player2", 75, 35, .6)
-    player3 = player.Player(player3_icon, "player3", 35, 75, .6)
-    player4 = player.Player(player4_icon, "player4", 75, 75, .6)
+    player1 = player.Player(player1_icon, "Player 1", 35, 35, True, False, .6)
+    player2 = player.Player(player2_icon, "Player 2", 75, 35, False, True, .6)
+    player3 = player.Player(player3_icon, "Player 3", 35, 75, False, True, .6)
+    player4 = player.Player(player4_icon, "Player 4", 75, 75, False, True, .6)
 
     die1 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
@@ -391,46 +415,45 @@ def main():
             roll_button.draw(screen)
             properties_button.draw(screen)
 
-            player1.draw(screen)
-            player2.draw(screen)
-            if total_players > 2:
-                player3.draw(screen)
-                if total_players > 3:
-                    player4.draw(screen)
+            players = create_players(screen, player1, player2, player3, player4, total_players)
 
-            if not is_rolling:
-                player1.turn = True
-                if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
-                    counter = 0
-                    is_rolling = True
-            else:
-                # A die_value of -1 indicates the die is not done rolling.
-                # Otherwise, roll() returns a random value from 1 to 6.
-                if die1_value == -1:
-                    die1_value = die1.roll(counter)
-                if die2_value == -1:
-                    die2_value = die2.roll(counter)
-                if die1_value != -1 and die2_value != -1:
-                    # Both dice are done rolling
+            for active_player in players:
+                if active_player.turn:
+                    if not is_rolling:
+                        draw_text(screen, active_player.name, medium_font, black, 895, 700)
+                        if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
+                            counter = 0
+                            is_rolling = True
 
-                    # Return the dice to the start
-                    if not die1.at_start:
-                        die1.reset()
-                    if not die2.at_start:
-                        die2.reset()
-                    if die1.at_start and die2.at_start:
-                        # Both dice are at the start. Reset values
-                        is_rolling = False
-                        print("You rolled a", die1_value + die2_value)
-                        die1_value = -1
-                        die2_value = -1
+                    else:
+                        # A die_value of -1 indicates the die is not done rolling.
+                        # Otherwise, roll() returns a random value from 1 to 6.
+                        if die1_value == -1:
+                            die1_value = die1.roll(counter)
+                        if die2_value == -1:
+                            die2_value = die2.roll(counter)
+                        if die1_value != -1 and die2_value != -1:
+                            # Both dice are done rolling
 
-                counter += 1
-            die1.draw(screen)
-            die2.draw(screen)
+                            # Return the dice to the start
+                            if not die1.at_start:
+                                die1.reset()
+                            if not die2.at_start:
+                                die2.reset()
+                            if die1.at_start and die2.at_start:
+                                # Both dice are at the start. Reset values
+                                is_rolling = False
+                                print("You rolled a", die1_value + die2_value)
+                                die1_value = -1
+                                die2_value = -1
 
-            if keys[pygame.K_c] or properties_button.check_click():  # check if property button screen has been clicked
-                current_screen = 2
+                        counter += 1
+
+                    die1.draw(screen)
+                    die2.draw(screen)
+
+                    if keys[pygame.K_c] or properties_button.check_click():  # check if property button clicked
+                        current_screen = 2
 
         elif current_screen == 2:
             card_screen(screen, font)
