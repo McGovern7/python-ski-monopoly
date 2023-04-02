@@ -394,7 +394,7 @@ def main():
             player1.draw(screen)
             player2.draw(screen)
 
-            #TODO - figure out how this works with the timer
+            #TODO - add turns so this doesn't make a player move infinitely
             #TEST MOVE
             player1.movement(1) #moves player1 forward 1 space
             if total_players > 2:
