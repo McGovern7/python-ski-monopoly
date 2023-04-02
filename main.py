@@ -271,6 +271,10 @@ def main():
     number_img = pygame.image.load("images/numplayer.png").convert_alpha()
     properties_img = pygame.image.load("images/properties.png").convert_alpha()
     roll_img = pygame.image.load("images/roll.png").convert_alpha()
+    player1_img = pygame.image.load("images/icon1.png").convert_alpha()
+    player2_img = pygame.image.load("images/icon2.png").convert_alpha()
+    player3_img = pygame.image.load("images/icon3.png").convert_alpha()
+    player4_img = pygame.image.load("images/icon4.png").convert_alpha()
 
     # draw buttons
     singleplayer_button = button.Button(singleplayer_img, 280, 210, "Single-Player", white, 1)
@@ -281,6 +285,10 @@ def main():
     num_computers3_button = button.Button(number_img, 500, 310, "3", white, 1.5)
     properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
     roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
+    player1_button = button.Button(player1_img, 250, 420, "Icon 1", white, 1)
+    player2_button = button.Button(player2_img, 350, 420, "Icon 2", white, 1)
+    player3_button = button.Button(player3_img, 450, 420, "Icon 3", white, 1)
+    player4_button = button.Button(player4_img, 550, 420, "Icon 4", white, 1)
 
     #load board positions
     icon_positions = get_icon_positions()
@@ -363,6 +371,10 @@ def main():
 
                 if num_computers > 0:
                     draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
+                    player1_button.draw(screen)
+                    player2_button.draw(screen)
+                    player3_button.draw(screen)
+                    player4_button.draw(screen)
                     startgame_button.draw(screen)
 
                     # if startgame button clicked and game setup, move to game screen

@@ -14,15 +14,17 @@ class Player:
         self.player_icon = pygame.transform.scale(player_icon, (int(width * scale), int(height * scale)))
         self.name = player_name
         self.bank = bank_account
+        self.board_positions = icon_positions
         #start location is at icon_positions[0] (this is a coordinate)
         self.location = 0
-        self.board_positions = icon_positions
+        #all players start the game with no properties
         self.property_list = []
+        #all players are created with it not being their turn to play
+        self.turn = False
+
         #self.rect = self.player_icon.get_rect(center=(self.x, self.y))
-        # self.property_list = []
         # self.jail_free = False
         # self.bankrupt = False
-        # self.cash = 300000
 
     def draw(self, screen):
         screen.blit(self.player_icon, self.board_positions[self.location])
