@@ -123,7 +123,7 @@ def load_properties():
         #create a property object
         new_prop = Property(property_features[0], property_features[1], property_features[2], property_features[3],
                             property_features[4], property_features[5], property_features[6], property_features[7],
-                            property_features[8], property_features[9], property_features[10])
+                            property_features[8], property_features[9], property_features[10], property_features[11])
         properties.append(new_prop)
 
     file.close()
@@ -149,10 +149,29 @@ def load_cards():
     file.close()
     return cards
 
+def get_icon_positions():
+    # trying to find the middle of each space's coordinate spot
+    #and put each coordinate into list  clockwise starting at bottom left "GO"
+    icon_positions = []
+    #first position (start)
+    icon_positions.append((75, 725)) #bottom left
+    y_coord = 745
+    for i in range(9):
+        icon_positions.append((75, 655-(575 / 9)*i)) #left row of vertical coords
+    icon_positions.append((75, 75)) #top left
+    for i in range(9):
+        icon_positions.append((142+ (575 / 9)*i, 75)) #top row of horizontal coords
+    icon_positions.append((725, 75)) #top right
+    for i in range(9):
+        icon_positions.append((725, 142+ (575 / 9)*i))#right row of vertical coords
+    icon_positions.append((745, 725))  # bottom right
+    for i in range(9):
+        icon_positions.append((655 - (575 / 9)*i, 725)) #bottom row of horizontal coords
+    return icon_positions
 
 # SCREENS
 # board screen
-def board_screen(screen):
+def board_screen(screen, icon_positions, properties):
     """
     Function to display the screen with the monopoly board
     :param screen: game screen
@@ -162,72 +181,39 @@ def board_screen(screen):
 
     # Fill screen background
     screen.fill((127, 127, 127))
-
-#-------------------------------------------------------------------------------------------------------
     # draw board
     # full board (outer square)
     pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
     # center square
-    centerDimension = 575  # Used for the height and width of the center space
-    centerX = 110
-    centerY = 110
-    pygame.draw.rect(screen, green, (centerX, centerY, centerDimension, centerDimension))
+    center_dimension = 575  # Used for the height and width of the center space
+    center_x = 110
+    center_y = 110
+    pygame.draw.rect(screen, green, (center_x, center_y, center_dimension, center_dimension))
 
     # tile lines
-    y = centerY
+    y = center_y
     for i in range(10):
         #lines going down the left side of the board
-        pygame.draw.rect(screen, black, (0, y, centerY, 1))
+        pygame.draw.rect(screen, black, (0, y, center_y, 1))
         #lines going down the right side of the board
-        pygame.draw.rect(screen, black, (centerX + centerDimension, y, centerY, 1))
-        y += centerDimension / 9  # Spaces all the squares evenly
+        pygame.draw.rect(screen, black, (center_x + center_dimension, y, center_y, 1))
+        y += center_dimension / 9  # Spaces all the squares evenly
 
-    x = centerX
+    x = center_x
     for i in range(10):
         #going across top of board
-        pygame.draw.rect(screen, black, (x, 0, 1, centerX))
+        pygame.draw.rect(screen, black, (x, 0, 1, center_x))
         #lines going across bottom of board
-        pygame.draw.rect(screen, black, (x, centerY + centerDimension, 1, centerX))
-        x += centerDimension / 9  # Spaces all the squares evenly
+        pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
+        x += center_dimension / 9  # Spaces all the squares evenly
 
-    # trying to find the middle of each space's coordinate spot
-    #and put each coordinate into list  clockwise starting at bottom left "GO"
-    icon_positions = []
-    XcoordLocation = centerX
-    YcoordLocation = centerY
-
-    #add next positions
-    #Top row
-    #Next 4 rects are corner squares
-    pygame.draw.rect(screen, red, (55, 55, 4, 4)) #top left
-    pygame.draw.rect(screen, red, (55, 745, 4, 4)) #bottom left
-    pygame.draw.rect(screen, red, (745, 55, 4, 4)) #top right
-    pygame.draw.rect(screen, red, (745, 745, 4, 4)) #bottom right
-
-    for i in range(9):
-        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 55, 4, 4)) #top row of horizontal coords
-        pygame.draw.rect(screen, red, (XcoordLocation + (575 / 9) / 2, 745, 4, 4)) #bottom row of horizontal coords
-        XcoordLocation += (centerDimension / 9)
-
-
-    for i in range(9):
-        pygame.draw.rect(screen, red, (55, YcoordLocation + (575 / 9) / 2, 4, 4)) #left row of vertical coords
-        pygame.draw.rect(screen, red, (745, YcoordLocation + (575 / 9) / 2, 4, 4)) #right row of vertical coords
-        YcoordLocation += (centerDimension / 9)
-
-   # --------------------------------------------------------------------------------------------------------------------
-
-    # first position bottom row
-    #pygame.draw.rect(screen, red, (55, 800 - 55, 4, 4))
-    icon_positions.append((55, 745))
-
-    # board = pygame.image.load("images/board.png")
-    # screen.blit(board, (0, 0))
-
-    # draw player icon
-    # draw_player1(screen, 40, 50)
-    # draw_player2(screen, 70, 50)
-    # draw_player3(screen, 100, 50)
+    #TODO -  will fix this tomorrow
+    #draw the name of each property on the square
+    for property in properties:
+        coordinates = str(icon_positions[int(property.location)])
+        coordinates_list = coordinates[1:len(coordinates)-1].split(',')
+        print(coordinates)
+        draw_text(screen, property.property_name, small_font_3, black, coordinates[0], coordinates[1])
 
 
 # card screen
@@ -327,6 +313,13 @@ def main():
     num_computers3_button = button.Button(number_img, 500, 310, "3", white, 1.5)
     properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
     roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
+    player1_button = button.Button(player1_img, 250, 420, "Icon 1", white, 1)
+    player2_button = button.Button(player2_img, 350, 420, "Icon 2", white, 1)
+    player3_button = button.Button(player3_img, 450, 420, "Icon 3", white, 1)
+    player4_button = button.Button(player4_img, 550, 420, "Icon 4", white, 1)
+
+    #load board positions
+    icon_positions = get_icon_positions()
 
     # load player data
     player1_icon = pygame.image.load("images/icon1.png").convert_alpha()
@@ -337,7 +330,22 @@ def main():
     player2 = player.Player(player2_icon, "Player 2", 75, 35, False, True, .6)
     player3 = player.Player(player3_icon, "Player 3", 35, 75, False, True, .6)
     player4 = player.Player(player4_icon, "Player 4", 75, 75, False, True, .6)
+    #Bank accounts
+    bank1 = Bank_Account("player1")
+    bank2 = Bank_Account("player2")
+    bank3 = Bank_Account("player3")
+    bank4 = Bank_Account("player4")
+    #create player objects
+    player1 = player.Player(player1_icon, "player1", bank1, .6, icon_positions)
+    player2 = player.Player(player2_icon, "player2", bank2, .6, icon_positions)
+    player3 = player.Player(player3_icon, "player3", bank3, .6, icon_positions)
+    player4 = player.Player(player4_icon, "player4", bank4, .6, icon_positions)
+    #load community chest and chance cards
+    cards = load_cards()
+    #load property cards
+    #properties = load_properties()
 
+    #created die
     die1 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
                screen.get_height() - DICE_DIMS[0] * 1.5,
@@ -399,6 +407,10 @@ def main():
 
                 if num_computers > 0:
                     draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
+                    player1_button.draw(screen)
+                    player2_button.draw(screen)
+                    player3_button.draw(screen)
+                    player4_button.draw(screen)
                     startgame_button.draw(screen)
 
                     # if startgame button clicked and game setup, move to game screen
@@ -410,50 +422,57 @@ def main():
             # draw_text("Number of Players", medium_font, black, 300, 285)
             # draw_text("Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
-            board_screen(screen)
+            board_screen(screen, icon_positions, properties)
             # load roll dice image (eventually only loads during player's turn
             roll_button.draw(screen)
             properties_button.draw(screen)
 
+            player1.draw(screen)
+            player2.draw(screen)
             players = create_players(screen, player1, player2, player3, player4, total_players)
 
-            for active_player in players:
-                if active_player.turn:
-                    if not is_rolling:
-                        draw_text(screen, active_player.name, medium_font, black, 895, 700)
-                        if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
-                            counter = 0
-                            is_rolling = True
+            #TODO - add turns so this doesn't make a player move infinitely
+            #TEST MOVE
+            player1.movement(1) #moves player1 forward 1 space
+            if total_players > 2:
+                player3.draw(screen)
+                if total_players > 3:
+                    player4.draw(screen)
 
-                    else:
-                        # A die_value of -1 indicates the die is not done rolling.
-                        # Otherwise, roll() returns a random value from 1 to 6.
-                        if die1_value == -1:
-                            die1_value = die1.roll(counter)
-                        if die2_value == -1:
-                            die2_value = die2.roll(counter)
-                        if die1_value != -1 and die2_value != -1:
-                            # Both dice are done rolling
 
-                            # Return the dice to the start
-                            if not die1.at_start:
-                                die1.reset()
-                            if not die2.at_start:
-                                die2.reset()
-                            if die1.at_start and die2.at_start:
-                                # Both dice are at the start. Reset values
-                                is_rolling = False
-                                print("You rolled a", die1_value + die2_value)
-                                die1_value = -1
-                                die2_value = -1
+            if not is_rolling:
+                player1.turn = True
+                if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
+                    counter = 0
+                    is_rolling = True
+            else:
+                # A die_value of -1 indicates the die is not done rolling.
+                # Otherwise, roll() returns a random value from 1 to 6.
+                if die1_value == -1:
+                    die1_value = die1.roll(counter)
+                if die2_value == -1:
+                    die2_value = die2.roll(counter)
+                if die1_value != -1 and die2_value != -1:
+                    # Both dice are done rolling
 
-                        counter += 1
+                    # Return the dice to the start
+                    if not die1.at_start:
+                        die1.reset()
+                    if not die2.at_start:
+                        die2.reset()
+                    if die1.at_start and die2.at_start:
+                        # Both dice are at the start. Reset values
+                        is_rolling = False
+                        print("You rolled a", die1_value + die2_value)
+                        die1_value = -1
+                        die2_value = -1
 
-                    die1.draw(screen)
-                    die2.draw(screen)
+                counter += 1
+            die1.draw(screen)
+            die2.draw(screen)
 
-                    if keys[pygame.K_c] or properties_button.check_click():  # check if property button clicked
-                        current_screen = 2
+            if keys[pygame.K_c] or properties_button.check_click():  # check if property button screen has been clicked
+                current_screen = 2
 
         elif current_screen == 2:
             card_screen(screen, font)
