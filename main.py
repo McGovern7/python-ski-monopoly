@@ -207,13 +207,12 @@ def board_screen(screen, icon_positions, properties):
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
 
-    #TODO -  will fix this tomorrow
     #draw the name of each property on the square
     for property in properties:
         coordinates = str(icon_positions[int(property.location)])
         coordinates_list = coordinates[1:len(coordinates)-1].split(',')
-        print(coordinates)
-        draw_text(screen, property.property_name, small_font_3, black, coordinates[0], coordinates[1])
+        #print(coordinates_list)
+        draw_text(screen, property.property_name, small_font_3, black, float(coordinates_list[0]), float(coordinates_list[1]))
 
 
 # card screen
@@ -319,7 +318,7 @@ def main():
     #load community chest and chance cards
     cards = load_cards()
     #load property cards
-    #properties = load_properties()
+    properties = load_properties()
 
     #created die
     die1 = Die(screen,
