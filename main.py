@@ -108,7 +108,7 @@ def load_properties():
     Function to load in property information and create objects of Propery class
     :return: list of property objects
     """
-    #initialize list to put properties in
+    # initialize list to put properties in
     properties = []
     file = open('text/property_cards.txt', 'r')
     lines = file.readlines()
@@ -116,11 +116,11 @@ def load_properties():
     # Strips the newline character
     for line in lines:
         count += 1
-        #DEBUGGING
-        #print("Line{}: {}".format(count, line.strip()))
-        #split the line by commas
+        # DEBUGGING
+        # print("Line{}: {}".format(count, line.strip()))
+        # split the line by commas
         property_features = line.split(',')
-        #create a property object
+        # create a property object
         new_prop = Property(property_features[0], property_features[1], property_features[2], property_features[3],
                             property_features[4], property_features[5], property_features[6], property_features[7],
                             property_features[8], property_features[9], property_features[10], property_features[11])
@@ -139,7 +139,7 @@ def load_cards():
     for line in lines:
         count += 1
         # DEBUGGING
-        #print("Line{}: {}".format(count, line.strip()))
+        # print("Line{}: {}".format(count, line.strip()))
         # split the line by commas
         card_features = line.split(',')
         # create a property object
@@ -149,25 +149,27 @@ def load_cards():
     file.close()
     return cards
 
+
 def get_icon_positions():
     # trying to find the middle of each space's coordinate spot
-    #and put each coordinate into list  clockwise starting at bottom left "GO"
+    # and put each coordinate into list  clockwise starting at bottom left "GO"
     icon_positions = []
-    #first position (start)
-    icon_positions.append((75, 725)) #bottom left
+    # first position (start)
+    icon_positions.append((75, 725))  # bottom left
     y_coord = 745
     for i in range(9):
-        icon_positions.append((75, 655-(575 / 9)*i)) #left row of vertical coords
-    icon_positions.append((75, 75)) #top left
+        icon_positions.append((75, 655 - (575 / 9) * i))  # left row of vertical coords
+    icon_positions.append((75, 75))  # top left
     for i in range(9):
-        icon_positions.append((142+ (575 / 9)*i, 75)) #top row of horizontal coords
-    icon_positions.append((725, 75)) #top right
+        icon_positions.append((142 + (575 / 9) * i, 75))  # top row of horizontal coords
+    icon_positions.append((725, 75))  # top right
     for i in range(9):
-        icon_positions.append((725, 142+ (575 / 9)*i))#right row of vertical coords
+        icon_positions.append((725, 142 + (575 / 9) * i))  # right row of vertical coords
     icon_positions.append((745, 725))  # bottom right
     for i in range(9):
-        icon_positions.append((655 - (575 / 9)*i, 725)) #bottom row of horizontal coords
+        icon_positions.append((655 - (575 / 9) * i, 725))  # bottom row of horizontal coords
     return icon_positions
+
 
 # SCREENS
 # board screen
@@ -193,26 +195,27 @@ def board_screen(screen, icon_positions, properties):
     # tile lines
     y = center_y
     for i in range(10):
-        #lines going down the left side of the board
+        # lines going down the left side of the board
         pygame.draw.rect(screen, black, (0, y, center_y, 1))
-        #lines going down the right side of the board
+        # lines going down the right side of the board
         pygame.draw.rect(screen, black, (center_x + center_dimension, y, center_y, 1))
         y += center_dimension / 9  # Spaces all the squares evenly
 
     x = center_x
     for i in range(10):
-        #going across top of board
+        # going across top of board
         pygame.draw.rect(screen, black, (x, 0, 1, center_x))
-        #lines going across bottom of board
+        # lines going across bottom of board
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
 
-    #draw the name of each property on the square
+    # draw the name of each property on the square
     for property in properties:
         coordinates = str(icon_positions[int(property.location)])
-        coordinates_list = coordinates[1:len(coordinates)-1].split(',')
-        #print(coordinates_list)
-        draw_text(screen, property.property_name, small_font_3, black, float(coordinates_list[0]), float(coordinates_list[1]))
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        # print(coordinates_list)
+        draw_text(screen, property.property_name, small_font_3, black, float(coordinates_list[0]),
+                  float(coordinates_list[1]))
 
 
 # card screen
@@ -258,13 +261,13 @@ def main():
     counter = 0
     die1_value = -1
     die2_value = -1
+    turn = "Player1"
 
     # game type variables
     game_singleplayer = False
     game_multiplayer = False
     num_players = 1
     num_computers = 0
-    total_players = num_players + num_computers
 
     # define fonts
     large_font = pygame.font.SysFont('Verdana', 25)
@@ -297,30 +300,26 @@ def main():
     player3_button = button.Button(player3_img, 450, 420, "Icon 3", white, 1)
     player4_button = button.Button(player4_img, 550, 420, "Icon 4", white, 1)
 
-    #load board positions
+    # load board positions
     icon_positions = get_icon_positions()
 
-    # load player data
-    player1_icon = pygame.image.load("images/icon1.png").convert_alpha()
-    player2_icon = pygame.image.load("images/icon2.png").convert_alpha()
-    player3_icon = pygame.image.load("images/icon3.png").convert_alpha()
-    player4_icon = pygame.image.load("images/icon4.png").convert_alpha()
-    #Bank accounts
+    # Bank accounts
     bank1 = Bank_Account("player1")
     bank2 = Bank_Account("player2")
     bank3 = Bank_Account("player3")
     bank4 = Bank_Account("player4")
-    #create player objects
-    player1 = player.Player(player1_icon, "player1", bank1, .6, icon_positions)
-    player2 = player.Player(player2_icon, "player2", bank2, .6, icon_positions)
-    player3 = player.Player(player3_icon, "player3", bank3, .6, icon_positions)
-    player4 = player.Player(player4_icon, "player4", bank4, .6, icon_positions)
-    #load community chest and chance cards
+    # create player objects
+    player1 = player.Player(player1_img, "Player1", bank1, .6, icon_positions)
+    player2 = player.Player(player2_img, "Player2", bank2, .6, icon_positions)
+    player3 = player.Player(player3_img, "Player3", bank3, .6, icon_positions)
+    player4 = player.Player(player4_img, "Player4", bank4, .6, icon_positions)
+    players = [player1, player2, player3, player4]
+    # load community chest and chance cards
     cards = load_cards()
-    #load property cards
+    # load property cards
     properties = load_properties()
 
-    #created die
+    # created die
     die1 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
                screen.get_height() - DICE_DIMS[0] * 1.5,
@@ -372,13 +371,11 @@ def main():
 
                 # set number of computers
                 if num_computers1_button.check_click():
-                    num_computers = 1
+                    num_computers = 3
                 if num_computers2_button.check_click():
-                    num_computers = 2
+                    num_computers = 3
                 if num_computers3_button.check_click():
                     num_computers = 3
-
-                total_players = num_players + num_computers
 
                 if num_computers > 0:
                     draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
@@ -404,45 +401,56 @@ def main():
 
             player1.draw(screen)
             player2.draw(screen)
+            player3.draw(screen)
+            player4.draw(screen)
 
-            #TODO - add turns so this doesn't make a player move infinitely
-            #TEST MOVE
-            player1.movement(1) #moves player1 forward 1 space
-            if total_players > 2:
-                player3.draw(screen)
-                if total_players > 3:
-                    player4.draw(screen)
+            # For loop iterates over all the players and checks if it is their turn
+            for active_player in players:
+                active_player.turn = True
+                if turn == active_player.name and active_player.turn:
+                    # TEST MOVE
+                    player1.movement(1)  # moves player1 forward 1 space
+                    active_player.turn = True
+                    if not is_rolling:
+                        active_player.turn = True
+                        draw_text(screen, active_player.name, medium_font, black, 900, 700)
+                        if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
+                            counter = 0
+                            is_rolling = True
+                    else:
+                        # A die_value of -1 indicates the die is not done rolling.
+                        # Otherwise, roll() returns a random value from 1 to 6.
+                        if die1_value == -1:
+                            die1_value = die1.roll(counter)
+                        if die2_value == -1:
+                            die2_value = die2.roll(counter)
+                        if die1_value != -1 and die2_value != -1:
+                            # Both dice are done rolling
 
-            if not is_rolling:
-                player1.turn = True
-                if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
-                    counter = 0
-                    is_rolling = True
-            else:
-                # A die_value of -1 indicates the die is not done rolling.
-                # Otherwise, roll() returns a random value from 1 to 6.
-                if die1_value == -1:
-                    die1_value = die1.roll(counter)
-                if die2_value == -1:
-                    die2_value = die2.roll(counter)
-                if die1_value != -1 and die2_value != -1:
-                    # Both dice are done rolling
+                            # Return the dice to the start
+                            if not die1.at_start:
+                                die1.reset()
+                            if not die2.at_start:
+                                die2.reset()
+                            if die1.at_start and die2.at_start:
+                                # Both dice are at the start. Reset values
+                                is_rolling = False
+                                print("You rolled a", die1_value + die2_value)
+                                die1_value = -1
+                                die2_value = -1
+                                if turn == "Player1":
+                                    turn = "Player2"
+                                elif turn == "Player2":
+                                    turn = "Player3"
+                                elif turn == "Player3":
+                                    turn = "Player4"
+                                elif turn == "Player4":
+                                    turn = "Player1"
+                                active_player.turn = False
 
-                    # Return the dice to the start
-                    if not die1.at_start:
-                        die1.reset()
-                    if not die2.at_start:
-                        die2.reset()
-                    if die1.at_start and die2.at_start:
-                        # Both dice are at the start. Reset values
-                        is_rolling = False
-                        print("You rolled a", die1_value + die2_value)
-                        die1_value = -1
-                        die2_value = -1
-
-                counter += 1
-            die1.draw(screen)
-            die2.draw(screen)
+                        counter += 1
+                    die1.draw(screen)
+                    die2.draw(screen)
 
             if keys[pygame.K_c] or properties_button.check_click():  # check if property button screen has been clicked
                 current_screen = 2
