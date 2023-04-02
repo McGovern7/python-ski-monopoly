@@ -123,7 +123,7 @@ def load_properties():
         #create a property object
         new_prop = Property(property_features[0], property_features[1], property_features[2], property_features[3],
                             property_features[4], property_features[5], property_features[6], property_features[7],
-                            property_features[8], property_features[9], property_features[10])
+                            property_features[8], property_features[9], property_features[10], property_features[11])
         properties.append(new_prop)
 
     file.close()
@@ -171,7 +171,7 @@ def get_icon_positions():
 
 # SCREENS
 # board screen
-def board_screen(screen):
+def board_screen(screen, icon_positions, properties):
     """
     Function to display the screen with the monopoly board
     :param screen: game screen
@@ -206,6 +206,14 @@ def board_screen(screen):
         #lines going across bottom of board
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
+
+    #TODO -  will fix this tomorrow
+    #draw the name of each property on the square
+    for property in properties:
+        coordinates = str(icon_positions[int(property.location)])
+        coordinates_list = coordinates[1:len(coordinates)-1].split(',')
+        print(coordinates)
+        draw_text(screen, property.property_name, small_font_3, black, coordinates[0], coordinates[1])
 
 
 # card screen
@@ -308,8 +316,12 @@ def main():
     player2 = player.Player(player2_icon, "player2", bank2, .6, icon_positions)
     player3 = player.Player(player3_icon, "player3", bank3, .6, icon_positions)
     player4 = player.Player(player4_icon, "player4", bank4, .6, icon_positions)
+    #load community chest and chance cards
+    cards = load_cards()
+    #load property cards
+    #properties = load_properties()
 
-
+    #created die
     die1 = Die(screen,
                screen.get_width() - screen.get_width() * 0.1 - DICE_DIMS[0] * 1.5,
                screen.get_height() - DICE_DIMS[0] * 1.5,
@@ -386,7 +398,7 @@ def main():
             # draw_text("Number of Players", medium_font, black, 300, 285)
             # draw_text("Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
-            board_screen(screen)
+            board_screen(screen, icon_positions, properties)
             # load roll dice image (eventually only loads during player's turn
             roll_button.draw(screen)
             properties_button.draw(screen)
