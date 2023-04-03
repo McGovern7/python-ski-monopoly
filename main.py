@@ -9,6 +9,7 @@ from Die import Die
 from Property import Property
 from card import Card
 from player import Player
+from network import Network
 
 # Initialize PyGame
 pygame.init()
@@ -160,9 +161,8 @@ def load_cards():
 def get_icon_positions():
     # trying to find the middle of each space's coordinate spot
     # and put each coordinate into list  clockwise starting at bottom left "GO"
-    icon_positions = []
     # first position (start)
-    icon_positions.append((35, 765))  # bottom left
+    icon_positions = [(35, 765)]
     y_coord = 745
     for i in range(9):
         icon_positions.append((35, 655 - (575 / 9) * i))  # left row of vertical coords
@@ -184,6 +184,8 @@ def board_screen(screen, icon_positions, properties):
     """
     Function to display the screen with the monopoly board
     :param screen: game screen
+    :param icon_positions:
+    :param properties:
     :return: nothing
     """
     large_font = pygame.font.SysFont('Verdana', 25)
@@ -198,10 +200,9 @@ def board_screen(screen, icon_positions, properties):
     center_x = 110
     center_y = 110
     pygame.draw.rect(screen, green, (center_x, center_y, center_dimension, center_dimension))
-    #center picture
+    # center picture
     logo = pygame.image.load("images/ski-resort.png")
     screen.blit(logo, (center_x+20, center_y+20))
-
 
     # draw the name of each property on the square and district colors
     for property in properties:
@@ -297,12 +298,14 @@ def main():
     num_computers = 0
 
     # Multiplayer initializations
-    user_text = ""
-    input_rect = pygame.Rect(300, 300, 140, 32)
+    ip_address = ""
+    input_rect = pygame.Rect(300, 320, 200, 32)
     color_active = pygame.Color('white')
     color_passive = pygame.Color('gray')
     box_color = color_passive
     active = True
+    connecting = False
+    connected = False
 
     # define fonts
     large_font = pygame.font.SysFont('Verdana', 25)
@@ -378,11 +381,11 @@ def main():
                 sys.exit()
             elif event.type == pygame.KEYDOWN and active:
                 if event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]
+                    ip_address = ip_address[:-1]
                 elif event.key == pygame.K_RETURN:
                     active = False
                 else:
-                    user_text += event.unicode
+                    ip_address += event.unicode
 
         # Vector of all keys on keyboard.
         # keys[pygame.K_SPACE] will return True if the space-bar is pressed; False if otherwise
@@ -440,17 +443,31 @@ def main():
             elif game_multiplayer:
                 game_singleplayer = False
 
-                draw_text(screen, "Enter server ip:", medium_font, black, 300, 285)
+                draw_text(screen, "Enter server ip:", medium_font, black, 320, 285)
 
                 if active:
                     box_color = color_active
                 else:
                     box_color = color_passive
+                    if not connecting:
+                        # Attempt connection to server
+                        connecting = True
+                        n = Network(ip_address)
+                        if not n:
+                            print("Error connecting. Retype ip")
+                            ip_address = ""
+                            active = True
+                            connecting = False
+                        else:
+                            connected = True
 
                 pygame.draw.rect(screen, box_color, input_rect)
-                draw_text(screen, user_text, medium_font, black, input_rect.x+5, input_rect.y+5)
+                draw_text(screen, ip_address, medium_font, black, input_rect.x+5, input_rect.y+5)
 
-                draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
+                if connected:
+                    draw_text(screen, "Connected to game #" + str(n.get_game_id() + 1), medium_font, black, 285, 375)
+                    draw_text(screen, "You are player " + str(n.get_p() + 1), medium_font, black, 285, 400)
+                    # draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
             board_screen(screen, icon_positions, properties)
             # load roll dice image (eventually only loads during player's turn
