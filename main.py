@@ -261,7 +261,7 @@ def main():
     counter = 0
     die1_value = -1
     die2_value = -1
-    turn = "Player1"
+    turn = "Player 1"
 
     # game type variables
     game_singleplayer = False
@@ -304,16 +304,22 @@ def main():
     icon_positions = get_icon_positions()
 
     # Bank accounts
-    bank1 = Bank_Account("player1")
-    bank2 = Bank_Account("player2")
-    bank3 = Bank_Account("player3")
-    bank4 = Bank_Account("player4")
+    bank1 = Bank_Account("Player 1")
+    bank2 = Bank_Account("Player 2")
+    bank3 = Bank_Account("Player 3")
+    bank4 = Bank_Account("Player 4")
     # create player objects
-    player1 = player.Player(player1_img, "Player1", bank1, .6, icon_positions)
-    player2 = player.Player(player2_img, "Player2", bank2, .6, icon_positions)
-    player3 = player.Player(player3_img, "Player3", bank3, .6, icon_positions)
-    player4 = player.Player(player4_img, "Player4", bank4, .6, icon_positions)
+    player1 = Player(player1_img, "Player 1", bank1, .6, icon_positions)
+    player2 = Player(player2_img, "Player 2", bank2, .6, icon_positions)
+    player3 = Player(player3_img, "Player 3", bank3, .6, icon_positions)
+    player4 = Player(player4_img, "Player 4", bank4, .6, icon_positions)
     players = [player1, player2, player3, player4]
+    new_players = [player1, player2, player3, player4]
+
+    # initial roll to see who goes first
+    first_rolls = []
+    first_roll = True
+
     # load community chest and chance cards
     cards = load_cards()
     # load property cards
@@ -404,16 +410,20 @@ def main():
             player3.draw(screen)
             player4.draw(screen)
 
+
             # For loop iterates over all the players and checks if it is their turn
             for active_player in players:
+                # display instructions if its the first roll
+                if first_roll:
+                    draw_text(screen, "Determine player order by", medium_font, black, 890, 300)
+                    draw_text(screen, "each person rolling the dice once", medium_font, black,
+                              850, 330)
                 active_player.turn = True
                 if turn == active_player.name and active_player.turn:
-                    # TEST MOVE
-                    player1.movement(1)  # moves player1 forward 1 space
                     active_player.turn = True
                     if not is_rolling:
                         active_player.turn = True
-                        draw_text(screen, active_player.name, medium_font, black, 900, 700)
+                        draw_text(screen, str(active_player.name) + "'s turn", medium_font, black, 900, 700)
                         if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
                             counter = 0
                             is_rolling = True
@@ -436,16 +446,65 @@ def main():
                                 # Both dice are at the start. Reset values
                                 is_rolling = False
                                 print("You rolled a", die1_value + die2_value)
+                                roll = die1_value + die2_value
+
+                                #FIRST ROLL-----
+                                #Have everyone roll once to find out the order of when each person players
+                                if first_roll:
+                                    first_rolls.append(roll)
+                                    #stop when everyone has rolled once
+                                    if len(first_rolls) >=4:
+                                        first_roll = False
+                                        #find player with largest roll and assign them to have a turn first, continue
+                                        for i in range(0,len(players)):
+                                            largest = first_rolls.index(max(first_rolls))
+                                            new_players[i] =players[largest]
+                                            #get rid of the largest element in list
+                                            first_rolls[largest] = -1
+                                        #reassign player list to the new order
+                                        count = 0
+                                        for player in new_players:
+                                            players[count] = player
+                                            count+=1
+                                        for player in players:
+                                            print(player.name)
+                                        draw_text(screen, "Player order", medium_font, black, 890, 300)
+
                                 die1_value = -1
                                 die2_value = -1
-                                if turn == "Player1":
-                                    turn = "Player2"
-                                elif turn == "Player2":
-                                    turn = "Player3"
-                                elif turn == "Player3":
-                                    turn = "Player4"
-                                elif turn == "Player4":
-                                    turn = "Player1"
+                                if turn == "Player 1":
+                                    # change the turn to the name of the next player in the players list
+                                    for i in range(0, len(players)):
+                                        if players[i].name == "Player 1" and i < 3:
+                                            turn = str(players[i+1].name)
+                                            print("turn l1: ", turn)
+                                        elif players[i].name == "Player 1" and i == 3:
+                                            turn = str(players[0].name)
+                                            print("turn l2: ", turn)
+                                elif turn == "Player 2":
+                                    for i in range(0, len(players)):
+                                        if players[i].name == "Player 2" and i < 3:
+                                            turn = str(players[i + 1].name)
+                                            print("2turn l1: ", turn)
+                                        elif players[i].name == "Player 2" and i == 3:
+                                            turn = str(players[0].name)
+                                            print("2turn l2: ", turn)
+                                elif turn == "Player 3":
+                                    for i in range(0, len(players)):
+                                        if players[i].name == "Player 3" and i < 3:
+                                            turn = str(players[i + 1].name)
+                                            print("3turn l1: ", turn)
+                                        elif players[i].name == "Player 3" and i == 3:
+                                            turn = str(players[0].name)
+                                            print("3turn l2: ", turn)
+                                elif turn == "Player 4":
+                                    for i in range(0, len(players)):
+                                        if players[i].name == "Player 4" and i < 3:
+                                            turn = str(players[i + 1].name)
+                                            print("4turn l1: ", turn)
+                                        elif players[i].name == "Player 4" and i == 3:
+                                            turn = str(players[0].name)
+                                            print("4turn l2: ", turn)
                                 active_player.turn = False
 
                         counter += 1
