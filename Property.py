@@ -4,7 +4,7 @@ class Property:
     # house price, hotel price, rent_amount
     def __init__(self, resort_name, resort_region, cost, house_cost, hotel_cost, rent_amount,
                  rent_with_1_house, rent_with_2_houses, rent_with_3_houses, rent_with_4_houses,
-                 rent_with_hotel):
+                 rent_with_hotel, board_location):
         self.property_name = resort_name
         self.region = resort_region
         self.price = cost
@@ -16,6 +16,8 @@ class Property:
         self.rent_3house = rent_with_3_houses
         self.rent_4house = rent_with_4_houses
         self.rent_hotel = rent_with_hotel
+        #location on the board (this aligns with icon_positions[location])
+        self.location = board_location
         #start with no houses or hotels on property
         self.num_houses = 0
         self.num_hotels = 0
