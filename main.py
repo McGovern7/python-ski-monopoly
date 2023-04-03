@@ -388,6 +388,14 @@ def main():
     num_players = 0
     num_computers = 0
 
+    # Multiplayer initializations
+    user_text = ""
+    input_rect = pygame.Rect(300, 300, 140, 32)
+    color_active = pygame.Color('white')
+    color_passive = pygame.Color('gray')
+    box_color = color_passive
+    active = True
+
     # define fonts
     large_font = pygame.font.SysFont('Verdana', 25)
     medium_font = pygame.font.SysFont('Verdana', 20)
@@ -427,6 +435,13 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.KEYDOWN and active:
+                if event.key == pygame.K_BACKSPACE:
+                    user_text = user_text[:-1]
+                elif event.key == pygame.K_RETURN:
+                    active = False
+                else:
+                    user_text += event.unicode
 
         # Vector of all keys on keyboard.
         # keys[pygame.K_SPACE] will return True if the space-bar is pressed; False if otherwise
@@ -477,10 +492,20 @@ def main():
                     if startgame_button.check_click():
                         current_screen = 1
 
-            # elif game_multiplayer:
-            # game_singleplayer = False
-            # draw_text("Number of Players", medium_font, black, 300, 285)
-            # draw_text("Number of Computers", medium_font, black, 285, 375)
+            elif game_multiplayer:
+                game_singleplayer = False
+
+                draw_text(screen, "Enter server ip:", medium_font, black, 300, 285)
+
+                if active:
+                    box_color = color_active
+                else:
+                    box_color = color_passive
+
+                pygame.draw.rect(screen, box_color, input_rect)
+                draw_text(screen, user_text, medium_font, black, input_rect.x+5, input_rect.y+5)
+
+                draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
             board_screen(screen)
             # load roll dice image (eventually only loads during player's turn
@@ -499,6 +524,7 @@ def main():
                     # Otherwise, roll() returns a random value from 1 to 6.
                     if die1_value == -1:
                         die1_value = die1.roll(counter)
+                        print(die1.get_vel())
                     if die2_value == -1:
                         die2_value = die2.roll(counter)
                     if die1_value != -1 and die2_value != -1:

@@ -22,6 +22,7 @@ class Network:
             response = self.client.recv(4096).decode().split(',')
             return int(response[0]), int(response[1])
         except:
+            print("Error Connecting to server...")
             pass
 
     def send(self, data):
