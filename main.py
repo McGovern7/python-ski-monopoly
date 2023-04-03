@@ -32,9 +32,16 @@ clock = pygame.time.Clock()
 green = (0, 100, 0)
 white = (255, 255, 255)
 black = (0, 0, 0)
-blue = (30, 144, 225)
-red = (255, 0, 0)
 board_color = (191, 219, 174)
+#property region colors
+brown = (165, 42, 42)
+lightblue = (173, 216, 230)
+pink = (255, 192, 203)
+orange = (255, 165, 0)
+red = (255, 0, 0)
+yellow = (255, 255, 0)
+green = (0, 100, 0)
+blue = (30, 144, 225)
 
 
 # house graphic
@@ -105,7 +112,7 @@ def draw_text(screen, text, font, text_col, x, y):
 
 def load_properties():
     """
-    Function to load in property information and create objects of Propery class
+    Function to load in property information and create objects of Property class
     :return: list of property objects
     """
     # initialize list to put properties in
@@ -155,19 +162,19 @@ def get_icon_positions():
     # and put each coordinate into list  clockwise starting at bottom left "GO"
     icon_positions = []
     # first position (start)
-    icon_positions.append((75, 725))  # bottom left
+    icon_positions.append((35, 765))  # bottom left
     y_coord = 745
     for i in range(9):
-        icon_positions.append((75, 655 - (575 / 9) * i))  # left row of vertical coords
-    icon_positions.append((75, 75))  # top left
+        icon_positions.append((35, 655 - (575 / 9) * i))  # left row of vertical coords
+    icon_positions.append((35, 35))  # top left
     for i in range(9):
-        icon_positions.append((142 + (575 / 9) * i, 75))  # top row of horizontal coords
-    icon_positions.append((725, 75))  # top right
+        icon_positions.append((142 + (575 / 9) * i, 35))  # top row of horizontal coords
+    icon_positions.append((765, 35))  # top right
     for i in range(9):
-        icon_positions.append((725, 142 + (575 / 9) * i))  # right row of vertical coords
-    icon_positions.append((745, 725))  # bottom right
+        icon_positions.append((765, 142 + (575 / 9) * i))  # right row of vertical coords
+    icon_positions.append((765, 765))  # bottom right
     for i in range(9):
-        icon_positions.append((655 - (575 / 9) * i, 725))  # bottom row of horizontal coords
+        icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
     return icon_positions
 
 
@@ -191,6 +198,35 @@ def board_screen(screen, icon_positions, properties):
     center_x = 110
     center_y = 110
     pygame.draw.rect(screen, green, (center_x, center_y, center_dimension, center_dimension))
+    #center picture
+    logo = pygame.image.load("images/ski-resort.png")
+    screen.blit(logo, (center_x+20, center_y+20))
+
+
+    # draw the name of each property on the square and district colors
+    for property in properties:
+        coordinates = str(icon_positions[int(property.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
+
+        # draw in a different spot of the square depend on section of the board
+        # up the left side
+        if x_coord == 35:
+            pygame.draw.rect(screen, property.region, (90, y_coord-33, 20, 64))
+            draw_text(screen, property.property_name, small_font_3, black, x_coord - 34, y_coord)
+        # across the top
+        if y_coord == 35:
+            pygame.draw.rect(screen, property.region, (x_coord-32, 90, 63.9, 20))
+            draw_text(screen, property.property_name, small_font_3, black, x_coord - 25, y_coord+30)
+        # down the right side
+        if x_coord == 765:
+            pygame.draw.rect(screen, property.region, (685, y_coord-32, 20, 64))
+            draw_text(screen, property.property_name, small_font_3, black, x_coord - 50, y_coord)
+        # across the bottom
+        if y_coord == 765:
+            pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
+            draw_text(screen, property.property_name, small_font_3, black, x_coord - 25, y_coord-50)
 
     # tile lines
     y = center_y
@@ -208,15 +244,6 @@ def board_screen(screen, icon_positions, properties):
         # lines going across bottom of board
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
-
-    # draw the name of each property on the square
-    for property in properties:
-        coordinates = str(icon_positions[int(property.location)])
-        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
-        # print(coordinates_list)
-        draw_text(screen, property.property_name, small_font_3, black, float(coordinates_list[0]),
-                  float(coordinates_list[1]))
-
 
 # card screen
 def card_screen(screen, font):
