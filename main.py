@@ -1,5 +1,7 @@
 import sys
 import pygame
+import socket
+import pickle
 
 import player
 import button
@@ -322,6 +324,7 @@ def main():
     active = True
     connecting = False
     connected = False
+    error = False
 
     # define fonts
     large_font = pygame.font.SysFont('Verdana', 25)
@@ -395,7 +398,7 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN and active:
+            elif event.type == pygame.KEYDOWN and active and game_multiplayer:
                 if event.key == pygame.K_BACKSPACE:
                     ip_address = ip_address[:-1]
                 elif event.key == pygame.K_RETURN:
@@ -467,24 +470,57 @@ def main():
                     box_color = color_active
                 else:
                     box_color = color_passive
-                    if not connecting:
-                        # Attempt connection to server
-                        connecting = True
-                        n = Network(ip_address)
-                        if not n:
-                            print("Error connecting. Retype ip")
-                            ip_address = ""
-                            active = True
-                            connecting = False
-                        else:
-                            connected = True
 
                 pygame.draw.rect(screen, box_color, input_rect)
                 draw_text(screen, ip_address, medium_font, black, input_rect.x + 5, input_rect.y + 5)
 
+                if not active and not connecting:
+                    # Attempt connection to server
+                    connecting = True
+                    n = Network(ip_address)
+                    if n.get_games() is not None:
+                        error = False
+                        connected = True
+                    else:
+                        error = True
+                        ip_address = ""
+                        active = True
+                        connecting = False
+
+                if error:
+                    draw_text(screen,
+                              "Error connecting to server. Please re-type IP.",
+                              medium_font,
+                              black,
+                              285, 375)
+
                 if connected:
-                    draw_text(screen, "Connected to game #" + str(n.get_game_id() + 1), medium_font, black, 285, 375)
-                    draw_text(screen, "You are player " + str(n.get_p() + 1), medium_font, black, 285, 400)
+                    games = n.get_games()
+
+                    for i in range(0, len(games)):
+                        server_box = pygame.Rect(300, 330 + (32 * i), 200, 32)
+                        server_box_color = pygame.Color("gray")
+                        if i % 2 == 0:
+                            server_box_color = pygame.Color("white")
+                        pygame.draw.rect(screen, server_box_color, server_box)
+                        draw_text(screen,
+                                  "Game #" + str(games[i + 1].get_id()),
+                                  medium_font,
+                                  black,
+                                  server_box.x + 5,
+                                  server_box.y + 5)
+
+                    # draw_text(screen,
+                    #           "Connected to game #" + str(n.get_game_id() + 1),
+                    #           medium_font,
+                    #           black,
+                    #           285, 375)
+                    # draw_text(screen,
+                    #           "You are player " + str(n..get_p() + 1),
+                    #           medium_font,
+                    #           black,
+                    #           285, 400)
+
                     # draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
         elif current_screen == 1:
             board_screen(screen, icon_positions, properties)

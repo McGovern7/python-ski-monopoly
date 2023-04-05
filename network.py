@@ -8,22 +8,19 @@ class Network:
         self.server = ip
         self.port = 5555
         self.addr = (self.server, self.port)
-        self.p, self.game_id = self.connect()
+        self.games = self.connect()
 
-    def get_p(self):
-        return self.p
-
-    def get_game_id(self):
-        return self.game_id
+    def get_games(self):
+        return self.games
 
     def connect(self):
         try:
             self.client.connect(self.addr)
-            response = self.client.recv(4096).decode().split(',')
-            return int(response[0]), int(response[1])
+            response = pickle.loads(self.client.recv(4096))
+            return response
         except:
             print("Error Connecting to server...")
-            pass
+            return None
 
     def send(self, data):
         try:
