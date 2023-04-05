@@ -73,7 +73,7 @@ def create_hotel(screen, x, y):
     screen.blit(hotel, (x, y))
 
 
-def create_card(screen, x, y, region_color):
+def create_card(screen, x, y, property):
     """
     Function to create a card graphic for the card screen
     :param screen: game screen
@@ -84,7 +84,7 @@ def create_card(screen, x, y, region_color):
     """
     # draw text on every property card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
-    pygame.draw.rect(screen, region_color, (x + 5, y + 5, 140, 50))
+    pygame.draw.rect(screen, property., (x + 5, y + 5, 140, 50))
     draw_text(screen, "TITLE DEED", small_font_4, black, 90, 160)
     draw_text(screen, "Property Name", small_font_2, black, 70, 180)
     draw_text(screen, "Rent: $", small_font_3, black, 90, 215)
@@ -527,6 +527,7 @@ def main():
                     #           285, 400)
 
                     # draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
+
         elif current_screen == screens.get("BOARD"):
             board_screen(screen, icon_positions, properties)
             # load roll dice image (eventually only loads during player's turn
@@ -642,7 +643,16 @@ def main():
                 current_screen = screens.get("PROPS")
 
         elif current_screen == screens.get("PROPS"):
-            card_screen(screen, font)
+            #Player 1
+            if turn == 'Player 1':
+                card_screen(screen, font, player1.property_list)
+            elif turn == 'Player 2':
+                card_screen(screen, font, player2.property_list)
+            elif turn == 'Player 3':
+                card_screen(screen, font, player3.property_list)
+            else:
+                card_screen(screen, font, player4.property_list)
+
 
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get("BOARD")
