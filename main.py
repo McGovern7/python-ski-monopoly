@@ -285,7 +285,12 @@ def main():
     pygame.display.set_icon(icon)
     # make screen
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    current_screen = 0
+    screens = {
+        "START": 1,
+        "BOARD": 2,
+        "PROPS": 3
+    }
+    current_screen = screens.get("START")
 
     is_rolling = False
     counter = 0
@@ -398,7 +403,7 @@ def main():
             pygame.quit()
             sys.exit()
 
-        if current_screen == 0:
+        if current_screen == screens.get("START"):
             # game_singleplayer, game_multiplayer = start_screen(screen, game_singleplayer, game_multiplayer)
             # Fill screen background
             screen.fill((135, 206, 235))
@@ -441,7 +446,7 @@ def main():
 
                     # if startgame button clicked and game setup, move to game screen
                     if startgame_button.check_click():
-                        current_screen = 1
+                        current_screen = screens.get("BOARD")
 
             elif game_multiplayer:
                 game_singleplayer = False
@@ -504,7 +509,7 @@ def main():
                     #           285, 400)
 
                     # draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
-        elif current_screen == 1:
+        elif current_screen == screens.get("BOARD"):
             board_screen(screen, icon_positions, properties)
             # load roll dice image (eventually only loads during player's turn
             roll_button.draw(screen)
@@ -613,13 +618,13 @@ def main():
                     die2.draw(screen)
 
             if keys[pygame.K_c] or properties_button.check_click():  # check if property button screen has been clicked
-                current_screen = 2
+                current_screen = screens.get("PROPS")
 
-        elif current_screen == 2:
+        elif current_screen == screens.get("PROPS"):
             card_screen(screen, font)
 
             if keys[pygame.K_g]:  # press g to return to game
-                current_screen = 1
+                current_screen = screens.get("BOARD")
 
         # Required to update screen
         pygame.display.update()
