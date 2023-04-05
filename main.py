@@ -263,7 +263,7 @@ def board_screen(screen, icon_positions, properties):
 
 
 # card screen
-def card_screen(screen, font):
+def card_screen(screen, font, property_list):
     """
     Function to display a screen that shows you cards and gives more details about your properties
     :param screen: game screen
@@ -278,10 +278,14 @@ def card_screen(screen, font):
     screen.blit(text1, (50, 50))
     screen.blit(text2, (50, 100))
 
-    cards [] = player.
-    # create card
-    create_card(screen, 50, 150, blue)
-    create_house(screen, 100, 500)
+
+    x = 50
+    y= 150
+    for property in property_list:
+        # create card
+        create_card(screen, x, y, blue)
+        x += 60
+        #create_house(screen, 100, 500)
 
 
 def main():
