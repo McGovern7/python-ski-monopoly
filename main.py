@@ -85,16 +85,24 @@ def create_card(screen, x, y, property):
     # draw text on every property card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
     pygame.draw.rect(screen, property.region, (x + 5, y + 5, 140, 50))
-    draw_text(screen, "TITLE DEED", small_font_4, black, 90, 160)
-    draw_text(screen, property.name, small_font_2, black, 70, 180)
-    draw_text(screen, "Rent: $", small_font_3, black, 90, 215)
-    draw_text(screen, "With 1 House", small_font_3, black, 60, 235)
-    draw_text(screen, "With 2 Houses", small_font_3, black, 60, 250)
-    draw_text(screen, "With 3 Houses", small_font_3, black, 60, 265)
-    draw_text(screen, "With 4 Houses", small_font_3, black, 60, 280)
-    draw_text(screen, "With Hotel", small_font_3, black, 60, 295)
-    draw_text(screen, "Houses cost $", small_font_3, black, 60, 320)
-    draw_text(screen, "Hotel costs $", small_font_3, black, 60, 330)
+    draw_text(screen, "TITLE DEED", small_font_4, black, x + 40, y + 10)
+    draw_text(screen, property.property_name, small_font_2, black, x+20, y+30)
+    draw_text(screen, "Rent: $", small_font_3, black, x+40, y+65)
+    draw_text(screen, property.rent, small_font_3, black, x+75, y+65)
+    draw_text(screen, "With 1 House $", small_font_3, black, x+10, y+85)
+    draw_text(screen, property.rent_1house, small_font_3, black, x+85, y+85)
+    draw_text(screen, "With 2 Houses $", small_font_3, black, x+10, y+100)
+    draw_text(screen, property.rent_2house, small_font_3, black, x+90, y+100)
+    draw_text(screen, "With 3 Houses $", small_font_3, black, x+10, y+115)
+    draw_text(screen, property.rent_3house, small_font_3, black, x+89, y+115)
+    draw_text(screen, "With 4 Houses $", small_font_3, black, x+10, y+130)
+    draw_text(screen, property.rent_4house, small_font_3, black, x+90, y+130)
+    draw_text(screen, "With Hotel $", small_font_3, black, x+10, y+145)
+    draw_text(screen, property.rent_hotel, small_font_3, black, x+71, y+145)
+    draw_text(screen, "Houses cost $", small_font_3, black, x+10, y+168)
+    draw_text(screen, property.house_price, small_font_3, black, x+78, y+168)
+    draw_text(screen, "Hotel costs $", small_font_3, black, x+10, y+180)
+    draw_text(screen, property.hotel_price, small_font_3, black, x+73, y+180)
 
 
 # Function draws text with desired font, color, and location on page
@@ -278,9 +286,21 @@ def card_screen(screen, font, property_list):
     screen.blit(text1, (50, 50))
     screen.blit(text2, (50, 100))
     #TODO -- figure out which x and y values we should use based on len(property_list)
-    for property in property_list:
+
+    x = 50
+    y = 150
+    i = 0
+
+    for i in range(0,7):
         # create card
-        create_card(screen, 50, 150, property)
+        create_card(screen, x, y, property_list[i])
+        x += 160
+    x = 50
+    y = 360
+    for i in range(6,len(property_list)):
+        create_card(screen, x, y, property_list[i])
+        x += 160
+
 
     #create_house(screen, 100, 500)
 
@@ -398,6 +418,8 @@ def main():
     player1.add_property(properties[10])
     player1.add_property(properties[14])
     player1.add_property(properties[9])
+    player1.add_property(properties[20])
+    player1.add_property(properties[18])
 
 
 
