@@ -277,6 +277,8 @@ def card_screen(screen, font):
     screen.fill(green)
     screen.blit(text1, (50, 50))
     screen.blit(text2, (50, 100))
+
+    cards [] = player.
     # create card
     create_card(screen, 50, 150, blue)
     create_house(screen, 100, 500)
