@@ -84,9 +84,9 @@ def create_card(screen, x, y, property):
     """
     # draw text on every property card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
-    pygame.draw.rect(screen, property., (x + 5, y + 5, 140, 50))
+    pygame.draw.rect(screen, property.region, (x + 5, y + 5, 140, 50))
     draw_text(screen, "TITLE DEED", small_font_4, black, 90, 160)
-    draw_text(screen, "Property Name", small_font_2, black, 70, 180)
+    draw_text(screen, property.name, small_font_2, black, 70, 180)
     draw_text(screen, "Rent: $", small_font_3, black, 90, 215)
     draw_text(screen, "With 1 House", small_font_3, black, 60, 235)
     draw_text(screen, "With 2 Houses", small_font_3, black, 60, 250)
@@ -263,7 +263,7 @@ def board_screen(screen, icon_positions, properties):
 
 
 # card screen
-def card_screen(screen, font):
+def card_screen(screen, font, property_list):
     """
     Function to display a screen that shows you cards and gives more details about your properties
     :param screen: game screen
@@ -277,9 +277,12 @@ def card_screen(screen, font):
     screen.fill(green)
     screen.blit(text1, (50, 50))
     screen.blit(text2, (50, 100))
-    # create card
-    create_card(screen, 50, 150, blue)
-    create_house(screen, 100, 500)
+    #TODO -- figure out which x and y values we should use based on len(property_list)
+    for property in property_list:
+        # create card
+        create_card(screen, 50, 150, property)
+
+    #create_house(screen, 100, 500)
 
 
 def main():
@@ -386,6 +389,18 @@ def main():
     cards = load_cards()
     # load property cards
     properties = load_properties()
+
+    # TESTING ----
+    player1.add_property(properties[0])
+    player1.add_property(properties[7])
+    player1.add_property(properties[3])
+    player1.add_property(properties[4])
+    player1.add_property(properties[10])
+    player1.add_property(properties[14])
+    player1.add_property(properties[9])
+
+
+
 
     # created die
     die1 = Die(screen,
