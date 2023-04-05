@@ -84,9 +84,9 @@ def create_card(screen, x, y, property):
     """
     # draw text on every property card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
-    pygame.draw.rect(screen, property., (x + 5, y + 5, 140, 50))
+    pygame.draw.rect(screen, property.region, (x + 5, y + 5, 140, 50))
     draw_text(screen, "TITLE DEED", small_font_4, black, 90, 160)
-    draw_text(screen, "Property Name", small_font_2, black, 70, 180)
+    draw_text(screen, property.name, small_font_2, black, 70, 180)
     draw_text(screen, "Rent: $", small_font_3, black, 90, 215)
     draw_text(screen, "With 1 House", small_font_3, black, 60, 235)
     draw_text(screen, "With 2 Houses", small_font_3, black, 60, 250)
