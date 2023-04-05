@@ -570,6 +570,17 @@ def main():
             # load roll dice image (eventually only loads during player's turn
             roll_button.draw(screen)
             properties_button.draw(screen)
+            #display bank account money
+            draw_text(screen, "Money: $", medium_font, black, 900, 90)
+            if turn == 'Player 1':
+                bank_account = player1.bank
+            elif turn == 'Player 2':
+                bank_account = player2.bank
+            elif turn == 'Player 3':
+                bank_account = player3.bank
+            else:
+                bank_account = player4.bank
+            draw_text(screen, str(bank_account.total), medium_font, black, 995, 90)
 
             # (Created once) loads the number of players into each list based on the amount chosen in first screen
             if not players_loaded:
