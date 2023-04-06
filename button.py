@@ -42,4 +42,3 @@ class Button:
                 return False
         else:
             self.text = button_font.render(self.text_input, True, self.text_color)
-
