@@ -329,6 +329,7 @@ def main():
     }
     current_screen = screens.get("START")
 
+    new_press = True
     is_rolling = False
     counter = 0
     die1_value = -1
@@ -365,6 +366,7 @@ def main():
     startgame_img = pygame.image.load("images/startgame.png").convert_alpha()
     number_img = pygame.image.load("images/numplayer.png").convert_alpha()
     properties_img = pygame.image.load("images/properties.png").convert_alpha()
+    board_return_img = pygame.image.load("images/board-return.png").convert_alpha()
     roll_img = pygame.image.load("images/roll.png").convert_alpha()
     player1_img = pygame.image.load("images/icon1.png").convert_alpha()
     player2_img = pygame.image.load("images/icon2.png").convert_alpha()
@@ -379,6 +381,7 @@ def main():
     num_computers2_button = button.Button(number_img, 400, 310, "2", white, 1.5)
     num_computers3_button = button.Button(number_img, 500, 310, "3", white, 1.5)
     properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
+    board_return_button = button.Button(board_return_img, 1000, 50, "Return to Board", white, 1.5)
     roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
     player1_button = button.Button(player1_img, 250, 420, "Icon 1", white, 1)
     player2_button = button.Button(player2_img, 350, 420, "Icon 2", white, 1)
@@ -676,8 +679,14 @@ def main():
                     die1.draw(screen)
                     die2.draw(screen)
 
-            if keys[pygame.K_c] or properties_button.check_click():  # check if property button screen has been clicked
+            if keys[pygame.K_c]:  # check if property button screen has been clicked
                 current_screen = screens.get("PROPS")
+            if pygame.mouse.get_pressed()[0] and new_press:
+                new_press = False
+                if properties_button.check_click():
+                    current_screen = screens.get("PROPS")
+            if not pygame.mouse.get_pressed()[0] and not new_press:
+                new_press = True
 
         elif current_screen == screens.get("PROPS"):
             #Player 1
@@ -689,11 +698,16 @@ def main():
                 card_screen(screen, font, player3.property_list)
             else:
                 card_screen(screen, font, player4.property_list)
-
-
+            board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get("BOARD")
+            if pygame.mouse.get_pressed()[0] and new_press:
+                new_press = False
+                if board_return_button.check_click():
+                    current_screen = screens.get("BOARD")
 
+        if not pygame.mouse.get_pressed()[0] and not new_press:
+            new_press = True
         # Required to update screen
         pygame.display.update()
         clock.tick(60)
