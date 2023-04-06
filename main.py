@@ -291,16 +291,21 @@ def card_screen(screen, font, property_list):
     y = 150
     i = 0
 
-    for i in range(0,7):
-        # create card
-        create_card(screen, x, y, property_list[i])
-        x += 160
-    x = 50
-    y = 360
-    for i in range(6,len(property_list)):
-        create_card(screen, x, y, property_list[i])
-        x += 160
+    if len(property_list) > 7:
+        for i in range(0,7):
+            # create card
+            create_card(screen, x, y, property_list[i])
+            x += 160
 
+        x = 50
+        y = 360
+        for i in range(6,len(property_list)):
+            create_card(screen, x, y, property_list[i])
+            x += 160
+    else:
+        for property in property_list:
+            create_card(screen, x, y, property)
+            x += 160
 
     #create_house(screen, 100, 500)
 
@@ -423,6 +428,14 @@ def main():
     player1.add_property(properties[9])
     player1.add_property(properties[20])
     player1.add_property(properties[18])
+
+    player2.add_property(properties[2])
+    player2.add_property(properties[17])
+
+    player3.add_property(properties[2])
+    player3.add_property(properties[20])
+    player3.add_property(properties[4])
+    player3.add_property(properties[19])
 
 
 
@@ -639,7 +652,7 @@ def main():
                                 if first_roll:
                                     first_rolls.append(roll)
                                     # stop when everyone has rolled once
-                                    if len(first_rolls) >= 4:
+                                    if len(first_rolls) >= len(players):
                                         first_roll = False
                                         # find player with largest roll and assign them to have a turn first, continue
                                         for i in range(0, len(players)):
@@ -662,27 +675,27 @@ def main():
                                 if turn == "Player 1":
                                     # change the turn to the name of the next player in the players list
                                     for i in range(0, len(players)):
-                                        if players[i].name == "Player 1" and i < 3:
+                                        if players[i].name == "Player 1" and i < len(players)-1:
                                             turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 1" and i == 3:
+                                        elif players[i].name == "Player 1" and i == len(players)-1:
                                             turn = str(players[0].name)
                                 elif turn == "Player 2":
                                     for i in range(0, len(players)):
-                                        if players[i].name == "Player 2" and i < 3:
+                                        if players[i].name == "Player 2" and i < len(players)-1:
                                             turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 2" and i == 3:
+                                        elif players[i].name == "Player 2" and i == len(players)-1:
                                             turn = str(players[0].name)
                                 elif turn == "Player 3":
                                     for i in range(0, len(players)):
-                                        if players[i].name == "Player 3" and i < 3:
+                                        if players[i].name == "Player 3" and i < len(players)-1:
                                             turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 3" and i == 3:
+                                        elif players[i].name == "Player 3" and i == len(players)-1:
                                             turn = str(players[0].name)
                                 elif turn == "Player 4":
                                     for i in range(0, len(players)):
-                                        if players[i].name == "Player 4" and i < 3:
+                                        if players[i].name == "Player 4" and i < len(players)-1:
                                             turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 4" and i == 3:
+                                        elif players[i].name == "Player 4" and i == len(players)-1:
                                             turn = str(players[0].name)
                                 active_player.turn = False
 
