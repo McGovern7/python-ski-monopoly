@@ -200,6 +200,79 @@ def get_icon_positions():
         icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
     return icon_positions
 
+#TODO - how do I get this popup message to stay on the screen until the button is clicked?? (feel free to edit)
+def property_pop_up(screen, message):
+    #buttons
+    roll_img = pygame.image.load("images/roll.png").convert_alpha()
+    yes_button = button.Button(roll_img, 950, 400, "yes", black, 1)
+    no_button = button.Button(roll_img, 1050, 400, "no", black, 1)
+    yes_button.draw(screen)
+    no_button.draw(screen)
+    #draws pop up message
+    pygame.draw.rect(screen, red, (850, 110, 300, 150))
+    pygame.draw.rect(screen, red, (860, 120, 290, 140))
+    draw_text(screen, message, font, black, 900, 100)
+
+    #return true for now
+    return True
+
+    #if "yes" button is clicked, answer is true
+    if yes_button.check_click():
+        return True
+    #if no button is clicked, then answer is false
+    if no_button.check_click():
+        return False
+def interact(screen, active_player, properties):
+    #interaction for properties
+    for property in properties:
+        print("Name: ", active_player.name)
+        print("Property location: ", property.location)
+        print("Player location: ", active_player.location)
+        if int(active_player.location) == int(property.location):
+            #check if property is owned by anyone
+            if property.owner == "NONE":
+                #if the player wants to buy the property
+                answer = property_pop_up(screen, "Do you want to buy this property?")
+                if answer:
+                    #change property status to owned
+                    property.owner = active_player.name
+                    #add it to their property list
+                    active_player.property_list.append(property)
+                    print("Price: ", property.price)
+                    #take money out of their bank account
+                    bank = active_player.bank
+                    bank.withdraw(int(property.price))
+                    print("Money: ", bank.total)
+def change_turn(players, active_player, turn):
+    # change the turn
+    if turn == "Player 1":
+        # change the turn to the name of the next player in the players list
+        for i in range(0, len(players)):
+            if players[i].name == "Player 1" and i < len(players) - 1:
+                turn = str(players[i + 1].name)
+            elif players[i].name == "Player 1" and i == len(players) - 1:
+                turn = str(players[0].name)
+    elif turn == "Player 2":
+        for i in range(0, len(players)):
+            if players[i].name == "Player 2" and i < len(players) - 1:
+                turn = str(players[i + 1].name)
+            elif players[i].name == "Player 2" and i == len(players) - 1:
+                turn = str(players[0].name)
+    elif turn == "Player 3":
+        for i in range(0, len(players)):
+            if players[i].name == "Player 3" and i < len(players) - 1:
+                turn = str(players[i + 1].name)
+            elif players[i].name == "Player 3" and i == len(players) - 1:
+                turn = str(players[0].name)
+    elif turn == "Player 4":
+        for i in range(0, len(players)):
+            if players[i].name == "Player 4" and i < len(players) - 1:
+                turn = str(players[i + 1].name)
+            elif players[i].name == "Player 4" and i == len(players) - 1:
+                turn = str(players[0].name)
+    active_player.turn = False
+    return turn
+
 
 # SCREENS
 # board screen
@@ -279,13 +352,9 @@ def card_screen(screen, font, property_list):
     :return: nothing
     """
     pygame.display.set_caption("Your cards")
-    text1 = font.render("Available money: ", True, white)
-    text2 = font.render("Properties: ", True, white)
-
     screen.fill(green)
-    screen.blit(text1, (50, 50))
-    screen.blit(text2, (50, 100))
-    #TODO -- figure out which x and y values we should use based on len(property_list)
+    draw_text(screen, "Available money: ", font, white, 50, 50)
+    draw_text(screen, "Properties: ", font, white, 50, 100)
 
     x = 50
     y = 150
@@ -406,8 +475,8 @@ def main():
     player2 = Player(player2_img, "Player 2", bank2, .6, icon_positions)
     player3 = Player(player3_img, "Player 3", bank3, .6, icon_positions)
     player4 = Player(player4_img, "Player 4", bank4, .6, icon_positions)
-    players = [player1, player2]
-    new_players = [player1, player2]
+    players = [player1, player2, player3, player4]
+    new_players = [player1, player2, player3, player4]
 
     # initial roll to see who goes first
     first_rolls = []
@@ -417,28 +486,6 @@ def main():
     cards = load_cards()
     # load property cards
     properties = load_properties()
-
-    # TESTING ----
-    player1.add_property(properties[0])
-    player1.add_property(properties[7])
-    player1.add_property(properties[3])
-    player1.add_property(properties[4])
-    player1.add_property(properties[10])
-    player1.add_property(properties[14])
-    player1.add_property(properties[9])
-    player1.add_property(properties[20])
-    player1.add_property(properties[18])
-
-    player2.add_property(properties[2])
-    player2.add_property(properties[17])
-
-    player3.add_property(properties[2])
-    player3.add_property(properties[20])
-    player3.add_property(properties[4])
-    player3.add_property(properties[19])
-
-
-
 
     # created die
     die1 = Die(screen,
@@ -646,6 +693,8 @@ def main():
                                 # if it's not the first roll, player icon should move number of spaces rolled
                                 if not first_roll:
                                     active_player.movement(roll)
+                                    #interact with that spot on the board
+                                    interact(screen, active_player, properties)
 
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players
@@ -671,33 +720,7 @@ def main():
 
                                 die1_value = -1
                                 die2_value = -1
-                                # change the turn
-                                if turn == "Player 1":
-                                    # change the turn to the name of the next player in the players list
-                                    for i in range(0, len(players)):
-                                        if players[i].name == "Player 1" and i < len(players)-1:
-                                            turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 1" and i == len(players)-1:
-                                            turn = str(players[0].name)
-                                elif turn == "Player 2":
-                                    for i in range(0, len(players)):
-                                        if players[i].name == "Player 2" and i < len(players)-1:
-                                            turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 2" and i == len(players)-1:
-                                            turn = str(players[0].name)
-                                elif turn == "Player 3":
-                                    for i in range(0, len(players)):
-                                        if players[i].name == "Player 3" and i < len(players)-1:
-                                            turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 3" and i == len(players)-1:
-                                            turn = str(players[0].name)
-                                elif turn == "Player 4":
-                                    for i in range(0, len(players)):
-                                        if players[i].name == "Player 4" and i < len(players)-1:
-                                            turn = str(players[i + 1].name)
-                                        elif players[i].name == "Player 4" and i == len(players)-1:
-                                            turn = str(players[0].name)
-                                active_player.turn = False
+                                turn = change_turn(players, active_player, turn)
 
                         counter += 1
                     die1.draw(screen)
