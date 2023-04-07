@@ -21,10 +21,8 @@ class Player:
         self.property_list = []
         #all players are created with it not being their turn to play
         self.turn = False
-
-        #self.rect = self.player_icon.get_rect(center=(self.x, self.y))
-        # self.jail_free = False
-        # self.bankrupt = False
+        self.jail= False
+        self.bankrupt = False
 
     def draw(self, screen):
         screen.blit(self.player_icon, self.board_positions[self.location])
@@ -47,8 +45,6 @@ class Player:
             index = self.property_list.index(new_property)
             self.property_list.remove(new_property)
 
-
-    # TODO -- fix-- how does this work with the timer??
     def movement(self, spaces_moved):
         #make sure icon loops back to beginning of list if it reaches the end
         if (self.location + spaces_moved) > 39:
@@ -65,9 +61,10 @@ class Player:
         # return self.jail_free
 
     # Sets the get out of jail free card to positive when the player obtains one
-    def set_jail_free(self):
-        pass
-        # self.jail_free = true
+    def go_to_jail(self):
+        self.jail = True
+        #go to the jail spot
+        self.location = 10
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):

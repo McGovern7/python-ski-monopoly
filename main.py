@@ -202,27 +202,32 @@ def get_icon_positions():
 
 
 # TODO - how do I get this popup message to stay on the screen until the button is clicked?? (feel free to edit)
-def property_pop_up(screen, message):
+def property_pop_up(screen, active_player, message):
     # buttons
     roll_img = pygame.image.load("images/roll.png").convert_alpha()
     yes_button = button.Button(roll_img, 950, 400, "yes", black, 1)
     no_button = button.Button(roll_img, 1050, 400, "no", black, 1)
+    # draws pop up message
+    pygame.draw.rect(screen, red, (850, 310, 300, 150))
+    pygame.draw.rect(screen, white, (860, 320, 280, 130))
+    draw_text(screen, message, font, black, 900, 330)
     yes_button.draw(screen)
     no_button.draw(screen)
-    # draws pop up message
-    pygame.draw.rect(screen, red, (850, 110, 300, 150))
-    pygame.draw.rect(screen, red, (860, 120, 290, 140))
-    draw_text(screen, message, font, black, 900, 100)
-
-    # return true for now
-    return True
-
-    # if "yes" button is clicked, answer is true
+    # if "yes" button is clicked, user buys the property
     if yes_button.check_click():
-        return True
-    # if no button is clicked, then answer is false
+        property.owner = active_player.name
+        # add it to their property list
+        active_player.property_list.append(property)
+        print("Price: ", property.price)
+        # take money out of their bank account
+        bank = active_player.bank
+        bank.withdraw(int(property.price))
+        print("Money: ", bank.total)
+        return ""
+    # if no button is clicked, user does not buy the property
     if no_button.check_click():
-        return False
+        return ""
+
 
 
 def interact(screen, active_player, properties):
@@ -234,18 +239,23 @@ def interact(screen, active_player, properties):
         if int(active_player.location) == int(property.location):
             # check if property is owned by anyone
             if property.owner == "NONE":
-                # if the player wants to buy the property
-                answer = property_pop_up(screen, "Do you want to buy this property?")
-                if answer:
-                    # change property status to owned
-                    property.owner = active_player.name
-                    # add it to their property list
-                    active_player.property_list.append(property)
-                    print("Price: ", property.price)
-                    # take money out of their bank account
-                    bank = active_player.bank
-                    bank.withdraw(int(property.price))
-                    print("Money: ", bank.total)
+                #send message to call pop-up back to main
+                return "landlord opportunity"
+    #interaction for GO
+    if int(active_player.location) == 0:
+        bank = active_player.bank
+        #call go function in Bank Account class
+        bank.go()
+        return ""
+    #interaction for go to jail spot (send player to jail)
+    elif int(active_player.location) == 30:
+        active_player.go_to_jail()
+        return ""
+    #interaction for community chest
+    #interaction for chance
+    #interaction for tax
+    #interaction for railroad
+
 
 
 def change_turn(players, active_player, turn):
@@ -490,6 +500,7 @@ def main():
     # initial roll to see who goes first
     first_rolls = []
     first_roll = True
+    result = ""
 
     # load community chest and chance cards
     cards = load_cards()
@@ -669,6 +680,9 @@ def main():
                     draw_text(screen, "Determine player order by", medium_font, black, 890, 300)
                     draw_text(screen, "each person rolling the dice once", medium_font, black,
                               850, 330)
+                # print pop-ups if needed
+                if result == "landlord opportunity":
+                    result = property_pop_up(screen, active_player, "Would you like to buy this property?")
                 active_player.turn = True
                 if turn == active_player.name and active_player.turn:
                     if not is_rolling:
@@ -708,7 +722,7 @@ def main():
                                 if not first_roll:
                                     active_player.movement(roll)
                                     # interact with that spot on the board
-                                    interact(screen, active_player, properties)
+                                    result = interact(screen, active_player, properties)
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players
                                 if first_roll:
@@ -733,9 +747,6 @@ def main():
 
                                 die1_value = -1
                                 die2_value = -1
-                                # if stay== False:
-                                #     turn = change_turn(players, active_player, turn)
-                                #     has_rolled = False
 
                         counter += 1
                     die1.draw(screen)
