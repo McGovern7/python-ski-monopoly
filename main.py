@@ -410,6 +410,7 @@ def main():
 
     new_press = True
     is_rolling = False
+    has_rolled = False
     counter = 0
     die1_value = -1
     die2_value = -1
@@ -462,6 +463,7 @@ def main():
     properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
     board_return_button = button.Button(board_return_img, 1000, 50, "Return to Board", white, 1.5)
     roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
+    end_button = button.Button(singleplayer_img, 970, 680, "END TURN", black, .75)
     player1_button = button.Button(player1_img, 250, 420, "Icon 1", white, 1)
     player2_button = button.Button(player2_img, 350, 420, "Icon 2", white, 1)
     player3_button = button.Button(player3_img, 450, 420, "Icon 3", white, 1)
@@ -482,6 +484,8 @@ def main():
     player4 = Player(player4_img, "Player 4", bank4, .6, icon_positions)
     players = [player1, player2, player3, player4]
     new_players = [player1, player2, player3, player4]
+
+
 
     # initial roll to see who goes first
     first_rolls = []
@@ -667,14 +671,18 @@ def main():
                               850, 330)
                 active_player.turn = True
                 if turn == active_player.name and active_player.turn:
-                    active_player.turn = True
                     if not is_rolling:
-                        active_player.turn = True
                         draw_text(screen, str(active_player.name) + "'s turn", medium_font, black, 900, 700)
-                        roll_button.draw(screen)
-                        if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
-                            counter = 0
-                            is_rolling = True
+                        if not has_rolled:
+                            roll_button.draw(screen)
+                            if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
+                                counter = 0
+                                is_rolling = True
+                        else:
+                            end_button.draw(screen)
+                            if end_button.check_click():  # rolls on a space key or button click
+                                turn = change_turn(players, active_player, turn)
+                                has_rolled = False
                     else:
                         # A die_value of -1 indicates the die is not done rolling.
                         # Otherwise, roll() returns a random value from 1 to 6.
@@ -684,6 +692,7 @@ def main():
                             die2_value = die2.roll(counter)
                         if die1_value != -1 and die2_value != -1:
                             # Both dice are done rolling
+                            has_rolled = True
 
                             # Return the dice to the start
                             if not die1.at_start:
@@ -700,7 +709,6 @@ def main():
                                     active_player.movement(roll)
                                     # interact with that spot on the board
                                     interact(screen, active_player, properties)
-
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players
                                 if first_roll:
@@ -725,7 +733,9 @@ def main():
 
                                 die1_value = -1
                                 die2_value = -1
-                                turn = change_turn(players, active_player, turn)
+                                # if stay== False:
+                                #     turn = change_turn(players, active_player, turn)
+                                #     has_rolled = False
 
                         counter += 1
                     die1.draw(screen)
