@@ -25,7 +25,9 @@ small_font_1 = pygame.font.SysFont(FONT_NAME, 16)
 small_font_2 = pygame.font.SysFont(FONT_NAME, 15)
 small_font_3 = pygame.font.SysFont(FONT_NAME, 12)
 small_font_4 = pygame.font.SysFont(FONT_NAME, 10)
-small_button_font = pygame.font.SysFont('Verdana', 14)
+small_cs_font_1 = pygame.font.SysFont('comicsansms', 14)
+small_cs_font_3 = pygame.font.SysFont('comicsansms', 11)
+small_cs_font_4 = pygame.font.SysFont('comicsansms', 10)
 # Create the screen
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -209,7 +211,7 @@ def property_pop_up(screen, active_player, message, properties):
     # draws pop up message
     pygame.draw.rect(screen, red, (850, 310, 300, 150))
     pygame.draw.rect(screen, white, (860, 320, 280, 130))
-    draw_text(screen, message, small_button_font, black, 870, 330)
+    draw_text(screen, message, small_cs_font_1, black, 870, 330)
     yes_button.draw(screen)
     no_button.draw(screen)
     # if "yes" button is clicked, user buys the property
@@ -221,11 +223,11 @@ def property_pop_up(screen, active_player, message, properties):
                 bought_property.owner = active_player.name
                 # add it to their property list
                 active_player.property_list.append(bought_property)
-                print("Price: ", bought_property.price)
+                #DEBUGGING
+                #print("Price: ", bought_property.price)
                 # take money out of their bank account
                 bank = active_player.bank
                 bank.withdraw(int(bought_property.price))
-                print("Money: ", bank.total)
                 return ""
 
     # if no button is clicked, user does not buy the property
@@ -329,19 +331,40 @@ def board_screen(screen, icon_positions, properties):
         # up the left side
         if x_coord == 35:
             pygame.draw.rect(screen, property.region, (90, y_coord - 33, 20, 64))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 34, y_coord)
+            #name of property
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord-30)
+            #draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord, y_coord-10)
+
         # across the top
         if y_coord == 35:
+            #color square for region
             pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 25, y_coord + 30)
+            #if property name has more than two words, display it differently
+            if property.property_name.find(' ') > -1:
+                name = property.property_name.split(' ')
+                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 25, y_coord)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 22, y_coord + 15)
+                # draw the cost to buy property
+                draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 20, y_coord + 35)
+            else:
+                draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 30, y_coord + 15)
+                # draw the cost to buy property
+                draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 20, y_coord + 35)
+
         # down the right side
         if x_coord == 765:
             pygame.draw.rect(screen, property.region, (685, y_coord - 32, 20, 64))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 50, y_coord)
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 58, y_coord-30)
+            # draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 34, y_coord - 10)
+
         # across the bottom
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 25, y_coord - 50)
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 32, y_coord - 55)
+            # draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
 
     # tile lines
     y = center_y
