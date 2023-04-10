@@ -25,6 +25,7 @@ small_font_1 = pygame.font.SysFont(FONT_NAME, 16)
 small_font_2 = pygame.font.SysFont(FONT_NAME, 15)
 small_font_3 = pygame.font.SysFont(FONT_NAME, 12)
 small_font_4 = pygame.font.SysFont(FONT_NAME, 10)
+small_button_font = pygame.font.SysFont('Verdana', 14)
 # Create the screen
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -200,9 +201,7 @@ def get_icon_positions():
         icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
     return icon_positions
 
-
-# TODO - how do I get this popup message to stay on the screen until the button is clicked?? (feel free to edit)
-def property_pop_up(screen, active_player, message):
+def property_pop_up(screen, active_player, message, properties):
     # buttons
     roll_img = pygame.image.load("images/roll.png").convert_alpha()
     yes_button = button.Button(roll_img, 950, 400, "yes", black, 1)
@@ -210,32 +209,36 @@ def property_pop_up(screen, active_player, message):
     # draws pop up message
     pygame.draw.rect(screen, red, (850, 310, 300, 150))
     pygame.draw.rect(screen, white, (860, 320, 280, 130))
-    draw_text(screen, message, font, black, 900, 330)
+    draw_text(screen, message, small_button_font, black, 870, 330)
     yes_button.draw(screen)
     no_button.draw(screen)
     # if "yes" button is clicked, user buys the property
     if yes_button.check_click():
-        property.owner = active_player.name
-        # add it to their property list
-        active_player.property_list.append(property)
-        print("Price: ", property.price)
-        # take money out of their bank account
-        bank = active_player.bank
-        bank.withdraw(int(property.price))
-        print("Money: ", bank.total)
-        return ""
+        #determine what property player is on
+        for property in properties:
+            if int(active_player.location) == int(property.location):
+                bought_property = property
+                bought_property.owner = active_player.name
+                # add it to their property list
+                active_player.property_list.append(bought_property)
+                print("Price: ", bought_property.price)
+                # take money out of their bank account
+                bank = active_player.bank
+                bank.withdraw(int(bought_property.price))
+                print("Money: ", bank.total)
+                return ""
+
     # if no button is clicked, user does not buy the property
     if no_button.check_click():
         return ""
+    else:
+        return "landlord opportunity"
 
 
 
 def interact(screen, active_player, properties):
     # interaction for properties
     for property in properties:
-        print("Name: ", active_player.name)
-        print("Property location: ", property.location)
-        print("Player location: ", active_player.location)
         if int(active_player.location) == int(property.location):
             # check if property is owned by anyone
             if property.owner == "NONE":
@@ -499,7 +502,8 @@ def main():
 
     # initial roll to see who goes first
     first_rolls = []
-    first_roll = True
+    ##TODO - CHANGE THIS VALUE BACK TO FALSE to play the actual game
+    first_roll = False
     result = ""
 
     # load community chest and chance cards
@@ -682,7 +686,7 @@ def main():
                               850, 330)
                 # print pop-ups if needed
                 if result == "landlord opportunity":
-                    result = property_pop_up(screen, active_player, "Would you like to buy this property?")
+                    result = property_pop_up(screen, active_player, "Would you like to buy this property?", properties)
                 active_player.turn = True
                 if turn == active_player.name and active_player.turn:
                     if not is_rolling:
@@ -723,6 +727,7 @@ def main():
                                     active_player.movement(roll)
                                     # interact with that spot on the board
                                     result = interact(screen, active_player, properties)
+
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players
                                 if first_roll:
