@@ -31,21 +31,14 @@ class Button:
         self.check_click()
 
     def check_click(self):
-        action = False
         # get mouse position
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             # clicked
             if pygame.mouse.get_pressed()[0] == 1:
-                self.clicked = True
-                action = True
-            # hover
+                return True
             else:
                 self.text = button_font.render(self.text_input, True, gray)
-                if self.clicked:
-                    self.clicked = False
-                    action = False
+                return False
         else:
             self.text = button_font.render(self.text_input, True, self.text_color)
-
-        return action

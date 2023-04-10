@@ -21,6 +21,8 @@ class Property:
         #start with no houses or hotels on property
         self.num_houses = 0
         self.num_hotels = 0
+        #start with no owner
+        self.owner = "NONE"
         #current rent is the original rent (at the start)
         self.rent = self.original_rent
         #starts not being part of a monopoly
