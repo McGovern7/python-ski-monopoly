@@ -4,10 +4,10 @@ import socket
 import pickle
 
 import player
-import button
 import random
+from button import Button
 from Bank_Account import Bank_Account
-from Die import Die
+from die import Die
 from Property import Property
 from card import Card
 from player import Player
@@ -322,7 +322,7 @@ def main():
 
     # Multiplayer initializations
     ip_address = ""
-    input_rect = pygame.Rect(300, 320, 200, 32)
+    input_rect = pygame.Rect(SCREEN_WIDTH/2 - 100, 300, 200, 32)
     color_active = pygame.Color('white')
     color_passive = pygame.Color('gray')
     box_color = color_passive
@@ -349,18 +349,18 @@ def main():
     player4_img = pygame.image.load("images/icon4.png").convert_alpha()
 
     # draw buttons
-    singleplayer_button = button.Button(singleplayer_img, 280, 210, "Single-Player", white, 1)
-    multiplayer_button = button.Button(multiplayer_img, 520, 210, "Multi-Player", white, 1)
-    startgame_button = button.Button(startgame_img, 400, 500, "Start Game", white, 1)
-    num_computers1_button = button.Button(number_img, 300, 310, "1", white, 1.5)
-    num_computers2_button = button.Button(number_img, 400, 310, "2", white, 1.5)
-    num_computers3_button = button.Button(number_img, 500, 310, "3", white, 1.5)
-    properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
-    roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
-    player1_button = button.Button(player1_img, 250, 420, "Icon 1", white, 1)
-    player2_button = button.Button(player2_img, 350, 420, "Icon 2", white, 1)
-    player3_button = button.Button(player3_img, 450, 420, "Icon 3", white, 1)
-    player4_button = button.Button(player4_img, 550, 420, "Icon 4", white, 1)
+    singleplayer_button = Button(singleplayer_img, 280, 210, "Single-Player", white, 1)
+    multiplayer_button = Button(multiplayer_img, 520, 210, "Multi-Player", white, 1)
+    startgame_button = Button(startgame_img, 400, 500, "Start Game", white, 1)
+    num_computers1_button = Button(number_img, 300, 310, "1", white, 1.5)
+    num_computers2_button = Button(number_img, 400, 310, "2", white, 1.5)
+    num_computers3_button = Button(number_img, 500, 310, "3", white, 1.5)
+    properties_button = Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
+    roll_button = Button(roll_img, 935, 757, "ROLL", black, 2)
+    player1_button = Button(player1_img, 250, 420, "Icon 1", white, 1)
+    player2_button = Button(player2_img, 350, 420, "Icon 2", white, 1)
+    player3_button = Button(player3_img, 450, 420, "Icon 3", white, 1)
+    player4_button = Button(player4_img, 550, 420, "Icon 4", white, 1)
 
     # load board positions
     icon_positions = get_icon_positions()
@@ -469,7 +469,7 @@ def main():
             elif game_multiplayer:
                 game_singleplayer = False
 
-                draw_text(screen, "Enter server ip:", medium_font, black, 320, 285)
+                draw_text(screen, "Enter server ip:", medium_font, black, 320, 260)
 
                 if active:
                     box_color = color_active
@@ -477,56 +477,62 @@ def main():
                     box_color = color_passive
 
                 pygame.draw.rect(screen, box_color, input_rect)
-                draw_text(screen, ip_address, medium_font, black, input_rect.x + 5, input_rect.y + 5)
+                pygame.draw.rect(screen, pygame.Color("black"), input_rect, 3, 1)
+                draw_text(screen, ip_address, medium_font, black, input_rect.x + 5, input_rect.y + 4)
 
+                message = ""
                 if not active and not connecting:
                     # Attempt connection to server
                     connecting = True
+                    draw_text(screen,
+                              "Loading...",
+                              medium_font,
+                              black,
+                              285, 375)
+                    # Bad style
+                    pygame.display.update()
                     n = Network(ip_address)
-                    if n.get_games() is not None:
-                        error = False
-                        connected = True
-                    else:
+                    if n.get_games() is None:
+                        message = "Error connecting to server. Please re-type IP."
                         error = True
                         ip_address = ""
                         active = True
                         connecting = False
+                    elif n.get_games() == "full":
+                        message = "Server is full. Please wait for a spot."
+                        error = True
+                        ip_address = ""
+                        active = True
+                        connecting = False
+                    else:
+                        error = False
+                        connected = True
 
                 if error:
-                    draw_text(screen,
-                              "Error connecting to server. Please re-type IP.",
-                              medium_font,
-                              black,
-                              285, 375)
+                    draw_text(screen, message, medium_font, black, 285, 375)
 
                 if connected:
                     games = n.get_games()
 
-                    for i in range(0, len(games)):
-                        server_box = pygame.Rect(300, 330 + (32 * i), 200, 32)
-                        server_box_color = pygame.Color("gray")
-                        if i % 2 == 0:
-                            server_box_color = pygame.Color("white")
-                        pygame.draw.rect(screen, server_box_color, server_box)
-                        draw_text(screen,
-                                  "Game #" + str(games[i + 1].get_id()),
-                                  medium_font,
-                                  black,
-                                  server_box.x + 5,
-                                  server_box.y + 5)
+                    # for i in range(0, len(games)):
+                    #     server_box = pygame.Rect(300, 360 + (32 * i), 200, 32)
+                    #     server_box_color = pygame.Color("gray")
+                    #     if i % 2 == 0:
+                    #         server_box_color = pygame.Color("white")
+                    #     pygame.draw.rect(screen, server_box_color, server_box)
+                    #     draw_text(screen,
+                    #               "Game #" + str(games[i].get_id() + 1),
+                    #               medium_font,
+                    #               black,
+                    #               server_box.x + 5,
+                    #               server_box.y + 5)
 
-                    # draw_text(screen,
-                    #           "Connected to game #" + str(n.get_game_id() + 1),
-                    #           medium_font,
-                    #           black,
-                    #           285, 375)
-                    # draw_text(screen,
-                    #           "You are player " + str(n..get_p() + 1),
-                    #           medium_font,
-                    #           black,
-                    #           285, 400)
-
-                    # draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
+                    draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
+                    player1_button.draw(screen)
+                    player2_button.draw(screen)
+                    player3_button.draw(screen)
+                    player4_button.draw(screen)
+                    startgame_button.draw(screen)
         elif current_screen == screens.get("BOARD"):
             board_screen(screen, icon_positions, properties)
             # load roll dice image (eventually only loads during player's turn

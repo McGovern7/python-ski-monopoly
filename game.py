@@ -1,4 +1,5 @@
 from player import Player
+from die import Die
 
 MAX_PLAYERS = 4
 MIN_PLAYERS = 2
@@ -10,6 +11,7 @@ class Game:
         self.players = []
         self.player_turn = 0
         self.dice = []
+        self.isRunning = False
 
     def get_id(self):
         return self.game_id

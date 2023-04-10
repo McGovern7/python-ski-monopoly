@@ -3,8 +3,6 @@ from _thread import *
 import pickle
 from game import Game
 
-# server = "162.247.88.151" # Lofts
-# server = "10.245.202.223" # UVM
 server = socket.gethostname()
 port = 5555
 
@@ -82,9 +80,12 @@ while True:
     print("Connected to:", addr)
 
     id_count += 1
-    game_id = id_count // 4
-    games[id_count] = Game(id_count)
+    game_id = (id_count - 1) // 4
 
-    conn.send(pickle.dumps(games))
-
-    start_new_thread(threaded_client, (conn, game_id))
+    if id_count > 5:
+        conn.send(pickle.dumps("full"))
+    else:
+        if id_count == 1:
+            games[game_id] = Game(game_id)
+        conn.send(pickle.dumps(games))
+        start_new_thread(threaded_client, (conn, game_id))
