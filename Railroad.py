@@ -1,11 +1,13 @@
 class Railroad:
     #creates a railroad based on name
-    def __init__(self, railroad_name):
+    def __init__(self, railroad_name, board_location):
         self.name = railroad_name
         #rent starts at 25 for one railroad
         self.rent = 25
         self.price = 200
         self.owner = 'NONE'
+        #location on board
+        self.location = board_location
         #starts off without a mortgage
         self.mortgaged = False
 

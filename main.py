@@ -11,6 +11,7 @@ from die import Die
 from Property import Property
 from card import Card
 from player import Player
+from Railroad import Railroad
 from network import Network
 
 # Initialize PyGame
@@ -523,6 +524,11 @@ def main():
     cards = load_cards()
     # load property cards
     properties = load_properties()
+    #create railroad cards
+    railroads = [Railroad('Locke Mountain T-bar', 5),
+                 Railroad('Bonaventure Quad', 15),
+                 Railroad('Aerial Tramway', 25),
+                 Railroad('Gondola One', 35)]
 
     # created die
     die1 = Die(screen,
