@@ -219,15 +219,7 @@ def property_pop_up(screen, active_player, message, properties):
         #determine what property player is on
         for property in properties:
             if int(active_player.location) == int(property.location):
-                bought_property = property
-                bought_property.owner = active_player.name
-                # add it to their property list
-                active_player.property_list.append(bought_property)
-                #DEBUGGING
-                #print("Price: ", bought_property.price)
-                # take money out of their bank account
-                bank = active_player.bank
-                bank.withdraw(int(bought_property.price))
+                active_player.buy_property(property)
                 return ""
 
     # if no button is clicked, user does not buy the property
@@ -248,9 +240,7 @@ def interact(screen, active_player, properties):
                 return "landlord opportunity"
     #interaction for GO
     if int(active_player.location) == 0:
-        bank = active_player.bank
-        #call go function in Bank Account class
-        bank.go()
+        active_player.go()
         return ""
     #interaction for go to jail spot (send player to jail)
     elif int(active_player.location) == 30:

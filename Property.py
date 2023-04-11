@@ -104,20 +104,6 @@ class Property:
         else:
             print("You cannot sell a hotel")
 
-    #function to sell a property
-    def sell_property(self, player):
-        #remove property from player's property list
-        player.property_list.remove(self)
-        #give them the money back
-        bank_account = player.bank
-        bank_account.deposit(self.price)
-        #if there are hotels/houses, sell these back too
-        if self.num_hotels > 0:
-            self.sell_hotel(bank_account)
-        if self.num_houses > 0:
-            for i in range(0, self.num_houses):
-                self.sell_house(bank_account)
-
     #function to mortgage a property
     def mortgage(self, bank_account):
         #return half the money to the player
