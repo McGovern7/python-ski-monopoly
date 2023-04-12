@@ -244,8 +244,12 @@ def interact(screen, active_player, properties, railroads, cards):
         active_player.go_to_jail()
         return ""
     #interaction for community chest
+
     #interaction for chance
     #interaction for tax
+    if int(active_player.location) == 4 or int(active_player.location) == 38:
+        active_player.pay_taxes()
+
     #interaction for railroad
 
 
