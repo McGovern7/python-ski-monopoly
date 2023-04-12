@@ -40,6 +40,7 @@ class Button:
             self.text_color = gray
             # clicked
             if pygame.mouse.get_pressed()[0] == 1:
+                self.clicked = True
                 self.text_color = dark_gray
                 return True
         elif self.clicked:
