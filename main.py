@@ -301,7 +301,7 @@ def board_screen(screen, icon_positions, properties):
     screen.fill((127, 127, 127))
     # draw board
     # full board (outer square)
-    pygame.draw.rect(screen, board_color, (0, 0, 800, 800))
+    pygame.draw.rect(screen, board_color, (0, 0, 795, 795))
     # center square
     center_dimension = 575  # Used for the height and width of the center space
     center_x = 110
@@ -380,7 +380,11 @@ def board_screen(screen, icon_positions, properties):
 
     #chance
     chance_logo = pygame.image.load("images/chance.png")
-    screen.blit(chance_logo, (7, 223))
+    chance_logo2 = pygame.image.load("images/chance2.png")
+    chance_logo3 = pygame.image.load("images/chance3.png")
+    screen.blit(chance_logo, (694, 158))
+    screen.blit(chance_logo2, (7, 223))
+    screen.blit(chance_logo3, (287, 694))
 
 
 
