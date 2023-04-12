@@ -374,6 +374,10 @@ def board_screen(screen, icon_positions, properties):
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
 
+    #tax squares
+    draw_text(screen, 'TAX', small_cs_font_4, black, 75, 463)
+    draw_text(screen, 'TAX', small_cs_font_4, black, 208, 725)
+
 
 # card screen
 def card_screen(screen, font, property_list):
