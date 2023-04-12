@@ -386,6 +386,12 @@ def board_screen(screen, icon_positions, properties):
     screen.blit(chance_logo2, (7, 223))
     screen.blit(chance_logo3, (287, 694))
 
+    #community chest
+
+    #free parking
+    parking = pygame.image.load("images/freeParking.png")
+    screen.blit(parking, (705, 25))
+
 
 
 # card screen
