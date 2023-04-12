@@ -5,10 +5,10 @@ class Bank_Account:
         self.total = 1500
     #function to deposit money from the bank into player account
     def deposit(self, payment):
-        self.total += payment
+        self.total += int(payment)
     #function that gives money back to the bank
     def withdraw(self, payback):
-        self.total -= payback
+        self.total -= int(payback)
 
     #prints total amount in player's bank account
     def print(self):

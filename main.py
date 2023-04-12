@@ -157,13 +157,12 @@ def load_cards():
     file = open('text/cards.txt', 'r')
     lines = file.readlines()
     count = 0
-    # Strips the newline character
     for line in lines:
         count += 1
         # DEBUGGING
         # print("Line{}: {}".format(count, line.strip()))
         # split the line by commas
-        card_features = line.split(',')
+        card_features = line.strip().split(',')
         # create a property object
         new_card = Card(card_features[0], card_features[1], card_features[2], card_features[3])
         cards.append(new_card)
@@ -229,9 +228,25 @@ def property_pop_up(screen, active_player, message, properties):
     else:
         return "landlord opportunity"
 
+def card_pop_up(screen, active_player, message):
+    # buttons
+    roll_img = pygame.image.load("images/roll.png").convert_alpha()
+    okay_button = Button(roll_img, 950, 400, "ok", black, 1)
+    # draws pop up message
+    pygame.draw.rect(screen, red, (850, 310, 300, 150))
+    pygame.draw.rect(screen, white, (860, 320, 280, 130))
+    draw_text(screen, message[8:], small_cs_font_1, black, 870, 330)
+    okay_button.draw(screen)
+    # if ok button is clicked, player can move on
+    if okay_button.check_click():
+        return ""
+    else:
+        return message
 
+def interact(active_player, properties, railroads, cards):
+    #shuffle the cards!
+    random.shuffle(cards)
 
-def interact(screen, active_player, properties, railroads, cards):
     # interaction for properties
     for property in properties:
         if int(active_player.location) == int(property.location):
@@ -244,8 +259,21 @@ def interact(screen, active_player, properties, railroads, cards):
         active_player.go_to_jail()
         return ""
     #interaction for community chest
+    if int(active_player.location) == 2 or int(active_player.location) == 17 or int(active_player.location) == 33:
+        for card in cards:
+            if card.kind == 'Community Chest':
+                chosen_card = card
+                chosen_card.play(active_player)
+                return chosen_card.message
 
     #interaction for chance
+    if int(active_player.location) == 7 or int(active_player.location) == 22 or int(active_player.location) == 36:
+        for card in cards:
+            if card.kind == 'Chance':
+                chosen_card = card
+                message = chosen_card.play(active_player)
+                return message
+
     #interaction for tax
     if int(active_player.location) == 4 or int(active_player.location) == 38:
         active_player.pay_taxes()
@@ -715,6 +743,8 @@ def main():
                 # print pop-ups if needed
                 if result == "landlord opportunity":
                     result = property_pop_up(screen, active_player, "Would you like to buy this property?", properties)
+                if str(result)[:8] == 'message:':
+                    result = card_pop_up(screen, active_player, result)
                 active_player.turn = True
                 if turn == active_player.name and active_player.turn:
                     if not is_rolling:
@@ -750,11 +780,13 @@ def main():
                                 is_rolling = False
                                 print("You rolled a", die1_value + die2_value)
                                 roll = die1_value + die2_value
+                                #TODO -- test spaces here by changing the roll value
+                                roll = 2
                                 # if it's not the first roll, player icon should move number of spaces rolled
                                 if not first_roll:
                                     active_player.movement(roll)
                                     # interact with that spot on the board
-                                    result = interact(screen, active_player, properties, railroads, cards)
+                                    result = interact(active_player, properties, railroads, cards)
 
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players

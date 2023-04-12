@@ -6,17 +6,32 @@ class Card:
         self.payment = resulting_payment
         self.movement = resulting_movement
 
-    #TODO - need a function to move the player however many spaces (for chance cards), AND
-    #TODO calculate how many spaces to certain property and move the player
     #function to return the message of the card and impact your bank account
-    def play_card(self, bank_account):
+    def play(self, player):
+        bank = player.bank
         #if the payment is positive, deposit money
-        if self.payment > 0:
-            bank_account.deposit(self.payment)
+        print(self.payment)
+        if int(self.payment) > 0:
+            bank.deposit(self.payment)
+            print("deposit")
         else:
-            bank_account.withdraw(-1*self.payment)
-        #if negative withdraw money from account
-        return self.message
+            # if negative withdraw money from account
+            bank.withdraw(-1*int(self.payment))
+            print("withdraw")
+        #if there is a movement forward
+        if self.movement[0] == '+':
+            player.movement(int(self.movement[1]))
+        #if there is a movement backwards
+        elif self.movement[0] == '-':
+            player.movement(int(self.movement))
+        #if there is no movement
+        elif self.movement == '*':
+            return
+        #if there is a movement to a spot
+        else:
+            print('moved to a spot')
+            player.location = int(self.movement)
+
     def print(self):
         print(self.kind + ": " + self.message)
 

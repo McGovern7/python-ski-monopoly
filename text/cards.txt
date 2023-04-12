@@ -1,32 +1,32 @@
-Community Chest,Advance to go (collect 200).,0,Go
-Community Chest,Pay $100 for ski lessons.,-100,0
-Community Chest,You gave everyone a snowboarding lesson. Collect $50 from each player.,50,0
-Community Chest,You won second prize in a freestyle ski competition. Collect $15.,15,0
-Community Chest,Get out of jail free.,0,0
-Community Chest,Go to jail.,0,Jail
-Community Chest,You won a free ski pass. Collect $100.,100,0
-Community Chest,You crashed into a snowboarder. Pay $75 for doctor's fees.,-75,0
-Community Chest,A skier crashed into you. Collect $200 for damages.,200,0
-Community Chest,You hit a rock and broke your skis. Pay $150 for repairs.,-150,0
-Community Chest,You gained a sponsorship. Collect $250.,250,0
-Community Chest,You inherit a pair of skis. Collect $100,100,0
-Community Chest,You rescued an injured skier. Collect $50.,50,0
-Community Chest,You need to repair the resort. Pay $40 per house and $115 per hotel.,40+115,0
-Community Chest,You go off trail and get lost. Pay Ski Patrol $50.,50,0
-Community Chest,You find a free hot chocolate on the table in the lodge. Collect $5.,5,0
-Chance,Go to jail.,0,Jail
-Chance,Get out of jail free.,0,0
-Chance,Advance to go (collect $200).,0,Go
-Chance,Your friends plan a ski trip. Advance to Vail.,0,Vail
-Chance,The mountain is very windy. Go back 3 spaces.,0,-3
-Chance,You are going on a family ski trip. Advance to Bretton Woods.,0,Bretton Woods
-Chance,The lift breaks down. Pay $200.,200,0
-Chance,You are gifted a free lift ticket. Advance to Arizona Skibowl.,0,Arizona Skibowl
-Chance,Your goggles are really foggy. Pay $20.,20,0
-Chance,The mountain is very icy. Slip forward 2 spaces.,0,2
-Chance,You win a free ride on the snow groomer. Advance to the snow groomer.,0,snow groomer
-Chance,You take a bad fall. Pay $10.,-10,0
-Chance,A friend buys you pizza in the lodge. Collect $15.,15,0
-Chance,You try to race everyone to the bottom of the mountain. Advance 3 spaces.,0,3
-Chance,You take too long to strap into your snowboard bindings. Pay each player $50.,50,0
-Chance,You do a 360 off a jump. Collect $50.,50,0
+Community Chest,message:Advance to go (collect $200).,0,0
+Community Chest,message:Pay $100 for ski lessons.,-100,*
+Community Chest,message:You gave everyone a snowboarding lesson. Collect $50 from each player.,50,*
+Community Chest,message:You won second prize in a freestyle ski competition. Collect $15.,15,*
+Community Chest,message:Get out of jail free.,0,*
+Community Chest,message:Go to jail.,0,10
+Community Chest,message:You won a free ski pass. Collect $100.,100,*
+Community Chest,message:You crashed into a snowboarder. Pay $75 for doctor's fees.,-75,*
+Community Chest,message:A skier crashed into you. Collect $200 for damages.,200,*
+Community Chest,message:You hit a rock and broke your skis. Pay $150 for repairs.,-150,*
+Community Chest,message:You gained a sponsorship. Collect $250.,250,*
+Community Chest,message:You inherit a pair of skis. Collect $100,100,*
+Community Chest,message:You rescued an injured skier. Collect $50.,50,*
+Community Chest,message:You need to repair the resort. Pay $200.,200,*
+Community Chest,message:You go off trail and get lost. Pay Ski Patrol $50.,50,*
+Community Chest,message:You find a free hot chocolate on the table in the lodge. Collect $5.,5,*
+Chance,message:Go to jail.,0,10*
+Chance,message:Get out of jail free.,0,*
+Chance,message:Advance to go (collect $200).,0,0
+Chance,message:Your friends plan a ski trip. Advance to Vail.,0,39
+Chance,message:The mountain is very windy. Go back 3 spaces.,0,-3
+Chance,message:You are going on a family ski trip. Advance to Bretton Woods.,0,14
+Chance,message:The lift breaks down. Pay $200.,200,*
+Chance,message:You are gifted a free lift ticket. Advance to Arizona Skibowl.,0,1
+Chance,message:Your goggles are really foggy. Pay $20.,20,*
+Chance,message:The mountain is very icy. Slip forward 2 spaces.,0,+2
+Chance,message:You win a free ride on the snow groomer. Advance to the snow groomer.,0,29
+Chance,message:You take a bad fall. Pay $10.,-10,*
+Chance,message:A friend buys you pizza in the lodge. Collect $15.,15,*
+Chance,message:You try to race everyone to the bottom of the mountain. Advance 3 spaces.,0,+3
+Chance,message:You take too long to strap into your snowboard bindings. Pay each player $50.,50,*
+Chance,message:You do a 360 off a jump. Collect $50.,50,*
