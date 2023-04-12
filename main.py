@@ -4,13 +4,14 @@ import socket
 import pickle
 
 import player
-import button
 import random
+from button import Button
 from Bank_Account import Bank_Account
-from Die import Die
+from die import Die
 from Property import Property
 from card import Card
 from player import Player
+from Railroad import Railroad
 from network import Network
 
 # Initialize PyGame
@@ -25,6 +26,9 @@ small_font_1 = pygame.font.SysFont(FONT_NAME, 16)
 small_font_2 = pygame.font.SysFont(FONT_NAME, 15)
 small_font_3 = pygame.font.SysFont(FONT_NAME, 12)
 small_font_4 = pygame.font.SysFont(FONT_NAME, 10)
+small_cs_font_1 = pygame.font.SysFont('comicsansms', 14)
+small_cs_font_3 = pygame.font.SysFont('comicsansms', 11)
+small_cs_font_4 = pygame.font.SysFont('comicsansms', 10)
 # Create the screen
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -200,42 +204,36 @@ def get_icon_positions():
         icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
     return icon_positions
 
-
-# TODO - how do I get this popup message to stay on the screen until the button is clicked?? (feel free to edit)
-def property_pop_up(screen, active_player, message):
+def property_pop_up(screen, active_player, message, properties):
     # buttons
     roll_img = pygame.image.load("images/roll.png").convert_alpha()
-    yes_button = button.Button(roll_img, 950, 400, "yes", black, 1)
-    no_button = button.Button(roll_img, 1050, 400, "no", black, 1)
+    yes_button = Button(roll_img, 950, 400, "yes", black, 1)
+    no_button = Button(roll_img, 1050, 400, "no", black, 1)
     # draws pop up message
     pygame.draw.rect(screen, red, (850, 310, 300, 150))
     pygame.draw.rect(screen, white, (860, 320, 280, 130))
-    draw_text(screen, message, font, black, 900, 330)
+    draw_text(screen, message, small_cs_font_1, black, 870, 330)
     yes_button.draw(screen)
     no_button.draw(screen)
     # if "yes" button is clicked, user buys the property
     if yes_button.check_click():
-        property.owner = active_player.name
-        # add it to their property list
-        active_player.property_list.append(property)
-        print("Price: ", property.price)
-        # take money out of their bank account
-        bank = active_player.bank
-        bank.withdraw(int(property.price))
-        print("Money: ", bank.total)
-        return ""
+        #determine what property player is on
+        for property in properties:
+            if int(active_player.location) == int(property.location):
+                active_player.buy_property(property)
+                return ""
+
     # if no button is clicked, user does not buy the property
     if no_button.check_click():
         return ""
+    else:
+        return "landlord opportunity"
 
 
 
 def interact(screen, active_player, properties):
     # interaction for properties
     for property in properties:
-        print("Name: ", active_player.name)
-        print("Property location: ", property.location)
-        print("Player location: ", active_player.location)
         if int(active_player.location) == int(property.location):
             # check if property is owned by anyone
             if property.owner == "NONE":
@@ -243,9 +241,7 @@ def interact(screen, active_player, properties):
                 return "landlord opportunity"
     #interaction for GO
     if int(active_player.location) == 0:
-        bank = active_player.bank
-        #call go function in Bank Account class
-        bank.go()
+        active_player.go()
         return ""
     #interaction for go to jail spot (send player to jail)
     elif int(active_player.location) == 30:
@@ -326,19 +322,40 @@ def board_screen(screen, icon_positions, properties):
         # up the left side
         if x_coord == 35:
             pygame.draw.rect(screen, property.region, (90, y_coord - 33, 20, 64))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 34, y_coord)
+            #name of property
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord-30)
+            #draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord, y_coord-10)
+
         # across the top
         if y_coord == 35:
+            #color square for region
             pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 25, y_coord + 30)
+            #if property name has more than two words, display it differently
+            if property.property_name.find(' ') > -1:
+                name = property.property_name.split(' ')
+                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 25, y_coord)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 22, y_coord + 15)
+                # draw the cost to buy property
+                draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 20, y_coord + 35)
+            else:
+                draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 30, y_coord + 15)
+                # draw the cost to buy property
+                draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 20, y_coord + 35)
+
         # down the right side
         if x_coord == 765:
             pygame.draw.rect(screen, property.region, (685, y_coord - 32, 20, 64))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 50, y_coord)
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 58, y_coord-30)
+            # draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 34, y_coord - 10)
+
         # across the bottom
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
-            draw_text(screen, property.property_name, small_font_3, black, x_coord - 25, y_coord - 50)
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 32, y_coord - 55)
+            # draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
 
     # tile lines
     y = center_y
@@ -436,7 +453,7 @@ def main():
 
     # Multiplayer initializations
     ip_address = ""
-    input_rect = pygame.Rect(300, 320, 200, 32)
+    input_rect = pygame.Rect(SCREEN_WIDTH/2 - 100, 300, 200, 32)
     color_active = pygame.Color('white')
     color_passive = pygame.Color('gray')
     box_color = color_passive
@@ -464,20 +481,20 @@ def main():
     player4_img = pygame.image.load("images/icon4.png").convert_alpha()
 
     # draw buttons
-    singleplayer_button = button.Button(singleplayer_img, 280, 210, "Single-Player", white, 1)
-    multiplayer_button = button.Button(multiplayer_img, 520, 210, "Multi-Player", white, 1)
-    startgame_button = button.Button(startgame_img, 400, 500, "Start Game", white, 1)
-    num_computers1_button = button.Button(number_img, 300, 310, "1", white, 1.5)
-    num_computers2_button = button.Button(number_img, 400, 310, "2", white, 1.5)
-    num_computers3_button = button.Button(number_img, 500, 310, "3", white, 1.5)
-    properties_button = button.Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
-    board_return_button = button.Button(board_return_img, 1000, 50, "Return to Board", white, 1.5)
-    roll_button = button.Button(roll_img, 935, 757, "ROLL", black, 2)
-    end_button = button.Button(singleplayer_img, 970, 680, "END TURN", black, .75)
-    player1_button = button.Button(player1_img, 250, 420, "Icon 1", white, 1)
-    player2_button = button.Button(player2_img, 350, 420, "Icon 2", white, 1)
-    player3_button = button.Button(player3_img, 450, 420, "Icon 3", white, 1)
-    player4_button = button.Button(player4_img, 550, 420, "Icon 4", white, 1)
+    singleplayer_button = Button(singleplayer_img, 280, 210, "Single-Player", white, 1)
+    multiplayer_button = Button(multiplayer_img, 520, 210, "Multi-Player", white, 1)
+    startgame_button = Button(startgame_img, 400, 500, "Start Game", white, 1)
+    num_computers1_button = Button(number_img, 300, 310, "1", white, 1.5)
+    num_computers2_button = Button(number_img, 400, 310, "2", white, 1.5)
+    num_computers3_button = Button(number_img, 500, 310, "3", white, 1.5)
+    properties_button = Button(properties_img, 1000, 50, "Inspect Properties", white, 1.5)
+    board_return_button = Button(board_return_img, 1000, 50, "Return to Board", white, 1.5)
+    roll_button = Button(roll_img, 935, 757, "ROLL", black, 2)
+    end_button = Button(singleplayer_img, 970, 680, "END TURN", black, .75)
+    player1_button = Button(player1_img, 250, 420, "Icon 1", white, 1)
+    player2_button = Button(player2_img, 350, 420, "Icon 2", white, 1)
+    player3_button = Button(player3_img, 450, 420, "Icon 3", white, 1)
+    player4_button = Button(player4_img, 550, 420, "Icon 4", white, 1)
 
     # load board positions
     icon_positions = get_icon_positions()
@@ -499,13 +516,19 @@ def main():
 
     # initial roll to see who goes first
     first_rolls = []
-    first_roll = True
+    ##TODO - CHANGE THIS VALUE BACK TO FALSE to play the actual game
+    first_roll = False
     result = ""
 
     # load community chest and chance cards
     cards = load_cards()
     # load property cards
     properties = load_properties()
+    #create railroad cards
+    railroads = [Railroad('Locke Mountain T-bar', 5),
+                 Railroad('Bonaventure Quad', 15),
+                 Railroad('Aerial Tramway', 25),
+                 Railroad('Gondola One', 35)]
 
     # created die
     die1 = Die(screen,
@@ -589,7 +612,7 @@ def main():
             elif game_multiplayer:
                 game_singleplayer = False
 
-                draw_text(screen, "Enter server ip:", medium_font, black, 320, 285)
+                draw_text(screen, "Enter server ip:", medium_font, black, 320, 260)
 
                 if active:
                     box_color = color_active
@@ -597,57 +620,62 @@ def main():
                     box_color = color_passive
 
                 pygame.draw.rect(screen, box_color, input_rect)
-                draw_text(screen, ip_address, medium_font, black, input_rect.x + 5, input_rect.y + 5)
+                pygame.draw.rect(screen, pygame.Color("black"), input_rect, 3, 1)
+                draw_text(screen, ip_address, medium_font, black, input_rect.x + 5, input_rect.y + 4)
 
+                message = ""
                 if not active and not connecting:
                     # Attempt connection to server
                     connecting = True
+                    draw_text(screen,
+                              "Loading...",
+                              medium_font,
+                              black,
+                              285, 375)
+                    # Bad style
+                    pygame.display.update()
                     n = Network(ip_address)
-                    if n.get_games() is not None:
-                        error = False
-                        connected = True
-                    else:
+                    if n.get_games() is None:
+                        message = "Error connecting to server. Please re-type IP."
                         error = True
                         ip_address = ""
                         active = True
                         connecting = False
+                    elif n.get_games() == "full":
+                        message = "Server is full. Please wait for a spot."
+                        error = True
+                        ip_address = ""
+                        active = True
+                        connecting = False
+                    else:
+                        error = False
+                        connected = True
 
                 if error:
-                    draw_text(screen,
-                              "Error connecting to server. Please re-type IP.",
-                              medium_font,
-                              black,
-                              285, 375)
+                    draw_text(screen, message, medium_font, black, 285, 375)
 
                 if connected:
                     games = n.get_games()
 
-                    for i in range(0, len(games)):
-                        server_box = pygame.Rect(300, 330 + (32 * i), 200, 32)
-                        server_box_color = pygame.Color("gray")
-                        if i % 2 == 0:
-                            server_box_color = pygame.Color("white")
-                        pygame.draw.rect(screen, server_box_color, server_box)
-                        draw_text(screen,
-                                  "Game #" + str(games[i + 1].get_id()),
-                                  medium_font,
-                                  black,
-                                  server_box.x + 5,
-                                  server_box.y + 5)
+                    # for i in range(0, len(games)):
+                    #     server_box = pygame.Rect(300, 360 + (32 * i), 200, 32)
+                    #     server_box_color = pygame.Color("gray")
+                    #     if i % 2 == 0:
+                    #         server_box_color = pygame.Color("white")
+                    #     pygame.draw.rect(screen, server_box_color, server_box)
+                    #     draw_text(screen,
+                    #               "Game #" + str(games[i].get_id() + 1),
+                    #               medium_font,
+                    #               black,
+                    #               server_box.x + 5,
+                    #               server_box.y + 5)
 
-                    # draw_text(screen,
-                    #           "Connected to game #" + str(n.get_game_id() + 1),
-                    #           medium_font,
-                    #           black,
-                    #           285, 375)
-                    # draw_text(screen,
-                    #           "You are player " + str(n..get_p() + 1),
-                    #           medium_font,
-                    #           black,
-                    #           285, 400)
-
-                    # draw_text(screen, "Number of Computers", medium_font, black, 285, 375)
-
+                    draw_text(screen, "Choose your Piece", medium_font, black, 305, 350)
+                    player1_button.draw(screen)
+                    player2_button.draw(screen)
+                    player3_button.draw(screen)
+                    player4_button.draw(screen)
+                    startgame_button.draw(screen)
         elif current_screen == screens.get("BOARD"):
             board_screen(screen, icon_positions, properties)
             properties_button.draw(screen)
@@ -682,7 +710,7 @@ def main():
                               850, 330)
                 # print pop-ups if needed
                 if result == "landlord opportunity":
-                    result = property_pop_up(screen, active_player, "Would you like to buy this property?")
+                    result = property_pop_up(screen, active_player, "Would you like to buy this property?", properties)
                 active_player.turn = True
                 if turn == active_player.name and active_player.turn:
                     if not is_rolling:
@@ -723,6 +751,7 @@ def main():
                                     active_player.movement(roll)
                                     # interact with that spot on the board
                                     result = interact(screen, active_player, properties)
+
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players
                                 if first_roll:

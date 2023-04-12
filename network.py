@@ -17,6 +17,8 @@ class Network:
         try:
             self.client.connect(self.addr)
             response = pickle.loads(self.client.recv(4096))
+            if response == "full":
+                print("Server is full...")
             return response
         except:
             print("Error Connecting to server...")
