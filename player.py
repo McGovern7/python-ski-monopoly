@@ -99,6 +99,7 @@ class Player:
     def movement(self, spaces_moved):
         #make sure icon loops back to beginning of list if it reaches the end
         if (self.location + spaces_moved) > 39:
+            self.go()
             self.location = (self.location + spaces_moved) % 40
         else:
             self.location += spaces_moved
