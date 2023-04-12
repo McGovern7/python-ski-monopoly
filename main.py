@@ -231,7 +231,7 @@ def property_pop_up(screen, active_player, message, properties):
 
 
 
-def interact(screen, active_player, properties):
+def interact(screen, active_player, properties, railroads, cards):
     # interaction for properties
     for property in properties:
         if int(active_player.location) == int(property.location):
@@ -239,12 +239,8 @@ def interact(screen, active_player, properties):
             if property.owner == "NONE":
                 #send message to call pop-up back to main
                 return "landlord opportunity"
-    #interaction for GO
-    if int(active_player.location) == 0:
-        active_player.go()
-        return ""
     #interaction for go to jail spot (send player to jail)
-    elif int(active_player.location) == 30:
+    if int(active_player.location) == 30:
         active_player.go_to_jail()
         return ""
     #interaction for community chest
@@ -750,7 +746,7 @@ def main():
                                 if not first_roll:
                                     active_player.movement(roll)
                                     # interact with that spot on the board
-                                    result = interact(screen, active_player, properties)
+                                    result = interact(screen, active_player, properties, railroads, cards)
 
                                 # FIRST ROLL-----
                                 # Have everyone roll once to find out the order of when each person players
