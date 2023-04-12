@@ -6,6 +6,7 @@ button_font = pygame.font.SysFont('Verdana', 20)
 
 white = (255, 255, 255)
 gray = (170, 170, 170)
+dark_gray = (150, 150, 150)
 
 
 # button class
@@ -20,25 +21,30 @@ class Button:
         self.rect = self.image.get_rect(center=(self.x, self.y))
         self.text_color = text_color
         self.text_input = text_input
-        self.text = button_font.render(self.text_input, True, self.text_color)
-        self.text_rect = self.text.get_rect(center=(self.x, self.y))
         self.clicked = False
 
     # draws the button
     def draw(self, screen):
-        screen.blit(self.image, self.rect)
-        screen.blit(self.text, self.text_rect)
         self.check_click()
 
+        screen.blit(self.image, self.rect)
+
+        text = button_font.render(self.text_input, True, self.text_color)
+        text_rect = text.get_rect(center=(self.x, self.y))
+        screen.blit(text, text_rect)
+
     def check_click(self):
-        # get mouse position
+        # Check mouse position
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
+            self.text_color = gray
             # clicked
             if pygame.mouse.get_pressed()[0] == 1:
+                self.text_color = dark_gray
                 return True
-            else:
-                self.text = button_font.render(self.text_input, True, gray)
-                return False
+        elif self.clicked:
+            self.text_color = dark_gray
         else:
-            self.text = button_font.render(self.text_input, True, self.text_color)
+            self.text_color = white
+
+        return False
