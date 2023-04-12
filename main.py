@@ -378,6 +378,11 @@ def board_screen(screen, icon_positions, properties):
     draw_text(screen, 'TAX', small_cs_font_4, black, 75, 463)
     draw_text(screen, 'TAX', small_cs_font_4, black, 208, 725)
 
+    #chance
+    chance_logo = pygame.image.load("images/chance.png")
+    screen.blit(chance_logo, (7, 223))
+
+
 
 # card screen
 def card_screen(screen, font, property_list):
