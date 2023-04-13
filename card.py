@@ -16,7 +16,7 @@ class Card:
             print("deposit")
         else:
             # if negative withdraw money from account
-            bank.withdraw(-1*int(self.payment))
+            bank.withdraw(self.payment)
             print("withdraw")
         #if there is a movement forward
         if self.movement[0] == '+':

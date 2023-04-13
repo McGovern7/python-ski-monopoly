@@ -235,7 +235,15 @@ def card_pop_up(screen, active_player, message):
     # draws pop up message
     pygame.draw.rect(screen, red, (850, 310, 300, 150))
     pygame.draw.rect(screen, white, (860, 320, 280, 130))
-    draw_text(screen, message[8:], small_cs_font_1, black, 870, 330)
+    # remove 'message' part before printing
+    message_edit = message[8:]
+    #see if we need to split the string
+    if message.find('//') != -1:
+        messages = message_edit.split('//')
+        draw_text(screen, messages[0], small_cs_font_1, black, 870, 330)
+        draw_text(screen, messages[1], small_cs_font_1, black, 870, 350)
+    else:
+        draw_text(screen, message_edit, small_cs_font_1, black, 870, 330)
     okay_button.draw(screen)
     # if ok button is clicked, player can move on
     if okay_button.check_click():
@@ -407,18 +415,18 @@ def board_screen(screen, icon_positions, properties):
     draw_text(screen, 'TAX', small_cs_font_4, black, 208, 725)
 
     #chance
-    chance_logo = pygame.image.load("images/chance.png")
-    chance_logo2 = pygame.image.load("images/chance2.png")
-    chance_logo3 = pygame.image.load("images/chance3.png")
-    screen.blit(chance_logo, (694, 158))
-    screen.blit(chance_logo2, (7, 223))
-    screen.blit(chance_logo3, (287, 694))
+    # chance_logo = pygame.image.load("images/chance.png")
+    # chance_logo2 = pygame.image.load("images/chance2.png")
+    # chance_logo3 = pygame.image.load("images/chance3.png")
+    # screen.blit(chance_logo, (694, 158))
+    # screen.blit(chance_logo2, (7, 223))
+    # screen.blit(chance_logo3, (287, 694))
 
     #community chest
-
-    #free parking
-    parking = pygame.image.load("images/freeParking.png")
-    screen.blit(parking, (705, 25))
+    #
+    # #free parking
+    # parking = pygame.image.load("images/freeParking.png")
+    # screen.blit(parking, (705, 25))
 
 
 
