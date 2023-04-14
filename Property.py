@@ -22,11 +22,13 @@ class Property:
         self.num_houses = 0
         self.num_hotels = 0
         #start with no owner
-        self.owner = "NONE"
+        self.owner = 'NONE'
         #current rent is the original rent (at the start)
         self.rent = self.original_rent
         #starts not being part of a monopoly
         self.part_of_monopoly = False
+        #starts off having no mortgage
+        self.mortgaged = False
     #function to double rent if the property becomes part of a monopoly
     def in_monopoly(self):
         self.part_of_monopoly = True
@@ -57,8 +59,8 @@ class Property:
     def sell_house(self, bank_account):
         #can only sell a house if you have one
         if self.num_houses > 0 :
-            #put money back in the bank account
-            bank_account.deposit(self.house_price)
+            #put money back in the bank account (only get half the price back)
+            bank_account.deposit(self.house_price/2)
             #decrease number of houses owned
             self.num_houses -= 1
             #this changes the rent depending on how many houses you own
@@ -88,19 +90,33 @@ class Property:
             #this changes the rent
             self.rent = self.rent_hotel
         else:
-            print("You must have 4 houses on the property before you can purchase a hotel.")
+            print("You must have 4 houses on the property before you can purchase ONE hotel.")
     #function to sell the hotel using player's bank account to give back the money
     def sell_hotel(self, bank_account):
         #can only sell a hotel if you have one
         if self.num_hotels == 1:
-            #get the money back in your account
-            bank_account.deposit(self.hotel_cost)
+            #get the money back in your account (only get half the price back)
+            bank_account.deposit(self.hotel_cost/2)
             #go back to having 4 houses
             self.num_houses = 4
             #this changes the rent
             self.rent = self.rent_4house
         else:
             print("You cannot sell a hotel")
+
+    #function to mortgage a property
+    def mortgage(self, bank_account):
+        #return half the money to the player
+        bank_account.deposit(self.price/2)
+        #mark the property as mortgaged (player will not collect rent anymore)
+        self.mortgaged = True
+
+    #function to remove mortgage
+    def remove_mortgage(self, bank_account):
+        #player owes half the price of the property + 10%
+        bank_account.withdraw(self.price/2 + self.price/2*.1)
+        #mark property as not mortgaged (active now)
+        self.mortgaged = False
 
     #function to print property info
     def print(self):

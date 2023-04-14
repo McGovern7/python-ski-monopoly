@@ -19,18 +19,35 @@ class Player:
         self.location = 0
         #all players start the game with no properties
         self.property_list = []
+        #all player start the game with no railroads
+        self.railroad_list = []
         #all players are created with it not being their turn to play
         self.turn = False
-
-        #self.rect = self.player_icon.get_rect(center=(self.x, self.y))
-        # self.jail_free = False
-        # self.bankrupt = False
+        self.jail= False
+        self.bankrupt = False
 
     def draw(self, screen):
-        screen.blit(self.player_icon, self.board_positions[self.location])
+        screen.blit(self.player_icon, self.board_positions[int(self.location)])
 
-    def add_property(self, new_property):
+    # function to buy a property
+    def buy_property(self, new_property):
+        new_property.owner = self.name
+        # add it to their property list
         self.property_list.append(new_property)
+        self.bank.withdraw(int(new_property.price))
+
+    # function to sell a property
+    def sell_property(self, property):
+        # remove property from player's property list
+        self.property_list.remove(property)
+        # give them the money back
+        self.bank.deposit(property.price)
+        # if there are hotels/houses, sell these back too
+        if property.num_hotels > 0:
+            property.sell_hotel(self.bank)
+        if property.num_houses > 0:
+            for i in range(0, property.num_houses):
+                property.sell_house(self.bank)
 
     def check_properties(self, new_property):
         if new_property in self.property_list:
@@ -38,20 +55,52 @@ class Player:
         else:
             return False
 
-    def remove_property(self, new_property):
-        #make sure this property is in the list
-        if new_property not in self.property_list:
-            print("this property is not in the list of owned properties")
-            return
+    # function to buy railroad
+    def buy_railroad(self, new_railroad):
+        # withdraw the money from player's account
+        self.bank.withdraw(new_railroad.price)
+        # add this player's railroad list
+        self.railroad_list.append(new_railroad)
+        # update the owner
+        new_railroad.owner = self.name
+
+        #if this is the first railroad, rent is the same
+        if len(self.railroad_list) > 1:
+            #update what the rent is for every railroad if owns more than 1 railroad
+            if len(self.railroad_list) == 2:
+                new_rent = 50
+            elif len(self.railroad_list) == 3:
+                new_rent = 100
+            elif len(self.railroad_list) == 4:
+                new_rent = 200
+            else:
+                print('Too many railroads')
+                new_rent = 200
+            for railroad in self.railroad_list:
+                railroad.rent = new_rent
+
+    # function to sell a railroad
+    def sell_railroad(self, railroad):
+        # remove property from player's property list
+        self.railroad_list.remove(railroad)
+        # give them the money back
+        self.bank.deposit(railroad.price)
+
+    # function pay taxes -- pays either 10% of your income or $200 (whichever is smaller)
+    def pay_taxes(self):
+        # 10% of income
+        percentage_tax = self.bank.total * .1
+        # if 10% of income is less than $200, pay this
+        if percentage_tax < 200:
+            self.bank.withdraw(percentage_tax)
         else:
-            index = self.property_list.index(new_property)
-            self.property_list.remove(new_property)
+            self.bank.withdraw(200)
 
-
-    # TODO -- fix-- how does this work with the timer??
     def movement(self, spaces_moved):
         #make sure icon loops back to beginning of list if it reaches the end
         if (self.location + spaces_moved) > 39:
+            #player passed go
+            self.go()
             self.location = (self.location + spaces_moved) % 40
         else:
             self.location += spaces_moved
@@ -59,15 +108,26 @@ class Player:
     def check_position(self):
         return self.board_positions[self.location]
 
+    # function to pay another player rent when you land on their property
+    # pass the property owner's bank account and the rent you owe them
+    def pay_rent(self, property_owner_account, rent_owed):
+        self.bank.withdraw(rent_owed)
+        property_owner_account.deposit(rent_owed)
+
+    # function to call everytime a player goes over "GO" board space
+    def go(self):
+        self.bank.total += 200
+
     # Check if the player currently has a get out of jail free card
     def check_jail_free(self):
         pass
         # return self.jail_free
 
     # Sets the get out of jail free card to positive when the player obtains one
-    def set_jail_free(self):
-        pass
-        # self.jail_free = true
+    def go_to_jail(self):
+        self.jail = True
+        #go to the jail spot
+        self.location = 10
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):
