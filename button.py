@@ -23,6 +23,7 @@ class Button:
         self.text = button_font.render(self.text_input, True, self.text_color)
         self.text_rect = self.text.get_rect(center=(self.x, self.y))
         self.clicked = False
+        self.new_press = False
 
     # draws the button
     def draw(self, screen):
@@ -42,3 +43,11 @@ class Button:
                 return False
         else:
             self.text = button_font.render(self.text_input, True, self.text_color)
+
+    def check_new_press(self):
+        if pygame.mouse.get_pressed()[0] and self.new_press:
+            self.new_press = False
+            return True
+        if not pygame.mouse.get_pressed()[0] and not self.new_press:
+            self.new_press = True
+            return False

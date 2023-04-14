@@ -408,7 +408,6 @@ def main():
     }
     current_screen = screens.get("START")
 
-    new_press = True
     is_rolling = False
     counter = 0
     die1_value = -1
@@ -536,22 +535,12 @@ def main():
             singleplayer_button.draw(screen)
             multiplayer_button.draw(screen)
 
-            if pygame.mouse.get_pressed()[0] and new_press:
-                new_press = False
+            if singleplayer_button.check_new_press():
                 if singleplayer_button.check_click():
                     game_singleplayer = True
+            if multiplayer_button.check_new_press():
                 if multiplayer_button.check_click():
                     game_multiplayer = True
-                # set number of computers
-                if num_computers1_button.check_click():
-                    num_computers = 1
-                if num_computers2_button.check_click():
-                    num_computers = 2
-                if num_computers3_button.check_click():
-                    num_computers = 3
-                # if startgame button clicked and game setup, move to game screen
-                if startgame_button.check_click():
-                    current_screen = screens.get("BOARD")
 
             if game_singleplayer:
                 game_multiplayer = False
@@ -560,6 +549,17 @@ def main():
                 num_computers1_button.draw(screen)
                 num_computers2_button.draw(screen)
                 num_computers3_button.draw(screen)
+
+                # set number of computers
+                if num_computers1_button.check_new_press():
+                    if num_computers1_button.check_click():
+                        num_computers = 1
+                if num_computers2_button.check_new_press():
+                    if num_computers2_button.check_click():
+                       num_computers = 2
+                if num_computers3_button.check_new_press():
+                    if num_computers3_button.check_click():
+                        num_computers = 3
 
                 total_players = num_players + num_computers
 
@@ -570,6 +570,11 @@ def main():
                     player3_button.draw(screen)
                     player4_button.draw(screen)
                     startgame_button.draw(screen)
+
+                    # if startgame button clicked and game setup, move to game screen
+                    if startgame_button.check_new_press():
+                        if startgame_button.check_click():
+                            current_screen = screens.get("BOARD")
 
             elif game_multiplayer:
                 game_singleplayer = False
@@ -672,9 +677,13 @@ def main():
                         active_player.turn = True
                         draw_text(screen, str(active_player.name) + "'s turn", medium_font, black, 900, 700)
                         roll_button.draw(screen)
-                        if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
+                        if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                             counter = 0
                             is_rolling = True
+                        if roll_button.check_new_press():
+                            if roll_button.check_click():
+                                counter = 0
+                                is_rolling = True
                     else:
                         # A die_value of -1 indicates the die is not done rolling.
                         # Otherwise, roll() returns a random value from 1 to 6.
@@ -733,8 +742,7 @@ def main():
 
             if keys[pygame.K_c]:  # press c to go to property screen
                 current_screen = screens.get("PROPS")
-            if pygame.mouse.get_pressed()[0] and new_press:  # click to move to property screen
-                new_press = False
+            if properties_button.check_new_press():
                 if properties_button.check_click():
                     current_screen = screens.get("PROPS")
 
@@ -751,13 +759,10 @@ def main():
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get("BOARD")
-            if pygame.mouse.get_pressed()[0] and new_press:  # click to move to board screen
-                new_press = False
+            if board_return_button.check_new_press():
                 if board_return_button.check_click():
                     current_screen = screens.get("BOARD")
 
-        if not pygame.mouse.get_pressed()[0] and not new_press:
-            new_press = True
         # Required to update screen
         pygame.display.update()
         clock.tick(60)
