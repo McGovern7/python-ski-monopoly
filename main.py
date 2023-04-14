@@ -342,6 +342,42 @@ def change_turn(players, active_player, turn):
 
 
 # SCREENS
+# turn deciding screen
+def turn_screen(screen, total_players):
+    '''
+    Function displaying the screen which decides the turn order of the game
+    :param screen: game screen
+    :param total_players: the number of active players
+    :return: nothing
+    '''
+    medium_font = pygame.font.SysFont('Verdana', 20)
+    screen.fill(lightblue)  # Fill screen background
+    pygame.draw.rect(screen, (41, 50, 65), (200, 100, 800, 300))
+    pygame.draw.rect(screen, black, (200, 100, 800, 300), 4)
+    draw_text(screen, "Roll To Determine Player Order", medium_font, white, 440, 125)
+    if total_players == 2:
+        pygame.draw.rect(screen, white, (480, 175, 80, 80))
+        pygame.draw.rect(screen, black, (480, 175, 80, 80), 3)
+        pygame.draw.rect(screen, white, (640, 175, 80, 80))
+        pygame.draw.rect(screen, black, (640, 175, 80, 80), 3)
+    elif total_players == 3:
+        pygame.draw.rect(screen, white, (400, 175, 80, 80))
+        pygame.draw.rect(screen, black, (400, 175, 80, 80), 3)
+        pygame.draw.rect(screen, white, (560, 175, 80, 80))
+        pygame.draw.rect(screen, black, (560, 175, 80, 80), 3)
+        pygame.draw.rect(screen, white, (720, 175, 80, 80))
+        pygame.draw.rect(screen, black, (720, 175, 80, 80), 3)
+    elif total_players == 4:
+        pygame.draw.rect(screen, white, (320, 175, 80, 80))
+        pygame.draw.rect(screen, black, (320, 175, 80, 80), 3)
+        pygame.draw.rect(screen, white, (480, 175, 80, 80))
+        pygame.draw.rect(screen, black, (480, 175, 80, 80), 3)
+        pygame.draw.rect(screen, white, (640, 175, 80, 80))
+        pygame.draw.rect(screen, black, (640, 175, 80, 80), 3)
+        pygame.draw.rect(screen, white, (800, 175, 80, 80))
+        pygame.draw.rect(screen, black, (800, 175, 80, 80), 3)
+
+
 # board screen
 def board_screen(screen, icon_positions, properties):
     '''
@@ -581,20 +617,20 @@ def main():
     player4_img = pygame.image.load('images/icon4.png').convert_alpha()
 
     # draw buttons
-    singleplayer_button = Button(singleplayer_img, 280, 210, 'Single-Player', white, 1)
-    multiplayer_button = Button(multiplayer_img, 520, 210, 'Multi-Player', white, 1)
-    startgame_button = Button(startgame_img, 400, 500, 'Start Game', white, 1)
-    num_computers1_button = Button(number_img, 300, 310, '1', white, 1.5)
-    num_computers2_button = Button(number_img, 400, 310, '2', white, 1.5)
-    num_computers3_button = Button(number_img, 500, 310, '3', white, 1.5)
+    singleplayer_button = Button(singleplayer_img, 500, 210, 'Single-Player', white, 1)
+    multiplayer_button = Button(multiplayer_img, 700, 210, 'Multi-Player', white, 1)
+    startgame_button = Button(startgame_img, 600, 500, 'Start Game', white, 1)
+    num_computers1_button = Button(number_img, 525, 310, '1', white, 1.5)
+    num_computers2_button = Button(number_img, 600, 310, '2', white, 1.5)
+    num_computers3_button = Button(number_img, 675, 310, '3', white, 1.5)
     properties_button = Button(properties_img, 1000, 50, 'Inspect Properties', white, 1.5)
     board_return_button = Button(board_return_img, 1000, 50, 'Return to Board', white, 1.5)
     roll_button = Button(roll_img, 935, 757, 'ROLL', black, 2)
     end_button = Button(singleplayer_img, 970, 680, 'END TURN', black, .75)
-    player1_button = Button(player1_img, 250, 420, 'Icon 1', white, 1)
-    player2_button = Button(player2_img, 350, 420, 'Icon 2', white, 1)
-    player3_button = Button(player3_img, 450, 420, 'Icon 3', white, 1)
-    player4_button = Button(player4_img, 550, 420, 'Icon 4', white, 1)
+    player1_button = Button(player1_img, 450, 420, 'Icon 1', white, 1)
+    player2_button = Button(player2_img, 550, 420, 'Icon 2', white, 1)
+    player3_button = Button(player3_img, 650, 420, 'Icon 3', white, 1)
+    player4_button = Button(player4_img, 750, 420, 'Icon 4', white, 1)
 
     # load board positions
     icon_positions = get_icon_positions()
@@ -665,9 +701,9 @@ def main():
             # Fill screen background
             screen.fill((135, 206, 235))
 
-            draw_text(screen, 'Welcome to CS205 Project: Ski Resort Monopoly!', large_font, black, 80, 50)
+            draw_text(screen, 'Welcome to CS205 Project: Ski Resort Monopoly!', large_font, black, 290, 50)
             draw_text(screen, 'Press \'esc\' to close the program', small_font, black, 25, 750)
-            draw_text(screen, 'Game Setup', medium_font, black, 335, 150)
+            draw_text(screen, 'Game Setup', medium_font, black, 540, 150)
 
             singleplayer_button.draw(screen)
             multiplayer_button.draw(screen)
@@ -682,7 +718,7 @@ def main():
             if game_singleplayer:
                 game_multiplayer = False
                 num_players = 1
-                draw_text(screen, 'Number of Computers', medium_font, black, 285, 250)
+                draw_text(screen, 'Number of Computers', medium_font, black, 490, 250)
                 num_computers1_button.draw(screen)
                 num_computers2_button.draw(screen)
                 num_computers3_button.draw(screen)
@@ -701,7 +737,7 @@ def main():
                 total_players = num_players + num_computers
 
                 if num_computers > 0:
-                    draw_text(screen, 'Choose your Piece', medium_font, black, 305, 350)
+                    draw_text(screen, 'Choose your Piece', medium_font, black, 510, 350)
                     player1_button.draw(screen)
                     player2_button.draw(screen)
                     player3_button.draw(screen)
@@ -711,7 +747,7 @@ def main():
                     # if startgame button clicked and game setup, move to game screen
                     if startgame_button.check_new_press():
                         if startgame_button.check_click():
-                            current_screen = screens.get('BOARD')
+                            current_screen = screens.get('DECIDE_TURN')
 
             elif game_multiplayer:
                 game_singleplayer = False
@@ -780,6 +816,18 @@ def main():
                     player3_button.draw(screen)
                     player4_button.draw(screen)
                     startgame_button.draw(screen)
+        elif current_screen == screens.get('DECIDE_TURN'):
+            turn_screen(screen, total_players)
+            # (Created once) loads the number of players into each list based on the amount chosen in first screen
+            if not players_loaded:
+                players, new_players = load_players(screen, total_players, player1, player2, player3, player4,
+                                                    players, new_players)
+                players_loaded = True
+
+            startgame_button.draw(screen)
+            if startgame_button.check_new_press():
+                if startgame_button.check_click():
+                    current_screen = screens.get('BOARD')
         elif current_screen == screens.get('BOARD'):
             board_screen(screen, icon_positions, properties)
             properties_button.draw(screen)
