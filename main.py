@@ -331,6 +331,7 @@ def board_screen(screen, icon_positions, properties):
         if y_coord == 35:
             #color square for region
             pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
+            #houses = property.
             #if property name has more than two words, display it differently
             if property.property_name.find(' ') > -1:
                 name = property.property_name.split(' ')
@@ -389,7 +390,9 @@ def board_screen(screen, icon_positions, properties):
     #community chest
 
     #free parking
+    draw_text(screen, 'Free', small_cs_font_4, black, 705, 10)
     parking = pygame.image.load("images/freeParking.png")
+    draw_text(screen, 'Parking', small_cs_font_4, black, 705, 80)
     screen.blit(parking, (705, 25))
 
 
