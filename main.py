@@ -385,12 +385,12 @@ def board_screen(screen, icon_positions, properties):
             #color square for region
             pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
             houses = property.num_houses
-            houseX = 100
+            houseX = x_coord - 32 + (64/(property.num_houses+1))
             houseY = 100
-            for houses in num_houses:
-                pygame.draw.rect(screen, black, (houseX, houseY, 5, 5))
-                houseX += 5
-                houseY += 5
+            for house in range(property.num_houses):
+                pygame.draw.rect(screen, black, (houseX, houseY, 8, 8))
+                houseX += (64/(property.num_houses+1))
+                #houseY += 5
             #if property name has more than two words, display it differently
             if property.property_name.find(' ') > -1:
                 name = property.property_name.split(' ')
