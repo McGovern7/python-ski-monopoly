@@ -380,17 +380,23 @@ def board_screen(screen, icon_positions, properties):
             #draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord, y_coord-10)
 
+            # logic to print houses down the left side
+            houseY = y_coord - 32 + (64 / (property.num_houses + 1)) - 4
+            for house in range(property.num_houses):
+                pygame.draw.rect(screen, black, (96, houseY, 8, 8))
+                houseY += (64 / (property.num_houses + 1))
+
         # across the top
         if y_coord == 35:
             #color square for region
             pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
-            houses = property.num_houses
-            houseX = x_coord - 32 + (64/(property.num_houses+1))
-            houseY = 100
+
+            #logic to print houses along the top row
+            houseX = x_coord - 32 + (64/(property.num_houses+1)) - 4
             for house in range(property.num_houses):
-                pygame.draw.rect(screen, black, (houseX, houseY, 8, 8))
+                pygame.draw.rect(screen, black, (houseX, 100, 8, 8))
                 houseX += (64/(property.num_houses+1))
-                #houseY += 5
+
             #if property name has more than two words, display it differently
             if property.property_name.find(' ') > -1:
                 name = property.property_name.split(' ')
@@ -410,12 +416,24 @@ def board_screen(screen, icon_positions, properties):
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 34, y_coord - 10)
 
+            #logic to print houses down the right side
+            houseY = y_coord - 32 + (64 / (property.num_houses + 1)) - 4
+            for house in range(property.num_houses):
+                pygame.draw.rect(screen, black, (688, houseY, 8, 8))
+                houseY += (64/(property.num_houses+1))
+
         # across the bottom
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 32, y_coord - 55)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
+
+            # logic to print houses along the bottom row
+            houseX = x_coord - 32 + (64 / (property.num_houses + 1)) - 4
+            for house in range(property.num_houses):
+                pygame.draw.rect(screen, black, (houseX, 688, 8, 8))
+                houseX += (64 / (property.num_houses + 1))
 
     # tile lines
     y = center_y
