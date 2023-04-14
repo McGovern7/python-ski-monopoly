@@ -202,6 +202,7 @@ def get_icon_positions():
         icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
     return icon_positions
 
+
 def buy_pop_up(screen, active_player, message, properties, option):
     # buttons
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
@@ -215,15 +216,15 @@ def buy_pop_up(screen, active_player, message, properties, option):
     no_button.draw(screen)
     # if 'yes' button is clicked, user buys the property/railroad
     if yes_button.check_click():
-        #determine what property player is on
+        # determine what property player is on
         for property in properties:
             if int(active_player.location) == int(property.location):
-                #option 2 is buying a railroad
+                # option 2 is buying a railroad
                 if option == 2:
                     active_player.buy_railroad(property)
                     return ''
-                    #option 1 is buying a property
-                elif option==1:
+                    # option 1 is buying a property
+                elif option == 1:
                     active_player.buy_property(property)
                     return ''
 
@@ -231,12 +232,13 @@ def buy_pop_up(screen, active_player, message, properties, option):
     if no_button.check_click():
         return ''
     else:
-        #if railroad, return railroad opportunity
-        if option ==2:
+        # if railroad, return railroad opportunity
+        if option == 2:
             return 'railroad opportunity'
-        #otherwise it's a normal property
+        # otherwise it's a normal property
         else:
             return 'landlord opportunity'
+
 
 def card_pop_up(screen, message):
     # buttons
@@ -247,7 +249,7 @@ def card_pop_up(screen, message):
     pygame.draw.rect(screen, white, (860, 320, 280, 130))
     # remove 'message' part before printing
     message_edit = message[8:]
-    #see if we need to split the string
+    # see if we need to split the string
     if message.find('//') != -1:
         messages = message_edit.split('//')
         draw_text(screen, messages[0], small_cs_font_1, black, 870, 330)
@@ -256,13 +258,15 @@ def card_pop_up(screen, message):
         draw_text(screen, message_edit, small_cs_font_1, black, 870, 330)
     okay_button.draw(screen)
     # if ok button is clicked, player can move on
+
     if okay_button.check_click():
         return ''
     else:
         return message
 
+
 def interact(active_player, properties, railroads, cards):
-    #shuffle the cards!
+    # shuffle the cards!
     random.shuffle(cards)
 
     # interaction for properties
@@ -270,22 +274,22 @@ def interact(active_player, properties, railroads, cards):
         if int(active_player.location) == int(property.location):
             # check if property is owned by anyone
             if property.owner == 'NONE':
-                #send message to call pop-up back to main
+                # send message to call pop-up back to main
                 return 'landlord opportunity'
 
-    #interaction for railroads
+    # interaction for railroads
     for railroad in railroads:
         if int(active_player.location) == int(railroad.location):
             # check if property is owned by anyone
             if railroad.owner == 'NONE':
-                #send message to call pop-up back to main
+                # send message to call pop-up back to main
                 return 'railroad opportunity'
 
-    #interaction for go to jail spot (send player to jail)
+    # interaction for go to jail spot (send player to jail)
     if int(active_player.location) == 30:
         active_player.go_to_jail()
         return ''
-    #interaction for community chest
+    # interaction for community chest
     if int(active_player.location) == 2 or int(active_player.location) == 17 or int(active_player.location) == 33:
         for card in cards:
             if card.kind == 'Community Chest':
@@ -293,7 +297,7 @@ def interact(active_player, properties, railroads, cards):
                 chosen_card.play(active_player)
                 return chosen_card.message
 
-    #interaction for chance
+    # interaction for chance
     if int(active_player.location) == 7 or int(active_player.location) == 22 or int(active_player.location) == 36:
         for card in cards:
             if card.kind == 'Chance':
@@ -301,10 +305,9 @@ def interact(active_player, properties, railroads, cards):
                 message = chosen_card.play(active_player)
                 return message
 
-    #interaction for tax
+    # interaction for tax
     if int(active_player.location) == 4 or int(active_player.location) == 38:
         active_player.pay_taxes()
-
 
 
 def change_turn(players, active_player, turn):
@@ -375,10 +378,10 @@ def board_screen(screen, icon_positions, properties):
         # up the left side
         if x_coord == 35:
             pygame.draw.rect(screen, property.region, (90, y_coord - 33, 20, 64))
-            #name of property
-            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord-30)
-            #draw the cost to buy property
-            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord, y_coord-10)
+            # name of property
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord - 30)
+            # draw the cost to buy property
+            draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord, y_coord - 10)
 
             # logic to print houses down the left side
             houseY = y_coord - 32 + (64 / (property.num_houses + 1)) - 4
@@ -388,16 +391,16 @@ def board_screen(screen, icon_positions, properties):
 
         # across the top
         if y_coord == 35:
-            #color square for region
+            # color square for region
             pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
 
-            #logic to print houses along the top row
-            houseX = x_coord - 32 + (64/(property.num_houses+1)) - 4
+            # logic to print houses along the top row
+            houseX = x_coord - 32 + (64 / (property.num_houses + 1)) - 4
             for house in range(property.num_houses):
                 pygame.draw.rect(screen, black, (houseX, 100, 8, 8))
-                houseX += (64/(property.num_houses+1))
+                houseX += (64 / (property.num_houses + 1))
 
-            #if property name has more than two words, display it differently
+            # if property name has more than two words, display it differently
             if property.property_name.find(' ') > -1:
                 name = property.property_name.split(' ')
                 draw_text(screen, name[0], small_cs_font_3, black, x_coord - 25, y_coord)
@@ -412,15 +415,15 @@ def board_screen(screen, icon_positions, properties):
         # down the right side
         if x_coord == 765:
             pygame.draw.rect(screen, property.region, (685, y_coord - 32, 20, 64))
-            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 58, y_coord-30)
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 58, y_coord - 30)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 34, y_coord - 10)
 
-            #logic to print houses down the right side
+            # logic to print houses down the right side
             houseY = y_coord - 32 + (64 / (property.num_houses + 1)) - 4
             for house in range(property.num_houses):
                 pygame.draw.rect(screen, black, (688, houseY, 8, 8))
-                houseY += (64/(property.num_houses+1))
+                houseY += (64 / (property.num_houses + 1))
 
         # across the bottom
         if y_coord == 765:
@@ -452,11 +455,11 @@ def board_screen(screen, icon_positions, properties):
         pygame.draw.rect(screen, black, (x, center_y + center_dimension, 1, center_x))
         x += center_dimension / 9  # Spaces all the squares evenly
 
-    #tax squares
+    # tax squares
     draw_text(screen, 'TAX', small_cs_font_4, black, 75, 463)
     draw_text(screen, 'TAX', small_cs_font_4, black, 208, 725)
 
-    #chance
+    # chance
     chance_logo = pygame.image.load("images/chance.png")
     chance_logo2 = pygame.image.load("images/chance2.png")
     chance_logo3 = pygame.image.load("images/chance3.png")
@@ -464,14 +467,13 @@ def board_screen(screen, icon_positions, properties):
     screen.blit(chance_logo2, (7, 223))
     screen.blit(chance_logo3, (287, 694))
 
-    #community chest
+    # community chest
 
-    #free parking
+    # free parking
     draw_text(screen, 'Free', small_cs_font_4, black, 705, 10)
     parking = pygame.image.load("images/freeParking.png")
     draw_text(screen, 'Parking', small_cs_font_4, black, 705, 80)
     screen.blit(parking, (705, 25))
-
 
 
 # card screen
@@ -534,7 +536,6 @@ def main():
     }
     current_screen = screens.get('START')
 
-    new_press = True
     is_rolling = False
     has_rolled = False
     counter = 0
@@ -552,7 +553,7 @@ def main():
 
     # Multiplayer initializations
     ip_address = ''
-    input_rect = pygame.Rect(SCREEN_WIDTH/2 - 100, 300, 200, 32)
+    input_rect = pygame.Rect(SCREEN_WIDTH / 2 - 100, 300, 200, 32)
     color_active = pygame.Color('white')
     color_passive = pygame.Color('gray')
     box_color = color_passive
@@ -611,8 +612,6 @@ def main():
     players = [player1, player2, player3, player4]
     new_players = [player1, player2, player3, player4]
 
-
-
     # initial roll to see who goes first
     first_rolls = []
     ##TODO - CHANGE THIS VALUE BACK TO FALSE to play the actual game
@@ -623,7 +622,7 @@ def main():
     cards = load_cards()
     # load property cards
     properties = load_properties()
-    #create railroad cards
+    # create railroad cards
     railroads = [Railroad('Locke Mountain T-bar', 5),
                  Railroad('Bonaventure Quad', 15),
                  Railroad('Aerial Tramway', 25),
@@ -673,22 +672,12 @@ def main():
             singleplayer_button.draw(screen)
             multiplayer_button.draw(screen)
 
-            if pygame.mouse.get_pressed()[0] and new_press:
-                new_press = False
+            if singleplayer_button.check_new_press():
                 if singleplayer_button.check_click():
                     game_singleplayer = True
+            if multiplayer_button.check_new_press():
                 if multiplayer_button.check_click():
                     game_multiplayer = True
-                # set number of computers
-                if num_computers1_button.check_click():
-                    num_computers = 1
-                if num_computers2_button.check_click():
-                    num_computers = 2
-                if num_computers3_button.check_click():
-                    num_computers = 3
-                # if startgame button clicked and game setup, move to game screen
-                if startgame_button.check_click():
-                    current_screen = screens.get('BOARD')
 
             if game_singleplayer:
                 game_multiplayer = False
@@ -697,6 +686,17 @@ def main():
                 num_computers1_button.draw(screen)
                 num_computers2_button.draw(screen)
                 num_computers3_button.draw(screen)
+
+                # set number of computers
+                if num_computers1_button.check_new_press():
+                    if num_computers1_button.check_click():
+                        num_computers = 1
+                if num_computers2_button.check_new_press():
+                    if num_computers2_button.check_click():
+                        num_computers = 2
+                if num_computers3_button.check_new_press():
+                    if num_computers3_button.check_click():
+                        num_computers = 3
 
                 total_players = num_players + num_computers
 
@@ -707,6 +707,11 @@ def main():
                     player3_button.draw(screen)
                     player4_button.draw(screen)
                     startgame_button.draw(screen)
+
+                    # if startgame button clicked and game setup, move to game screen
+                    if startgame_button.check_new_press():
+                        if startgame_button.check_click():
+                            current_screen = screens.get('BOARD')
 
             elif game_multiplayer:
                 game_singleplayer = False
@@ -820,14 +825,19 @@ def main():
                         draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
                         if not has_rolled:
                             roll_button.draw(screen)
-                            if keys[pygame.K_SPACE] or roll_button.check_click():  # rolls on a space key or button click
+                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                 counter = 0
                                 is_rolling = True
+                            if roll_button.check_new_press():
+                                if roll_button.check_click():
+                                    counter = 0
+                                    is_rolling = True
                         else:
                             end_button.draw(screen)
-                            if end_button.check_click():  # rolls on a space key or button click
-                                turn = change_turn(players, active_player, turn)
-                                has_rolled = False
+                            if end_button.check_new_press():
+                                if end_button.check_click():  # rolls on a space key or button click
+                                    turn = change_turn(players, active_player, turn)
+                                    has_rolled = False
                     else:
                         # A die_value of -1 indicates the die is not done rolling.
                         # Otherwise, roll() returns a random value from 1 to 6.
@@ -849,7 +859,7 @@ def main():
                                 is_rolling = False
                                 print('You rolled a', die1_value + die2_value)
                                 roll = die1_value + die2_value
-                                #TODO -- test spaces here by changing the roll value
+                                # TODO -- test spaces here by changing the roll value
                                 roll = 5
                                 # if it's not the first roll, player icon should move number of spaces rolled
                                 if not first_roll:
@@ -888,9 +898,8 @@ def main():
 
             if keys[pygame.K_c]:  # press c to go to property screen
                 current_screen = screens.get('PROPS')
-            if pygame.mouse.get_pressed()[0] and new_press:  # click to move to property screen
-                new_press = False
-                if properties_button.check_click():
+            if properties_button.check_new_press():
+                if properties_button.check_click():  # click to move to property screen
                     current_screen = screens.get('PROPS')
 
         elif current_screen == screens.get('PROPS'):
@@ -906,13 +915,10 @@ def main():
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
-            if pygame.mouse.get_pressed()[0] and new_press:  # click to move to board screen
-                new_press = False
-                if board_return_button.check_click():
+            if board_return_button.check_new_press():
+                if board_return_button.check_click():  # click to move to board screen
                     current_screen = screens.get('BOARD')
 
-        if not pygame.mouse.get_pressed()[0] and not new_press:
-            new_press = True
         # Required to update screen
         pygame.display.update()
         clock.tick(60)
