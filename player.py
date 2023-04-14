@@ -27,7 +27,7 @@ class Player:
         self.bankrupt = False
 
     def draw(self, screen):
-        screen.blit(self.player_icon, self.board_positions[self.location])
+        screen.blit(self.player_icon, self.board_positions[int(self.location)])
 
     # function to buy a property
     def buy_property(self, new_property):
@@ -99,6 +99,7 @@ class Player:
     def movement(self, spaces_moved):
         #make sure icon loops back to beginning of list if it reaches the end
         if (self.location + spaces_moved) > 39:
+            #player passed go
             self.go()
             self.location = (self.location + spaces_moved) % 40
         else:
