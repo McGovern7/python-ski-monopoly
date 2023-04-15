@@ -171,17 +171,13 @@ def load_cards():
     return cards
 
 
-def load_players(screen, total_players, player1, player2, player3, player4, players, new_players):
-    player1.draw(screen)
-    player2.draw(screen)
+def load_players(screen, total_players, player1, player2, player3, player4, new_players):
     if total_players >= 3:
-        players.append(player3)
         new_players.append(player3)
         if total_players == 4:
-            players.append(player4)
             new_players.append(player4)
 
-    return players, new_players
+    return new_players
 
 
 def get_icon_positions():
@@ -354,7 +350,8 @@ def turn_screen(screen, total_players):
     screen.fill(lightblue)  # Fill screen background
     pygame.draw.rect(screen, (41, 50, 65), (200, 100, 800, 300))
     pygame.draw.rect(screen, black, (200, 100, 800, 300), 4)
-    draw_text(screen, "Roll To Determine Player Order", medium_font, white, 440, 125)
+    draw_text(screen, "Roll To Determine Player Order", medium_font, white, 440, 115)
+    draw_text(screen, "Higher Rolls Go First", medium_font, white, 500, 140)
     if total_players == 2:
         pygame.draw.rect(screen, white, (480, 175, 80, 80))
         pygame.draw.rect(screen, black, (480, 175, 80, 80), 3)
@@ -611,10 +608,10 @@ def main():
     properties_img = pygame.image.load('images/properties.png').convert_alpha()
     board_return_img = pygame.image.load('images/board-return.png').convert_alpha()
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
-    player1_img = pygame.image.load('images/icon1.png').convert_alpha()
-    player2_img = pygame.image.load('images/icon2.png').convert_alpha()
-    player3_img = pygame.image.load('images/icon3.png').convert_alpha()
-    player4_img = pygame.image.load('images/icon4.png').convert_alpha()
+    icon1_img = pygame.image.load('images/icon1.png').convert_alpha()
+    icon2_img = pygame.image.load('images/icon2.png').convert_alpha()
+    icon3_img = pygame.image.load('images/icon3.png').convert_alpha()
+    icon4_img = pygame.image.load('images/icon4.png').convert_alpha()
 
     # draw buttons
     singleplayer_button = Button(singleplayer_img, 500, 210, 'Single-Player', white, 1)
@@ -626,11 +623,12 @@ def main():
     properties_button = Button(properties_img, 1000, 50, 'Inspect Properties', white, 1.5)
     board_return_button = Button(board_return_img, 1000, 50, 'Return to Board', white, 1.5)
     roll_button = Button(roll_img, 935, 757, 'ROLL', black, 2)
+    turn_roll_button = Button(roll_img, 600, 370, 'ROLL', black, 2)
     end_button = Button(singleplayer_img, 970, 680, 'END TURN', black, .75)
-    player1_button = Button(player1_img, 450, 420, 'Icon 1', white, 1)
-    player2_button = Button(player2_img, 550, 420, 'Icon 2', white, 1)
-    player3_button = Button(player3_img, 650, 420, 'Icon 3', white, 1)
-    player4_button = Button(player4_img, 750, 420, 'Icon 4', white, 1)
+    icon1_button = Button(icon1_img, 450, 420, 'Icon 1', white, 1)
+    icon2_button = Button(icon2_img, 550, 420, 'Icon 2', white, 1)
+    icon3_button = Button(icon3_img, 650, 420, 'Icon 3', white, 1)
+    icon4_button = Button(icon4_img, 750, 420, 'Icon 4', white, 1)
 
     # load board positions
     icon_positions = get_icon_positions()
@@ -641,12 +639,17 @@ def main():
     bank3 = Bank_Account('Player 3')
     bank4 = Bank_Account('Player 4')
     # create player objects
-    player1 = Player(player1_img, 'Player 1', bank1, .6, icon_positions)
-    player2 = Player(player2_img, 'Player 2', bank2, .6, icon_positions)
-    player3 = Player(player3_img, 'Player 3', bank3, .6, icon_positions)
-    player4 = Player(player4_img, 'Player 4', bank4, .6, icon_positions)
+    player1 = Player(icon1_img, 'Player 1', bank1, .6, icon_positions)
+    player2 = Player(icon2_img, 'Player 2', bank2, .6, icon_positions)
+    player3 = Player(icon3_img, 'Player 3', bank3, .6, icon_positions)
+    player4 = Player(icon4_img, 'Player 4', bank4, .6, icon_positions)
     players = [player1, player2, player3, player4]
-    new_players = [player1, player2, player3, player4]
+    # turn screen variables
+    new_players = [player1, player2]
+    turn_index = 0
+    turn_roll = 0
+    turn_rolls = []
+    turn_dice_idx = 0
 
     # initial roll to see who goes first
     first_rolls = []
@@ -738,10 +741,26 @@ def main():
 
                 if num_computers > 0:
                     draw_text(screen, 'Choose your Piece', medium_font, black, 510, 350)
-                    player1_button.draw(screen)
-                    player2_button.draw(screen)
-                    player3_button.draw(screen)
-                    player4_button.draw(screen)
+                    icon1_button.draw(screen)
+                    icon2_button.draw(screen)
+                    icon3_button.draw(screen)
+                    icon4_button.draw(screen)
+                    if icon1_button.check_new_press():  # check if buttons clicked & ensure players don't share icons
+                        if icon1_button.check_click():
+                            player1.player_icon = icon1_img
+                    if icon2_button.check_new_press():
+                        if icon2_button.check_click():
+                            player1.player_icon = icon2_img
+                            player2.player_icon = icon1_img
+                    if icon3_button.check_new_press():
+                        if icon3_button.check_click():
+                            player1.player_icon = icon3_img
+                            player3.player_icon = icon1_img
+                    if icon4_button.check_new_press():
+                        if icon4_button.check_click():
+                            player1.player_icon = icon4_img
+                            player4.player_icon = icon1_img
+
                     startgame_button.draw(screen)
 
                     # if startgame button clicked and game setup, move to game screen
@@ -811,18 +830,84 @@ def main():
                     #               server_box.y + 5)
 
                     draw_text(screen, 'Choose your Piece', medium_font, black, 305, 350)
-                    player1_button.draw(screen)
-                    player2_button.draw(screen)
-                    player3_button.draw(screen)
-                    player4_button.draw(screen)
+                    icon1_button.draw(screen)  # instead of player1_button renamed to icon1_button
+                    icon2_button.draw(screen)
+                    icon3_button.draw(screen)
+                    icon4_button.draw(screen)
                     startgame_button.draw(screen)
         elif current_screen == screens.get('DECIDE_TURN'):
             turn_screen(screen, total_players)
             # (Created once) loads the number of players into each list based on the amount chosen in first screen
+            square_distance = 160
             if not players_loaded:
-                players, new_players = load_players(screen, total_players, player1, player2, player3, player4,
-                                                    players, new_players)
+                new_players = load_players(screen, total_players, player1, player2, player3, player4, new_players)
                 players_loaded = True
+            i = 0
+            for p in new_players:  # draw the icons into the squares
+                if total_players == 2:
+                    screen.blit(p.player_icon, (500 + i, 190))
+                    i += square_distance
+                elif total_players == 3:
+                    screen.blit(p.player_icon, (420 + i, 190))
+                    i += square_distance
+                elif total_players == 4:
+                    screen.blit(p.player_icon, (340 + i, 190))
+                    i += square_distance
+            for p in new_players:  # determine the order by having each player roll
+                p.turn = True
+                if turn == p.name and p.turn:
+                    if not is_rolling:
+                        if not has_rolled:
+                            if total_players == 2:
+                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
+                            if total_players == 3:
+                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
+                            if total_players == 4:
+                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
+                            turn_roll_button.draw(screen)
+                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+                                counter = 0
+                                is_rolling = True
+                            if turn_roll_button.check_new_press():
+                                if turn_roll_button.check_click():
+                                    counter = 0
+                                    is_rolling = True
+                        else:
+                            turn_index += square_distance
+                            if turn_index == square_distance * len(new_players):  # returns player text to beginning
+                                turn_index = 0
+                            turn = change_turn(new_players, p, turn)
+                            has_rolled = False
+                    else:
+                        if die1_value == -1:
+                            die1_value = die1.roll(counter)
+                        if die2_value == -1:
+                            die2_value = die2.roll(counter)
+                        if die1_value != -1 and die2_value != -1:
+                            # Both dice are done rolling
+                            has_rolled = True
+                            # Return the dice to the start
+                            if not die1.at_start:
+                                die1.reset()
+                            if not die2.at_start:
+                                die2.reset()
+                            if die1.at_start and die2.at_start:
+                                # Both dice are at the start. Reset values
+                                is_rolling = False
+                                turn_roll = die1_value + die2_value
+                                turn_rolls.append(turn_roll)
+                                die1_value = -1
+                                die2_value = -1
+                        counter += 1
+                    die1.draw(screen)
+                    die2.draw(screen)
+                for num in turn_rolls:
+                    if total_players == 2:
+                        draw_text(screen, str(num), medium_font, white, 510 + turn_dice_idx, 290)
+                    if total_players == 3:
+                        draw_text(screen, str(num), medium_font, white, 430 + turn_dice_idx, 290)
+                    if total_players == 4:
+                        draw_text(screen, str(num), medium_font, white, 370 + turn_dice_idx, 290)
 
             startgame_button.draw(screen)
             if startgame_button.check_new_press():
