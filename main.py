@@ -171,12 +171,13 @@ def load_cards():
     return cards
 
 
-def load_players(total_players, player3, player4, unset_players):
+def load_players(total_players, player1, player2, player3, player4, unset_players):
+    unset_players.append(player1)
+    unset_players.append(player2)
     if total_players >= 3:
         unset_players.append(player3)
         if total_players == 4:
             unset_players.append(player4)
-
     return unset_players
 
 
@@ -564,8 +565,9 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     screens = {
         'START': 1,
-        'BOARD': 2,
-        'PROPS': 3
+        'DECIDE_TURN': 2,
+        'BOARD': 3,
+        'PROPS': 4
     }
     current_screen = screens.get('START')
 
@@ -643,17 +645,16 @@ def main():
     player2 = Player(icon2_img, 'Player 2', bank2, .6, icon_positions)
     player3 = Player(icon3_img, 'Player 3', bank3, .6, icon_positions)
     player4 = Player(icon4_img, 'Player 4', bank4, .6, icon_positions)
-    unset_players = [player1, player2]
     # turn screen variables
+    unset_players = []
     players = []
     turn_index = 0
-    turn_roll = 0
     turn_rolls = []
     turn_dice_idx = 0
 
     # initial roll to see who goes first
     first_rolls = []
-    ##TODO - CHANGE THIS VALUE BACK TO FALSE to play the actual game
+    # TODO - CHANGE THIS VALUE BACK TO FALSE to play the actual game
     first_roll = False
     result = ''
 
@@ -840,8 +841,7 @@ def main():
             # (Created once) loads the number of players into each list based on the amount chosen in first screen
             square_distance = 160
             if not players_loaded:
-                unset_players = load_players(total_players, player3, player4, unset_players)
-                players = unset_players
+                unset_players = load_players(total_players, player1, player2, player3, player4, unset_players)
                 players_loaded = True
             i = 0
             for p in unset_players:  # draw the icons into the squares
@@ -854,17 +854,17 @@ def main():
                 elif total_players == 4:
                     screen.blit(p.player_icon, (340 + i, 190))
                     i += square_distance
-            for p in unset_players:  # determine the order by having each player roll
-                p.turn = True
-                if turn == p.name:
+            for active_player in unset_players:  # determine the order by having each player roll
+                active_player.turn = True
+                if turn == active_player.name and active_player.turn:
                     if not is_rolling:
                         if not has_rolled:
                             if total_players == 2:
-                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
                             if total_players == 3:
-                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
                             if total_players == 4:
-                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
                             turn_roll_button.draw(screen)
                             if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                 counter = 0
@@ -877,21 +877,17 @@ def main():
                             turn_index += square_distance
                             if turn_index == square_distance * len(unset_players):  # returns player text to beginning
                                 turn_index = 0
-                            # TODO: Figure out why the turn order is only sometimes correct
+                            turn = change_turn(unset_players, active_player, turn)
+                            has_rolled = False
                             if len(turn_rolls) == len(unset_players):
                                 # reassign player list to the new order
                                 for j in range(0, len(unset_players)):
-                                    for k in turn_rolls:
-                                        print(str(k) + ", ")
                                     largest = turn_rolls.index(max(turn_rolls))
-                                    players[j] = unset_players[largest]
-                                    print(players[j].name)
-                                    turn_rolls[largest] = -1 # get rid of the largest element in list
-                                for new_p in players:
-                                    print(new_p.name)
+                                    players.append(unset_players[largest])  # appends correct player to empty list
+                                    turn_rolls[largest] = -1  # get rid of the largest element in list
+                                turn = players[0].name
+                                players[0].turn = True
                                 current_screen = screens.get('BOARD')
-                            turn = change_turn(unset_players, p, turn)
-                            has_rolled = False
                     else:
                         if die1_value == -1:
                             die1_value = die1.roll(counter)
@@ -923,6 +919,7 @@ def main():
                 #         draw_text(screen, str(num), medium_font, white, 430 + turn_dice_idx, 290)
                 #     if total_players == 4:
                 #         draw_text(screen, str(num), medium_font, white, 370 + turn_dice_idx, 290)
+                active_player.turn = False
 
         elif current_screen == screens.get('BOARD'):
             board_screen(screen, icon_positions, properties)
