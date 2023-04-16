@@ -22,6 +22,7 @@ class Button:
         self.text_color = text_color
         self.text_input = text_input
         self.clicked = False
+        self.new_press = False
 
     # draws the button
     def draw(self, screen):
@@ -49,3 +50,11 @@ class Button:
             self.text_color = white
 
         return False
+
+    def check_new_press(self):
+        if pygame.mouse.get_pressed()[0] and self.new_press:
+            self.new_press = False
+            return True
+        if not pygame.mouse.get_pressed()[0] and not self.new_press:
+            self.new_press = True
+            return False
