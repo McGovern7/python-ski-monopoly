@@ -22,21 +22,8 @@ games = {}
 id_count = 0
 
 
-def threaded_client(conn, game_id):
+def threaded_client(conn, p):
     global id_count
-    p = 0
-
-    joined = False
-    # Connecting loop
-    while not joined:
-        try:
-            data = conn.recv(4096).decode()
-            game_id = data
-            p = games[game_id].get_num_players()
-        except:
-            pass
-
-    conn.send(str.encode(str(p) + "," + str(game_id)))
 
     reply = ""
     while True:
@@ -44,7 +31,7 @@ def threaded_client(conn, game_id):
             data = conn.recv(4096).decode()
 
             if game_id in games:
-                game = games[game_id]
+                game = games[0]
 
                 if not data:
                     break
@@ -77,15 +64,15 @@ def threaded_client(conn, game_id):
 
 while True:
     conn, addr = s.accept()
-    print("Connected to:", addr)
+    print("Connected to:", addr[0])
 
     id_count += 1
     game_id = (id_count - 1) // 4
 
     if id_count > 5:
-        conn.send(pickle.dumps("full"))
+        conn.send(str.encode("full"))
     else:
         if id_count == 1:
             games[game_id] = Game(game_id)
-        conn.send(pickle.dumps(games))
-        start_new_thread(threaded_client, (conn, game_id))
+        conn.send(str.encode(str(id_count)))
+        start_new_thread(threaded_client, (conn, id_count))

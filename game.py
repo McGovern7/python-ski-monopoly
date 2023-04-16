@@ -11,7 +11,7 @@ class Game:
         self.players = []
         self.player_turn = 0
         self.dice = []
-        self.isRunning = False
+        self.isPlaying = False
 
     def get_id(self):
         return self.game_id
