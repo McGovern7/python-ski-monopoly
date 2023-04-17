@@ -467,6 +467,7 @@ def board_screen(screen, icon_positions, properties, railroads):
         # up the left side
         if x_coord == 35:
             pygame.draw.rect(screen, property.region, (90, y_coord - 33, 20, 64))
+            pygame.draw.rect(screen, black, (90, y_coord - 33, 20, 64), 1)  # black outline
             # name of property
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord - 30)
             # draw the cost to buy property
@@ -481,7 +482,8 @@ def board_screen(screen, icon_positions, properties, railroads):
         # across the top
         if y_coord == 35:
             # color square for region
-            pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
+            pygame.draw.rect(screen, property.region, (x_coord - 31, 90, 63.9, 20))
+            pygame.draw.rect(screen, black, (x_coord - 31, 90, 63.9, 20), 1)  # black outline
 
             # logic to print houses along the top row
             houseX = x_coord - 32 + (64 / (property.num_houses + 1)) - 4
@@ -504,6 +506,7 @@ def board_screen(screen, icon_positions, properties, railroads):
         # down the right side
         if x_coord == 765:
             pygame.draw.rect(screen, property.region, (685, y_coord - 32, 20, 64))
+            pygame.draw.rect(screen, black, (685, y_coord - 32, 20, 64), 1)  # black outline
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 58, y_coord - 30)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 34, y_coord - 10)
@@ -517,6 +520,7 @@ def board_screen(screen, icon_positions, properties, railroads):
         # across the bottom
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
+            pygame.draw.rect(screen, black, (x_coord - 33, 685, 63.9, 20), 1)  # black outline
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 32, y_coord - 55)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
