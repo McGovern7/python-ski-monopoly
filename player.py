@@ -22,7 +22,6 @@ class Player:
         #all player start the game with no railroads
         self.railroad_list = []
         #all players are created with it not being their turn to play
-        self.turn = False
         self.jail= False
         self.bankrupt = False
 
@@ -110,9 +109,10 @@ class Player:
 
     # function to pay another player rent when you land on their property
     # pass the property owner's bank account and the rent you owe them
-    def pay_rent(self, property_owner_account, rent_owed):
+    def pay_rent(self, landlord, rent_owed):
         self.bank.withdraw(rent_owed)
-        property_owner_account.deposit(rent_owed)
+        landlord_bank = landlord.bank
+        landlord_bank.deposit(rent_owed)
 
     # function to call everytime a player goes over "GO" board space
     def go(self):
