@@ -22,7 +22,6 @@ class Player:
         #all player start the game with no railroads
         self.railroad_list = []
         #all players are created with it not being their turn to play
-        self.turn = False
         self.jail= False
         self.bankrupt = False
 

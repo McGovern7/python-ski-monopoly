@@ -314,28 +314,36 @@ def change_turn(players, active_player, turn):
         for i in range(0, len(players)):
             if players[i].name == 'Player 1' and i < len(players) - 1:
                 turn = str(players[i + 1].name)
+                new_active_player = players[i + 1]
             elif players[i].name == 'Player 1' and i == len(players) - 1:
                 turn = str(players[0].name)
+                new_active_player = players[0]
     elif turn == 'Player 2':
         for i in range(0, len(players)):
             if players[i].name == 'Player 2' and i < len(players) - 1:
                 turn = str(players[i + 1].name)
+                new_active_player = players[i + 1]
             elif players[i].name == 'Player 2' and i == len(players) - 1:
                 turn = str(players[0].name)
+                new_active_player = players[0]
     elif turn == 'Player 3':
         for i in range(0, len(players)):
             if players[i].name == 'Player 3' and i < len(players) - 1:
                 turn = str(players[i + 1].name)
+                new_active_player = players[i + 1]
             elif players[i].name == 'Player 3' and i == len(players) - 1:
                 turn = str(players[0].name)
+                new_active_player = players[0]
     elif turn == 'Player 4':
         for i in range(0, len(players)):
             if players[i].name == 'Player 4' and i < len(players) - 1:
                 turn = str(players[i + 1].name)
+                new_active_player = players[i + 1]
             elif players[i].name == 'Player 4' and i == len(players) - 1:
                 turn = str(players[0].name)
-    active_player.turn = False
-    return turn
+                new_active_player = players[0]
+
+    return turn, new_active_player
 
 
 # SCREENS
@@ -576,7 +584,6 @@ def main():
     counter = 0
     die1_value = -1
     die2_value = -1
-    turn = 'Player 1'
     players_loaded = False
 
     # game type variables
@@ -652,9 +659,10 @@ def main():
     players = []  # array of players w/ decided order
     turn_index = 0
     turn_rolls = []  # the holding the roll number of each unset_player
+    active_player = player1 #start with player 1 being active
+    turn = 'Player 1'
 
-    result = ''
-
+    result = '' #start with there being no results from an interaction (no pop-ups)
     # load community chest and chance cards
     cards = load_cards()
     # load property cards
@@ -851,7 +859,6 @@ def main():
                     screen.blit(p.player_icon, (340 + i, 190))
                     i += square_distance
             for active_player in unset_players:  # determine the order by having each player roll
-                active_player.turn = True
                 for num in range(0, len(turn_rolls)):  # - prints rolled number under icon
                     if total_players == 2:
                         draw_text(screen, str(turn_rolls[num]), medium_font, white, 510 + num * square_distance, 268)
@@ -859,7 +866,7 @@ def main():
                         draw_text(screen, str(turn_rolls[num]), medium_font, white, 435 + num * square_distance, 268)
                     if total_players == 4:
                         draw_text(screen, str(turn_rolls[num]), medium_font, white, 350 + num * square_distance, 268)
-                if turn == active_player.name and active_player.turn:
+                if turn == active_player.name:
                     if not is_rolling:
                         if not has_rolled:
                             if total_players == 2:
@@ -880,7 +887,7 @@ def main():
                             turn_index += square_distance
                             if turn_index == square_distance * len(unset_players):  # returns player text to beginning
                                 turn_index = 0
-                            turn = change_turn(unset_players, active_player, turn)
+                            turn, active_player = change_turn(unset_players, active_player, turn)
                             has_rolled = False
                             if len(turn_rolls) == len(unset_players):
                                 # reassign player list to the new order
@@ -915,7 +922,6 @@ def main():
                         counter += 1
                     die1.draw(screen)
                     die2.draw(screen)
-                active_player.turn = False
 
         elif current_screen == screens.get('BOARD'):
             board_screen(screen, icon_positions, properties)
@@ -935,69 +941,74 @@ def main():
 
             for p in players:
                 p.draw(screen)
+            #DEBUGGING
+            # draw_text(screen, 'player ' + str(active_player.name), medium_font, black, 900, 300)
+            # draw_text(screen, 'bank ' + str(bank_account.total), medium_font, black, 900, 400)
+            # draw_text(screen, 'location ' + str(active_player.location), medium_font, black, 900, 500)
+            # draw_text(screen, 'properties ' + str(active_player.property_list), medium_font, black, 900, 600)
 
-            # For loop iterates over all the players and checks if it is their turn
-            for active_player in players:
-                # print pop-ups if needed
-                if result == 'landlord opportunity':
-                    result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
-                elif result == 'railroad opportunity':
-                    result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
-                elif str(result)[:8] == 'message:':
-                    result = card_pop_up(screen, result)
-                active_player.turn = True
-                if turn == active_player.name and active_player.turn:
-                    if not is_rolling:
-                        draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
-                        if not has_rolled:
-                            roll_button.draw(screen)
-                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+            # print pop-ups if needed
+            if result == 'landlord opportunity':
+                result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
+            elif result == 'railroad opportunity':
+                result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+            elif str(result)[:8] == 'message:':
+                result = card_pop_up(screen, result)
+
+            #dice and turn
+            if turn == active_player.name:
+                if not is_rolling:
+                    draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
+                    if not has_rolled:
+                        roll_button.draw(screen)
+                        if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+                            counter = 0
+                            is_rolling = True
+                        if roll_button.check_new_press():
+                            if roll_button.check_click():
                                 counter = 0
                                 is_rolling = True
-                            if roll_button.check_new_press():
-                                if roll_button.check_click():
-                                    counter = 0
-                                    is_rolling = True
-                        else:
-                            end_button.draw(screen)
-                            if end_button.check_new_press():
-                                if end_button.check_click():  # rolls on a space key or button click
-                                    turn = change_turn(players, active_player, turn)
-                                    has_rolled = False
                     else:
-                        # A die_value of -1 indicates the die is not done rolling.
-                        # Otherwise, roll() returns a random value from 1 to 6.
-                        if die1_value == -1:
-                            die1_value = die1.roll(counter)
-                        if die2_value == -1:
-                            die2_value = die2.roll(counter)
-                        if die1_value != -1 and die2_value != -1:
-                            # Both dice are done rolling
-                            has_rolled = True
+                        end_button.draw(screen)
+                        if end_button.check_new_press():
+                            if end_button.check_click():  # rolls on a space key or button click
+                                #change the turn once player hit the end button
+                                turn, active_player = change_turn(players, active_player, turn)
+                                has_rolled = False
+                else:
+                    # A die_value of -1 indicates the die is not done rolling.
+                    # Otherwise, roll() returns a random value from 1 to 6.
+                    if die1_value == -1:
+                        die1_value = die1.roll(counter)
+                    if die2_value == -1:
+                        die2_value = die2.roll(counter)
+                    if die1_value != -1 and die2_value != -1:
+                        # Both dice are done rolling
+                        has_rolled = True
 
-                            # Return the dice to the start
-                            if not die1.at_start:
-                                die1.reset()
-                            if not die2.at_start:
-                                die2.reset()
-                            if die1.at_start and die2.at_start:
-                                # Both dice are at the start. Reset values
-                                is_rolling = False
-                                print('You rolled a', die1_value + die2_value)
-                                roll = die1_value + die2_value
-                                # TODO -- test spaces here by changing the roll value
-                                # roll = 6
-                                # player icon moves number of spaces rolled
-                                active_player.movement(roll)
-                                # interact with that spot on the board
-                                result = interact(active_player, properties, railroads, cards)
+                        # Return the dice to the start
+                        if not die1.at_start:
+                            die1.reset()
+                        if not die2.at_start:
+                            die2.reset()
+                        if die1.at_start and die2.at_start:
+                            # Both dice are at the start. Reset values
+                            is_rolling = False
+                            print('You rolled a', die1_value + die2_value)
+                            roll = die1_value + die2_value
+                            # TODO -- test spaces here by changing the roll value
+                            # roll = 6
+                            # player icon moves number of spaces rolled
+                            active_player.movement(roll)
+                            # interact with that spot on the board
+                            result = interact(active_player, properties, railroads, cards)
 
-                                die1_value = -1
-                                die2_value = -1
+                            die1_value = -1
+                            die2_value = -1
 
-                        counter += 1
-                    die1.draw(screen)
-                    die2.draw(screen)
+                    counter += 1
+                die1.draw(screen)
+                die2.draw(screen)
 
             if keys[pygame.K_c]:  # press c to go to property screen
                 current_screen = screens.get('PROPS')
