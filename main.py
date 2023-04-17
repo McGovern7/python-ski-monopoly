@@ -263,7 +263,29 @@ def card_pop_up(screen, message):
         return ''
     else:
         return message
+def jail_pop_up(screen, active_player, message):
+    # buttons
+    roll_img = pygame.image.load('images/roll.png').convert_alpha()
+    yes_button = Button(roll_img, 950, 300, 'yes', black, 1)
+    no_button = Button(roll_img, 1050, 300, 'no', black, 1)
+    # draws pop up message
+    pygame.draw.rect(screen, red, (850, 210, 300, 150))
+    pygame.draw.rect(screen, white, (860, 220, 280, 130))
+    draw_text(screen, "Do you want to pay $50 to get out of jail?", small_cs_font_1, black, 865, 240)
+    yes_button.draw(screen)
+    no_button.draw(screen)
+    # if 'yes' button is clicked, user pays 50 to get out of jail
+    if yes_button.check_click():
+        bank = active_player.bank
+        bank.withdraw(50)
+        active_player.jail = False
+        return ''
 
+    # if no button is clicked, user does not buy the property
+    if no_button.check_click():
+        return ''
+    else:
+        return 'jail'
 
 def interact(active_player, players, properties, railroads, cards):
     # shuffle the cards!
@@ -304,7 +326,11 @@ def interact(active_player, players, properties, railroads, cards):
     # interaction for go to jail spot (send player to jail)
     if int(active_player.location) == 30:
         active_player.go_to_jail()
-        return ''
+        return 'jail'
+    #interaction for if you are in jail
+    if int(active_player.location) == 10 and active_player.jail:
+        active_player.go_to_jail()
+        return 'jail'
     # interaction for community chest
     if int(active_player.location) == 2 or int(active_player.location) == 17 or int(active_player.location) == 33:
         for card in cards:
@@ -1013,11 +1039,18 @@ def main():
                 result = card_pop_up(screen, result)
             elif str(result)[:3] == 'You':
                 draw_text(screen, result, medium_font, black, 900, 300)
+            elif result == 'jail':
+                result = jail_pop_up(screen, active_player, result)
 
             #dice and turn
             if turn == active_player.name:
                 if not is_rolling:
                     draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
+                    #print message that player can't roll since they are in jail
+                    if active_player.jail:
+                        draw_text(screen, 'You are in jail.', medium_font, black, 920, 450)
+                        draw_text(screen, 'Pay $50 to get out or try to roll doubles', medium_font, black, 800, 480)
+                    #don't roll if player is in jail
                     if not has_rolled:
                         roll_button.draw(screen)
                         if keys[pygame.K_SPACE]:  # rolls on a space key or button click
@@ -1056,9 +1089,10 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 11
-                            # player icon moves number of spaces rolled
-                            active_player.movement(roll)
+                            roll = 30
+                            # player icon moves number of spaces rolled (only if player is not in jail)
+                            if not active_player.jail:
+                                active_player.movement(roll)
                             # interact with that spot on the board
                             result = interact(active_player, players, properties, railroads, cards)
 

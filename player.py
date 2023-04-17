@@ -23,6 +23,7 @@ class Player:
         self.railroad_list = []
         #all players are created with it not being their turn to play
         self.jail= False
+        self.rolls_in_jail = -1
         self.bankrupt = False
 
     def draw(self, screen):
@@ -128,6 +129,12 @@ class Player:
         self.jail = True
         #go to the jail spot
         self.location = 10
+        #increment number of times player rolled in jail
+        self.rolls_in_jail += 1
+        #if the number of rolls is 3, the player must get out by paying a fine of $50
+        if self.rolls_in_jail >= 3:
+            self.bank.withdraw(50)
+            self.jail = False
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):
