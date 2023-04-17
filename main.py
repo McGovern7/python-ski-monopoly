@@ -528,8 +528,7 @@ def card_screen(screen, font, property_list):
     '''
     pygame.display.set_caption('Your cards')
     screen.fill(green)
-    draw_text(screen, 'Available money: ', font, white, 50, 50)
-    draw_text(screen, 'Properties: ', font, white, 50, 100)
+    draw_text(screen, 'Properties: ', font, white, 50, 20)
 
     x = 50
     y = 150
@@ -659,7 +658,6 @@ def main():
     players = []  # array of players w/ decided order
     turn_index = 0
     turn_rolls = []  # the holding the roll number of each unset_player
-    active_player = player1 #start with player 1 being active
     turn = 'Player 1'
 
     result = '' #start with there being no results from an interaction (no pop-ups)
@@ -841,6 +839,7 @@ def main():
                     icon3_button.draw(screen)
                     icon4_button.draw(screen)
                     startgame_button.draw(screen)
+
         elif current_screen == screens.get('DECIDE_TURN'):
             turn_screen(screen, total_players)
             # (Created once) loads the number of players into each list based on the amount chosen in first screen
@@ -896,7 +895,7 @@ def main():
                                     players.append(unset_players[largest])  # appends correct player to empty list
                                     turn_rolls[largest] = -1  # get rid of the largest element in list
                                 turn = players[0].name
-                                players[0].turn = True
+                                active_player = players[0]
                                 current_screen = screens.get('BOARD')
                     else:
                         if die1_value == -1:
