@@ -276,16 +276,18 @@ def interact(active_player, players, properties, railroads, cards):
             #if the property is owned by someone, active player must pay owner rent
             else:
                 #DEBUGGING
-                print("real landlord: " + property.owner)
+                #print("real landlord: " + property.owner)
                 #see who the landlord is
                 for landlord in players:
                     if property.owner == landlord.name:
                         #DEBUG
-                        print("landlord chosen: " + landlord.name)
+                        #print("landlord chosen: " + landlord.name)
                         active_player.pay_rent(landlord, property.rent)
                         #DEBUG MONEY
-                        bank_l = landlord.bank
-                        print("landlord money now: ", bank_l.total)
+                        #bank_l = landlord.bank
+                        #print("landlord money now: ", bank_l.total)
+                        message = "You paid $" + str(property.rent) + " in rent!"
+                        return message
 
 
     # interaction for railroads
@@ -961,12 +963,15 @@ def main():
             # draw_text(screen, 'properties ' + str(active_player.property_list), medium_font, black, 900, 600)
 
             # print pop-ups if needed
+            print(result[:3])
             if result == 'landlord opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
             elif result == 'railroad opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
             elif str(result)[:8] == 'message:':
                 result = card_pop_up(screen, result)
+            elif str(result)[:3] == 'You':
+                draw_text(screen, result, medium_font, black, 900, 300)
 
             #dice and turn
             if turn == active_player.name:
