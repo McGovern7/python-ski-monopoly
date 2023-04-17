@@ -262,7 +262,7 @@ def card_pop_up(screen, message):
         return message
 
 
-def interact(active_player, properties, railroads, cards):
+def interact(active_player, players, properties, railroads, cards):
     # shuffle the cards!
     random.shuffle(cards)
 
@@ -273,6 +273,20 @@ def interact(active_player, properties, railroads, cards):
             if property.owner == 'NONE':
                 # send message to call pop-up back to main
                 return 'landlord opportunity'
+            #if the property is owned by someone, active player must pay owner rent
+            else:
+                #DEBUGGING
+                print("real landlord: " + property.owner)
+                #see who the landlord is
+                for landlord in players:
+                    if property.owner == landlord.name:
+                        #DEBUG
+                        print("landlord chosen: " + landlord.name)
+                        active_player.pay_rent(landlord, property.rent)
+                        #DEBUG MONEY
+                        bank_l = landlord.bank
+                        print("landlord money now: ", bank_l.total)
+
 
     # interaction for railroads
     for railroad in railroads:
@@ -996,11 +1010,11 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            # roll = 6
+                            roll = 11
                             # player icon moves number of spaces rolled
                             active_player.movement(roll)
                             # interact with that spot on the board
-                            result = interact(active_player, properties, railroads, cards)
+                            result = interact(active_player, players, properties, railroads, cards)
 
                             die1_value = -1
                             die2_value = -1
