@@ -107,9 +107,41 @@ def create_card(screen, x, y, property):
     draw_text(screen, property.house_price, small_font_3, black, x + 78, y + 168)
     draw_text(screen, 'Hotel costs $', small_font_3, black, x + 10, y + 180)
     draw_text(screen, property.hotel_price, small_font_3, black, x + 73, y + 180)
+def create_other_card(screen, x, y, object_name, type):
+    '''
+    Function to create a railroad/utiilies card
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :param object_name: name of railroad/ utility that the card will represent
+    :param type: either railroad or utility
+    :return: nothing
+    '''
+    # draw this on every card
+    pygame.draw.rect(screen, white, (x, y, 150, 200))
+    # name of object
+    draw_text(screen, '____________________________', small_font_4, black, x + 3, y + 70)
+    draw_text(screen, str(object_name).upper(), small_font_3, black, x + 5, y + 85)
+    draw_text(screen, '____________________________', small_font_4, black, x + 5, y + 90)
+
+    #specific things drawn for railroads only
+    if type == 'railroad':
+        #image on each card
+        lift = pygame.image.load('images/ski-lift.png')
+        screen.blit(lift, (x + 50, y + 10))
+        #info on each card
+        draw_text(screen, 'Rent                              $25', small_font_3, black, x + 10, y + 110)
+        draw_text(screen, 'Rent if 2 lifts are owned $50', small_font_3, black, x + 10, y + 130)
+        draw_text(screen, 'Rent      \"      \"      \"       $75', small_font_3, black, x + 10, y + 150)
+        draw_text(screen, 'Rent      \"      \"      \"       $100', small_font_3, black, x + 10, y + 170)
 
 
-# Function draws text with desired font, color, and location on page
+    #specific things drawn for utilities only
+    else:
+        pass
+
+
+
 def draw_text(screen, text, font, text_col, x, y):
     '''
     Function to draww text on the game screen
@@ -608,7 +640,7 @@ def board_screen(screen, icon_positions, properties, railroads):
 
 
 # card screen
-def card_screen(screen, font, active_player):
+def prop_card_screen(screen, font, active_player):
     '''
     Function to display a screen that shows you cards and gives more details about your properties
     :param screen: game screen
@@ -621,7 +653,7 @@ def card_screen(screen, font, active_player):
     #DRAW PROPERTIES
     draw_text(screen, 'Properties: ', font, white, 50, 10)
     start_x = 50
-    start_y = 50
+    start_y = 70
     #make 3 rows for properties (7 cards fit in one row)
     #if there are less than seven properties, then one row
     if len(active_player.property_list) < 8:
@@ -636,7 +668,7 @@ def card_screen(screen, font, active_player):
             start_x += 160
         #reset values for the next row
         start_x = 50
-        start_y = 300
+        start_y = 320
         for i in range(6, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             start_x += 160
@@ -648,21 +680,37 @@ def card_screen(screen, font, active_player):
             start_x += 160
         #reset values for the next row
         start_x = 50
-        start_y = 300
+        start_y = 320
         for i in range(7, 14):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             start_x += 160
         # reset values for the next row
         start_x = 50
-        start_y = 550
+        start_y = 570
         for i in range(13, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             start_x += 160
 
-    #DRAW RAILROADS
+#other card screen
+def other_card_screen(screen, font, active_player):
+    '''
+    Function to display a screen that shows you the cards besides property cards
+    :param screen: game screen
+    :param font: font of the text
+    :param active_player: the player whose turn it is
+    :return: nothing
+    '''
+    pygame.display.set_caption('Your cards')
+    screen.fill(green)
 
-    #DRAW UTILITIES
+    # DRAW RAILROADS
+    draw_text(screen, 'Railroads: ', font, white, 50, 10)
+    start_x = 50
+    start_y = 70
+    for railroad in active_player.railroad_list:
+        create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
 
+    # DRAW UTILITIES
 
 def main():
     '''
@@ -685,7 +733,8 @@ def main():
         'START': 1,
         'DECIDE_TURN': 2,
         'BOARD': 3,
-        'PROPS': 4
+        'PROPS': 4,
+        'CARDS': 5
     }
     current_screen = screens.get('START')
 
@@ -739,8 +788,9 @@ def main():
     num_computers1_button = Button(number_img, 525, 310, '1', white, 1.5)
     num_computers2_button = Button(number_img, 600, 310, '2', white, 1.5)
     num_computers3_button = Button(number_img, 675, 310, '3', white, 1.5)
-    properties_button = Button(properties_img, 1000, 50, 'Inspect Properties', white, 1.5)
-    board_return_button = Button(board_return_img, 1000, 50, 'Return to Board', white, 1.5)
+    properties_button = Button(properties_img, 910, 50, 'Inspect Properties', white, 1.5)
+    card_button = Button(multiplayer_img, 1110, 50, 'Other cards', white, 1)
+    board_return_button = Button(board_return_img, 1000, 30, 'Return to Board', white, 1.5)
     roll_button = Button(roll_img, 935, 757, 'ROLL', black, 2)
     turn_roll_button = Button(roll_img, 600, 370, 'ROLL', black, 2)
     end_button = Button(singleplayer_img, 970, 680, 'END TURN', black, .75)
@@ -793,8 +843,7 @@ def main():
                DICE_DIMS)
 
     #TESTING
-    for i in range(0,19):
-        player1.property_list.append(properties[i])
+    player1.railroad_list.append(railroads[0])
 
 
 
@@ -1043,6 +1092,7 @@ def main():
         elif current_screen == screens.get('BOARD'):
             board_screen(screen, icon_positions, properties, railroads)
             properties_button.draw(screen)
+            card_button.draw(screen)
 
             # display bank account money
             draw_text(screen, 'Money: $', medium_font, black, 900, 90)
@@ -1141,17 +1191,38 @@ def main():
             if properties_button.check_new_press():
                 if properties_button.check_click():  # click to move to property screen
                     current_screen = screens.get('PROPS')
+            if card_button.check_new_press():
+                if card_button.check_click():  # click to move to property screen
+                    current_screen = screens.get('CARDS')
 
         elif current_screen == screens.get('PROPS'):
             # Player 1
             if turn == 'Player 1':
-                card_screen(screen, font, player1)
+                prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
-                card_screen(screen, font, player2)
+                prop_card_screen(screen, font, player2)
             elif turn == 'Player 3':
-                card_screen(screen, font, player3)
+                prop_card_screen(screen, font, player3)
             else:
-                card_screen(screen, font, player4)
+                prop_card_screen(screen, font, player4)
+            board_return_button.draw(screen)
+            if keys[pygame.K_g]:  # press g to return to game
+                current_screen = screens.get('BOARD')
+            if board_return_button.check_new_press():
+                if board_return_button.check_click():  # click to move to board screen
+                    current_screen = screens.get('BOARD')
+
+        elif current_screen == screens.get('CARDS'):
+            # Player 1
+            if turn == 'Player 1':
+                other_card_screen(screen, font, player1)
+            elif turn == 'Player 2':
+                other_card_screen(screen, font, player2)
+            elif turn == 'Player 3':
+                other_card_screen(screen, font, player3)
+            else:
+                other_card_screen(screen, font, player4)
+
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
