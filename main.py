@@ -428,6 +428,8 @@ def board_screen(screen, icon_positions, properties, railroads):
     logo = pygame.image.load('images/ski-resort.png')
     screen.blit(logo, (center_x + 20, center_y + 20))
 
+    house = pygame.image.load("images/home.png")
+
     # draw the name of each property on the square and district colors
     for property in properties:
         coordinates = str(icon_positions[int(property.location)])
@@ -535,6 +537,10 @@ def board_screen(screen, icon_positions, properties, railroads):
         else:
             screen.blit(gondola, (x_coord - 25, y_coord - 45))
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
+
+        #draw jail
+        jail = pygame.image.load('images/jail.png')
+        screen.blit(jail, (33, 33))
 
     # tile lines
     y = center_y
