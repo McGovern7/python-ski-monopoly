@@ -401,7 +401,7 @@ def turn_screen(screen, total_players):
 
 
 # board screen
-def board_screen(screen, icon_positions, properties):
+def board_screen(screen, icon_positions, properties, railroads):
     '''
     Function to display the screen with the monopoly board
     :param screen: game screen
@@ -495,6 +495,39 @@ def board_screen(screen, icon_positions, properties):
             for house in range(property.num_houses):
                 pygame.draw.rect(screen, black, (houseX, 688, 8, 8))
                 houseX += (64 / (property.num_houses + 1))
+
+    #print railroads
+    tbar = pygame.image.load("images/tbar.png")
+    quad = pygame.image.load("images/quad.png")
+    tram = pygame.image.load("images/tram.png")
+    gondola = pygame.image.load("images/gondola.png")
+    for railroad in railroads:
+        coordinates = str(icon_positions[int(railroad.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
+        # up the left side
+        if x_coord == 35:
+            screen.blit(tbar, (x_coord, y_coord-25))
+            draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord-30)
+        # across the top
+        elif y_coord == 35:
+            screen.blit(quad, (x_coord-25, y_coord+5))
+            # if railroad name has more than two words, display it differently
+            if railroad.name.find(' ') > -1:
+                name = railroad.name.split(' ')
+                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 30, y_coord - 30)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 22, y_coord - 15)
+            else:
+                draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 30)
+        # down the right side
+        elif x_coord == 765:
+            screen.blit(tram, (x_coord - 45, y_coord - 25))
+            draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 70, y_coord - 30)
+        #across the bottom
+        else:
+            screen.blit(gondola, (x_coord - 25, y_coord - 45))
+            draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
 
     # tile lines
     y = center_y
@@ -939,7 +972,7 @@ def main():
                     die2.draw(screen)
 
         elif current_screen == screens.get('BOARD'):
-            board_screen(screen, icon_positions, properties)
+            board_screen(screen, icon_positions, properties, railroads)
             properties_button.draw(screen)
 
             # display bank account money
@@ -963,7 +996,6 @@ def main():
             # draw_text(screen, 'properties ' + str(active_player.property_list), medium_font, black, 900, 600)
 
             # print pop-ups if needed
-            print(result[:3])
             if result == 'landlord opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
             elif result == 'railroad opportunity':
