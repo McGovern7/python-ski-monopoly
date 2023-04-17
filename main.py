@@ -11,7 +11,8 @@ from die import Die
 from Property import Property
 from card import Card
 from player import Player
-from Railroad import Railroad
+from Other_Cards import Railroad
+from Other_Cards import Utility
 from network import Network
 
 # Initialize PyGame
@@ -120,8 +121,8 @@ def create_other_card(screen, x, y, object_name, type):
     # draw this on every card
     pygame.draw.rect(screen, white, (x, y, 150, 200))
     # name of object
-    draw_text(screen, '____________________________', small_font_4, black, x + 3, y + 70)
-    draw_text(screen, str(object_name).upper(), small_font_3, black, x + 5, y + 85)
+    draw_text(screen, '____________________________', small_font_4, black, x + 5, y + 70)
+    draw_text(screen, str(object_name).upper(), small_font_3, black, x + 2, y + 85)
     draw_text(screen, '____________________________', small_font_4, black, x + 5, y + 90)
 
     #specific things drawn for railroads only
@@ -130,15 +131,22 @@ def create_other_card(screen, x, y, object_name, type):
         lift = pygame.image.load('images/ski-lift.png')
         screen.blit(lift, (x + 50, y + 10))
         #info on each card
-        draw_text(screen, 'Rent                              $25', small_font_3, black, x + 10, y + 110)
-        draw_text(screen, 'Rent if 2 lifts are owned $50', small_font_3, black, x + 10, y + 130)
-        draw_text(screen, 'Rent      \"      \"      \"       $75', small_font_3, black, x + 10, y + 150)
-        draw_text(screen, 'Rent      \"      \"      \"       $100', small_font_3, black, x + 10, y + 170)
+        draw_text(screen, 'Rent                              $25', small_font_3, black, x + 5, y + 110)
+        draw_text(screen, 'Rent if 2 lifts are owned $50', small_font_3, black, x + 5, y + 130)
+        draw_text(screen, 'Rent      \"      \"      \"       $75', small_font_3, black, x + 5, y + 150)
+        draw_text(screen, 'Rent      \"      \"      \"       $100', small_font_3, black, x + 5, y + 170)
 
 
     #specific things drawn for utilities only
     else:
-        pass
+        # image on each card
+        lift = pygame.image.load('images/blower.png')
+        screen.blit(lift, (x + 50, y + 15))
+        # info on each card
+        draw_text(screen, 'If one \"Utility\" owned rent', small_font_3, black, x + 5, y + 110)
+        draw_text(screen, 'is 4 times amount on dice', small_font_3, black, x + 5, y + 130)
+        draw_text(screen, 'If both \"Utilities\" owned rent', small_font_3, black, x + 5, y + 150)
+        draw_text(screen, 'is 10 times amount on dice', small_font_3, black, x + 5, y + 170)
 
 
 
@@ -711,6 +719,11 @@ def other_card_screen(screen, font, active_player):
         create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
 
     # DRAW UTILITIES
+    draw_text(screen, 'Utilities: ', font, white, 50, 290)
+    start_x = 50
+    start_y = 330
+    for utility in active_player.utilities_list:
+        create_other_card(screen, start_x, start_y, utility.name, 'utilities')
 
 def main():
     '''
@@ -831,6 +844,9 @@ def main():
                  Railroad('Bonaventure Quad', 15),
                  Railroad('Aerial Tramway', 25),
                  Railroad('Gondola One', 35)]
+    #create utilities cards
+    utilities = [Utility('Snow Cannon', 12),
+                 Utility('Snow Groomer', 28)]
 
     # created die
     die1 = Die(screen,
@@ -844,6 +860,7 @@ def main():
 
     #TESTING
     player1.railroad_list.append(railroads[0])
+    player1.utilities_list.append(utilities[0])
 
 
 

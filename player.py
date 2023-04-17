@@ -21,6 +21,8 @@ class Player:
         self.property_list = []
         #all player start the game with no railroads
         self.railroad_list = []
+        # all player start the game with no utilities
+        self.utilities_list = []
         #all players are created with it not being their turn to play
         self.jail= False
         self.rolls_in_jail = -1
@@ -85,6 +87,23 @@ class Player:
         self.railroad_list.remove(railroad)
         # give them the money back
         self.bank.deposit(railroad.price)
+
+    # function to buy utility
+    def buy_utility(self, new_utility):
+        # withdraw the money from player's account
+        self.bank.withdraw(new_utility.price)
+        # add this player's railroad list
+        self.utilities_list.append(new_utility)
+        # update the owner
+        new_utility.owner = self.name
+
+        # function to sell a railroad
+    def sell_utility(self, utility):
+        # remove property from player's property list
+        self.utilities_list.remove(utility)
+        # give them the money back
+        self.bank.deposit(utility.price)
+
 
     # function pay taxes -- pays either 10% of your income or $200 (whichever is smaller)
     def pay_taxes(self):
