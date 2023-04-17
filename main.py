@@ -531,6 +531,10 @@ def board_screen(screen, icon_positions, properties, railroads):
             screen.blit(gondola, (x_coord - 25, y_coord - 45))
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
 
+        #draw jail
+        jail = pygame.image.load('images/jail.png')
+        screen.blit(jail, (33, 33))
+
     # tile lines
     y = center_y
     for i in range(10):
