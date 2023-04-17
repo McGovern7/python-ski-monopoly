@@ -364,6 +364,8 @@ def board_screen(screen, icon_positions, properties):
     logo = pygame.image.load('images/ski-resort.png')
     screen.blit(logo, (center_x + 20, center_y + 20))
 
+    house = pygame.image.load("images/home.png")
+
     # draw the name of each property on the square and district colors
     for property in properties:
         coordinates = str(icon_positions[int(property.location)])
