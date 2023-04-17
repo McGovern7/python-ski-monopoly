@@ -471,7 +471,7 @@ def turn_screen(screen, total_players):
 
 
 # board screen
-def board_screen(screen, icon_positions, properties, railroads):
+def board_screen(screen, icon_positions, properties, railroads, utilities):
     '''
     Function to display the screen with the monopoly board
     :param screen: game screen
@@ -605,9 +605,22 @@ def board_screen(screen, icon_positions, properties, railroads):
             screen.blit(gondola, (x_coord - 25, y_coord - 45))
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
 
-        #draw jail
-        jail = pygame.image.load('images/jail.png')
-        screen.blit(jail, (33, 33))
+    #draw utilities
+    for utility in utilities:
+        coordinates = str(icon_positions[int(utility.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
+        # across the top
+        if y_coord == 35:
+            draw_text(screen, utility.name, small_cs_font_3, black, x_coord - 25, y_coord - 30)
+        # down the right side
+        elif x_coord == 765:
+            draw_text(screen, utility.name, small_cs_font_3, black, x_coord - 70, y_coord - 30)
+
+    #draw jail
+    jail = pygame.image.load('images/jail.png')
+    screen.blit(jail, (33, 33))
 
     # tile lines
     y = center_y
@@ -845,7 +858,7 @@ def main():
                  Railroad('Aerial Tramway', 25),
                  Railroad('Gondola One', 35)]
     #create utilities cards
-    utilities = [Utility('Snow Cannon', 12),
+    utilities = [Utility('Snow Gun', 12),
                  Utility('Snow Groomer', 28)]
 
     # created die
@@ -1053,11 +1066,14 @@ def main():
                     if not is_rolling:
                         if not has_rolled:
                             if total_players == 2:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 450 +
+                                          turn_index, 268)
                             if total_players == 3:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 370 +
+                                          turn_index, 268)
                             if total_players == 4:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 +
+                                          turn_index, 268)
                             turn_roll_button.draw(screen)
                             if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                 counter = 0
@@ -1107,7 +1123,7 @@ def main():
                     die2.draw(screen)
 
         elif current_screen == screens.get('BOARD'):
-            board_screen(screen, icon_positions, properties, railroads)
+            board_screen(screen, icon_positions, properties, railroads, utilities)
             properties_button.draw(screen)
             card_button.draw(screen)
 
