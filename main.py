@@ -645,17 +645,14 @@ def main():
     player2 = Player(icon2_img, 'Player 2', bank2, .6, icon_positions)
     player3 = Player(icon3_img, 'Player 3', bank3, .6, icon_positions)
     player4 = Player(icon4_img, 'Player 4', bank4, .6, icon_positions)
-    # turn screen variables
-    unset_players = []
-    players = []
-    turn_index = 0
-    turn_rolls = []
-    turn_dice_idx = 0
 
-    # initial roll to see who goes first
-    first_rolls = []
-    # TODO - CHANGE THIS VALUE BACK TO FALSE to play the actual game
-    first_roll = False
+    # turn screen variables
+    square_distance = 160
+    unset_players = []  # array of players created in load_players
+    players = []  # array of players w/ decided order
+    turn_index = 0
+    turn_rolls = []  # the holding the roll number of each unset_player
+
     result = ''
 
     # load community chest and chance cards
@@ -839,7 +836,6 @@ def main():
         elif current_screen == screens.get('DECIDE_TURN'):
             turn_screen(screen, total_players)
             # (Created once) loads the number of players into each list based on the amount chosen in first screen
-            square_distance = 160
             if not players_loaded:
                 unset_players = load_players(total_players, player1, player2, player3, player4, unset_players)
                 players_loaded = True
@@ -856,6 +852,13 @@ def main():
                     i += square_distance
             for active_player in unset_players:  # determine the order by having each player roll
                 active_player.turn = True
+                for num in range(0, len(turn_rolls)):  # - prints rolled number under icon
+                    if total_players == 2:
+                        draw_text(screen, str(turn_rolls[num]), medium_font, white, 510 + num * square_distance, 268)
+                    if total_players == 3:
+                        draw_text(screen, str(turn_rolls[num]), medium_font, white, 435 + num * square_distance, 268)
+                    if total_players == 4:
+                        draw_text(screen, str(turn_rolls[num]), medium_font, white, 350 + num * square_distance, 268)
                 if turn == active_player.name and active_player.turn:
                     if not is_rolling:
                         if not has_rolled:
@@ -912,13 +915,6 @@ def main():
                         counter += 1
                     die1.draw(screen)
                     die2.draw(screen)
-                # for num in turn_rolls:  # - prints rolled number (needs to move under correct icon)
-                #     if total_players == 2:
-                #         draw_text(screen, str(num), medium_font, white, 510 + turn_dice_idx, 290)
-                #     if total_players == 3:
-                #         draw_text(screen, str(num), medium_font, white, 430 + turn_dice_idx, 290)
-                #     if total_players == 4:
-                #         draw_text(screen, str(num), medium_font, white, 370 + turn_dice_idx, 290)
                 active_player.turn = False
 
         elif current_screen == screens.get('BOARD'):
@@ -937,22 +933,11 @@ def main():
                 bank_account = player4.bank
             draw_text(screen, str(bank_account.total), medium_font, black, 995, 90)
 
-            # (Created once) loads the number of players into each list based on the amount chosen in first screen
-            # if not players_loaded:
-            #     players, new_players = load_players(screen, total_players, player1, player2, player3, player4,
-            #                                         players, new_players)
-            #     players_loaded = True
-            # draws all active players
             for p in players:
                 p.draw(screen)
 
             # For loop iterates over all the players and checks if it is their turn
             for active_player in players:
-                # display instructions if its the first roll
-                # if first_roll:
-                #     draw_text(screen, 'Determine player order by', medium_font, black, 890, 300)
-                #     draw_text(screen, 'each person rolling the dice once', medium_font, black,
-                #               850, 330)
                 # print pop-ups if needed
                 if result == 'landlord opportunity':
                     result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
@@ -1001,34 +986,11 @@ def main():
                                 print('You rolled a', die1_value + die2_value)
                                 roll = die1_value + die2_value
                                 # TODO -- test spaces here by changing the roll value
-                                # roll = 5
-                                # if it's not the first roll, player icon should move number of spaces rolled
-                                if not first_roll:
-                                    active_player.movement(roll)
-                                    # interact with that spot on the board
-                                    result = interact(active_player, properties, railroads, cards)
-
-                                # FIRST ROLL-----
-                                # Have everyone roll once to find out the order of when each person players
-                                # if first_roll:
-                                #     first_rolls.append(roll)
-                                    # stop when everyone has rolled once
-                                #     if len(first_rolls) >= len(players):
-                                #         first_roll = False
-                                        # find player with largest roll and assign them to have a turn first, continue
-                                #         for i in range(0, len(players)):
-                                #             largest = first_rolls.index(max(first_rolls))
-                                #             new_players[i] = players[largest]
-                                            # get rid of the largest element in list
-                                #             first_rolls[largest] = -1
-                                        # reassign player list to the new order
-                                #         count = 0
-                                #         for current in new_players:
-                                #             players[count] = current
-                                #             count += 1
-                                        # DEBUGGING - print new player order
-                                        # for player in players:
-                                        # print(player.name)
+                                # roll = 6
+                                # player icon moves number of spaces rolled
+                                active_player.movement(roll)
+                                # interact with that spot on the board
+                                result = interact(active_player, properties, railroads, cards)
 
                                 die1_value = -1
                                 die2_value = -1
