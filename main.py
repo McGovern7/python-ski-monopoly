@@ -203,14 +203,17 @@ def get_icon_positions():
 def buy_pop_up(screen, active_player, message, properties, option):
     # buttons
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
-    yes_button = Button(roll_img, 950, 400, 'yes', black, 1)
-    no_button = Button(roll_img, 1050, 400, 'no', black, 1)
+    yes_button = Button(roll_img, 950, 300, 'yes', black, 1)
+    no_button = Button(roll_img, 1050, 300, 'no', black, 1)
     # draws pop up message
-    pygame.draw.rect(screen, red, (850, 310, 300, 150))
-    pygame.draw.rect(screen, white, (860, 320, 280, 130))
-    draw_text(screen, message, small_cs_font_1, black, 870, 330)
+    pygame.draw.rect(screen, red, (850, 210, 300, 150))
+    pygame.draw.rect(screen, white, (860, 220, 280, 130))
+    draw_text(screen, message, small_cs_font_1, black, 875, 240)
     yes_button.draw(screen)
     no_button.draw(screen)
+    for property in properties:  # draws property landed on
+        if int(active_player.location) == int(property.location):
+            create_card(screen, 900, 400, property)
     # if 'yes' button is clicked, user buys the property/railroad
     if yes_button.check_click():
         # determine what property player is on
