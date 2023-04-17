@@ -29,6 +29,7 @@ small_font_4 = pygame.font.SysFont(FONT_NAME, 10)
 small_cs_font_1 = pygame.font.SysFont('comicsansms', 14)
 small_cs_font_3 = pygame.font.SysFont('comicsansms', 11)
 small_cs_font_4 = pygame.font.SysFont('comicsansms', 10)
+jail_font = pygame.font.SysFont(FONT_NAME, 20)
 # Create the screen
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -535,8 +536,18 @@ def board_screen(screen, icon_positions, properties, railroads):
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
 
         #draw jail
+        text = jail_font.render('Just', True, black)
+        text = pygame.transform.rotate(text, 90)
+        screen.blit(text, [2, 45])
+        text = jail_font.render('Visiting', True, black)
+        screen.blit(text, [25, 8])
         jail = pygame.image.load('images/jail.png')
         screen.blit(jail, (33, 33))
+        #draw go to jail
+        draw_text(screen, 'Go TO', small_font_1, black, 720, 690)
+        draw_text(screen, 'JAIL', small_font_1, black, 725, 772)
+        go_to_jail = pygame.image.load('images/handcuff.png')
+        screen.blit(go_to_jail, (710, 710))
 
     # tile lines
     y = center_y
