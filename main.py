@@ -608,7 +608,7 @@ def board_screen(screen, icon_positions, properties, railroads):
 
 
 # card screen
-def card_screen(screen, font, property_list):
+def card_screen(screen, font, active_player):
     '''
     Function to display a screen that shows you cards and gives more details about your properties
     :param screen: game screen
@@ -617,29 +617,51 @@ def card_screen(screen, font, property_list):
     '''
     pygame.display.set_caption('Your cards')
     screen.fill(green)
-    draw_text(screen, 'Properties: ', font, white, 50, 20)
 
-    x = 50
-    y = 150
-    i = 0
-
-    if len(property_list) > 7:
+    #DRAW PROPERTIES
+    draw_text(screen, 'Properties: ', font, white, 50, 10)
+    start_x = 50
+    start_y = 50
+    #make 3 rows for properties (7 cards fit in one row)
+    #if there are less than seven properties, then one row
+    if len(active_player.property_list) < 8:
+        for property in active_player.property_list:
+            create_card(screen, start_x, start_y, property)
+            start_x += 160
+    # if there are between 7-14 properties, then two rows
+    elif len(active_player.property_list) > 7 and len(active_player.property_list) < 15:
         for i in range(0, 7):
             # create card
-            create_card(screen, x, y, property_list[i])
-            x += 160
-
-        x = 50
-        y = 360
-        for i in range(6, len(property_list)):
-            create_card(screen, x, y, property_list[i])
-            x += 160
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+        #reset values for the next row
+        start_x = 50
+        start_y = 300
+        for i in range(6, len(active_player.property_list)):
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+    #if there are between 14-21 properties, then 3 rows
     else:
-        for property in property_list:
-            create_card(screen, x, y, property)
-            x += 160
+        for i in range(0, 7):
+            # create card
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+        #reset values for the next row
+        start_x = 50
+        start_y = 300
+        for i in range(7, 14):
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+        # reset values for the next row
+        start_x = 50
+        start_y = 550
+        for i in range(13, len(active_player.property_list)):
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
 
-    # create_house(screen, 100, 500)
+    #DRAW RAILROADS
+
+    #DRAW UTILITIES
 
 
 def main():
@@ -769,6 +791,13 @@ def main():
                screen.get_width() - screen.get_width() * 0.1,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
+
+    #TESTING
+    for i in range(0,19):
+        player1.property_list.append(properties[i])
+
+
+
 
     # Game loop
     while True:
@@ -1093,7 +1122,7 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 30
+                            # roll = 30
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
@@ -1116,13 +1145,13 @@ def main():
         elif current_screen == screens.get('PROPS'):
             # Player 1
             if turn == 'Player 1':
-                card_screen(screen, font, player1.property_list)
+                card_screen(screen, font, player1)
             elif turn == 'Player 2':
-                card_screen(screen, font, player2.property_list)
+                card_screen(screen, font, player2)
             elif turn == 'Player 3':
-                card_screen(screen, font, player3.property_list)
+                card_screen(screen, font, player3)
             else:
-                card_screen(screen, font, player4.property_list)
+                card_screen(screen, font, player4)
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
