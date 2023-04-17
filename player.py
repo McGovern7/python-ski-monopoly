@@ -21,8 +21,11 @@ class Player:
         self.property_list = []
         #all player start the game with no railroads
         self.railroad_list = []
+        # all player start the game with no utilities
+        self.utilities_list = []
         #all players are created with it not being their turn to play
         self.jail= False
+        self.rolls_in_jail = -1
         self.bankrupt = False
 
     def draw(self, screen):
@@ -85,6 +88,23 @@ class Player:
         # give them the money back
         self.bank.deposit(railroad.price)
 
+    # function to buy utility
+    def buy_utility(self, new_utility):
+        # withdraw the money from player's account
+        self.bank.withdraw(new_utility.price)
+        # add this player's railroad list
+        self.utilities_list.append(new_utility)
+        # update the owner
+        new_utility.owner = self.name
+
+        # function to sell a railroad
+    def sell_utility(self, utility):
+        # remove property from player's property list
+        self.utilities_list.remove(utility)
+        # give them the money back
+        self.bank.deposit(utility.price)
+
+
     # function pay taxes -- pays either 10% of your income or $200 (whichever is smaller)
     def pay_taxes(self):
         # 10% of income
@@ -128,6 +148,14 @@ class Player:
         self.jail = True
         #go to the jail spot
         self.location = 10
+        #increment number of times player rolled in jail
+        self.rolls_in_jail += 1
+        #if the number of rolls is 3, the player must get out by paying a fine of $50
+        if self.rolls_in_jail >= 3:
+            self.bank.withdraw(50)
+            self.jail = False
+            return ''
+        return 'jail'
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):

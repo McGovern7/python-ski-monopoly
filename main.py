@@ -11,7 +11,8 @@ from die import Die
 from Property import Property
 from card import Card
 from player import Player
-from Railroad import Railroad
+from Other_Cards import Railroad
+from Other_Cards import Utility
 from network import Network
 
 # Initialize PyGame
@@ -29,7 +30,6 @@ small_font_4 = pygame.font.SysFont(FONT_NAME, 10)
 small_cs_font_1 = pygame.font.SysFont('comicsansms', 14)
 small_cs_font_3 = pygame.font.SysFont('comicsansms', 11)
 small_cs_font_4 = pygame.font.SysFont('comicsansms', 10)
-jail_font = pygame.font.SysFont(FONT_NAME, 20)
 # Create the screen
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -108,9 +108,48 @@ def create_card(screen, x, y, property):
     draw_text(screen, property.house_price, small_font_3, black, x + 78, y + 168)
     draw_text(screen, 'Hotel costs $', small_font_3, black, x + 10, y + 180)
     draw_text(screen, property.hotel_price, small_font_3, black, x + 73, y + 180)
+def create_other_card(screen, x, y, object_name, type):
+    '''
+    Function to create a railroad/utiilies card
+    :param screen: game screen
+    :param x: x coordinate where icon will be drawn
+    :param y: y coordinate where icon will be drawn
+    :param object_name: name of railroad/ utility that the card will represent
+    :param type: either railroad or utility
+    :return: nothing
+    '''
+    # draw this on every card
+    pygame.draw.rect(screen, white, (x, y, 150, 200))
+    # name of object
+    draw_text(screen, '____________________________', small_font_4, black, x + 5, y + 70)
+    draw_text(screen, str(object_name).upper(), small_font_3, black, x + 2, y + 85)
+    draw_text(screen, '____________________________', small_font_4, black, x + 5, y + 90)
+
+    #specific things drawn for railroads only
+    if type == 'railroad':
+        #image on each card
+        lift = pygame.image.load('images/ski-lift.png')
+        screen.blit(lift, (x + 50, y + 10))
+        #info on each card
+        draw_text(screen, 'Rent                              $25', small_font_3, black, x + 5, y + 110)
+        draw_text(screen, 'Rent if 2 lifts are owned $50', small_font_3, black, x + 5, y + 130)
+        draw_text(screen, 'Rent      \"      \"      \"       $75', small_font_3, black, x + 5, y + 150)
+        draw_text(screen, 'Rent      \"      \"      \"       $100', small_font_3, black, x + 5, y + 170)
 
 
-# Function draws text with desired font, color, and location on page
+    #specific things drawn for utilities only
+    else:
+        # image on each card
+        lift = pygame.image.load('images/blower.png')
+        screen.blit(lift, (x + 50, y + 15))
+        # info on each card
+        draw_text(screen, 'If one \"Utility\" owned rent', small_font_3, black, x + 5, y + 110)
+        draw_text(screen, 'is 4 times amount on dice', small_font_3, black, x + 5, y + 130)
+        draw_text(screen, 'If both \"Utilities\" owned rent', small_font_3, black, x + 5, y + 150)
+        draw_text(screen, 'is 10 times amount on dice', small_font_3, black, x + 5, y + 170)
+
+
+
 def draw_text(screen, text, font, text_col, x, y):
     '''
     Function to draww text on the game screen
@@ -264,7 +303,29 @@ def card_pop_up(screen, message):
         return ''
     else:
         return message
+def jail_pop_up(screen, active_player, message):
+    # buttons
+    roll_img = pygame.image.load('images/roll.png').convert_alpha()
+    yes_button = Button(roll_img, 950, 300, 'yes', black, 1)
+    no_button = Button(roll_img, 1050, 300, 'no', black, 1)
+    # draws pop up message
+    pygame.draw.rect(screen, red, (850, 210, 300, 150))
+    pygame.draw.rect(screen, white, (860, 220, 280, 130))
+    draw_text(screen, "Do you want to pay $50 to get out of jail?", small_cs_font_1, black, 865, 240)
+    yes_button.draw(screen)
+    no_button.draw(screen)
+    # if 'yes' button is clicked, user pays 50 to get out of jail
+    if yes_button.check_click():
+        bank = active_player.bank
+        bank.withdraw(50)
+        active_player.jail = False
+        return ''
 
+    # if no button is clicked, user does not buy the property
+    if no_button.check_click():
+        return ''
+    else:
+        return 'jail'
 
 def interact(active_player, players, properties, railroads, cards):
     # shuffle the cards!
@@ -305,7 +366,12 @@ def interact(active_player, players, properties, railroads, cards):
     # interaction for go to jail spot (send player to jail)
     if int(active_player.location) == 30:
         active_player.go_to_jail()
-        return ''
+        return 'jail'
+    #interaction for if you are in jail
+    if int(active_player.location) == 10 and active_player.jail:
+        #will return 'jail' unless it is the person's third time rolling
+        result = active_player.go_to_jail()
+        return result
     # interaction for community chest
     if int(active_player.location) == 2 or int(active_player.location) == 17 or int(active_player.location) == 33:
         for card in cards:
@@ -405,7 +471,7 @@ def turn_screen(screen, total_players):
 
 
 # board screen
-def board_screen(screen, icon_positions, properties, railroads):
+def board_screen(screen, icon_positions, properties, railroads, utilities):
     '''
     Function to display the screen with the monopoly board
     :param screen: game screen
@@ -442,6 +508,7 @@ def board_screen(screen, icon_positions, properties, railroads):
         # up the left side
         if x_coord == 35:
             pygame.draw.rect(screen, property.region, (90, y_coord - 33, 20, 64))
+            pygame.draw.rect(screen, black, (90, y_coord - 33, 20, 64), 1)  # black outline
             # name of property
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord - 30)
             # draw the cost to buy property
@@ -456,7 +523,8 @@ def board_screen(screen, icon_positions, properties, railroads):
         # across the top
         if y_coord == 35:
             # color square for region
-            pygame.draw.rect(screen, property.region, (x_coord - 32, 90, 63.9, 20))
+            pygame.draw.rect(screen, property.region, (x_coord - 31, 90, 63.9, 20))
+            pygame.draw.rect(screen, black, (x_coord - 31, 90, 63.9, 20), 1)  # black outline
 
             # logic to print houses along the top row
             houseX = x_coord - 32 + (64 / (property.num_houses + 1)) - 4
@@ -479,6 +547,7 @@ def board_screen(screen, icon_positions, properties, railroads):
         # down the right side
         if x_coord == 765:
             pygame.draw.rect(screen, property.region, (685, y_coord - 32, 20, 64))
+            pygame.draw.rect(screen, black, (685, y_coord - 32, 20, 64), 1)  # black outline
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 58, y_coord - 30)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 34, y_coord - 10)
@@ -492,6 +561,7 @@ def board_screen(screen, icon_positions, properties, railroads):
         # across the bottom
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
+            pygame.draw.rect(screen, black, (x_coord - 33, 685, 63.9, 20), 1)  # black outline
             draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 32, y_coord - 55)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
@@ -535,6 +605,22 @@ def board_screen(screen, icon_positions, properties, railroads):
             screen.blit(gondola, (x_coord - 25, y_coord - 45))
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
 
+    #draw utilities
+    for utility in utilities:
+        coordinates = str(icon_positions[int(utility.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
+        # across the top
+        if y_coord == 35:
+            draw_text(screen, utility.name, small_cs_font_3, black, x_coord - 25, y_coord - 30)
+        # down the right side
+        elif x_coord == 765:
+            draw_text(screen, utility.name, small_cs_font_3, black, x_coord - 70, y_coord - 30)
+
+    #draw jail
+    jail = pygame.image.load('images/jail.png')
+    screen.blit(jail, (33, 33))
         #draw jail
         text = jail_font.render('Just', True, black)
         text = pygame.transform.rotate(text, 90)
@@ -588,7 +674,7 @@ def board_screen(screen, icon_positions, properties, railroads):
 
 
 # card screen
-def card_screen(screen, font, property_list):
+def prop_card_screen(screen, font, active_player):
     '''
     Function to display a screen that shows you cards and gives more details about your properties
     :param screen: game screen
@@ -597,30 +683,73 @@ def card_screen(screen, font, property_list):
     '''
     pygame.display.set_caption('Your cards')
     screen.fill(green)
-    draw_text(screen, 'Properties: ', font, white, 50, 20)
 
-    x = 50
-    y = 150
-    i = 0
-
-    if len(property_list) > 7:
+    #DRAW PROPERTIES
+    draw_text(screen, 'Properties: ', font, white, 50, 10)
+    start_x = 50
+    start_y = 70
+    #make 3 rows for properties (7 cards fit in one row)
+    #if there are less than seven properties, then one row
+    if len(active_player.property_list) < 8:
+        for property in active_player.property_list:
+            create_card(screen, start_x, start_y, property)
+            start_x += 160
+    # if there are between 7-14 properties, then two rows
+    elif len(active_player.property_list) > 7 and len(active_player.property_list) < 15:
         for i in range(0, 7):
             # create card
-            create_card(screen, x, y, property_list[i])
-            x += 160
-
-        x = 50
-        y = 360
-        for i in range(6, len(property_list)):
-            create_card(screen, x, y, property_list[i])
-            x += 160
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+        #reset values for the next row
+        start_x = 50
+        start_y = 320
+        for i in range(6, len(active_player.property_list)):
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+    #if there are between 14-21 properties, then 3 rows
     else:
-        for property in property_list:
-            create_card(screen, x, y, property)
-            x += 160
+        for i in range(0, 7):
+            # create card
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+        #reset values for the next row
+        start_x = 50
+        start_y = 320
+        for i in range(7, 14):
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
+        # reset values for the next row
+        start_x = 50
+        start_y = 570
+        for i in range(13, len(active_player.property_list)):
+            create_card(screen, start_x, start_y, active_player.property_list[i])
+            start_x += 160
 
-    # create_house(screen, 100, 500)
+#other card screen
+def other_card_screen(screen, font, active_player):
+    '''
+    Function to display a screen that shows you the cards besides property cards
+    :param screen: game screen
+    :param font: font of the text
+    :param active_player: the player whose turn it is
+    :return: nothing
+    '''
+    pygame.display.set_caption('Your cards')
+    screen.fill(green)
 
+    # DRAW RAILROADS
+    draw_text(screen, 'Railroads: ', font, white, 50, 10)
+    start_x = 50
+    start_y = 70
+    for railroad in active_player.railroad_list:
+        create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
+
+    # DRAW UTILITIES
+    draw_text(screen, 'Utilities: ', font, white, 50, 290)
+    start_x = 50
+    start_y = 330
+    for utility in active_player.utilities_list:
+        create_other_card(screen, start_x, start_y, utility.name, 'utilities')
 
 def main():
     '''
@@ -643,7 +772,8 @@ def main():
         'START': 1,
         'DECIDE_TURN': 2,
         'BOARD': 3,
-        'PROPS': 4
+        'PROPS': 4,
+        'CARDS': 5
     }
     current_screen = screens.get('START')
 
@@ -697,8 +827,9 @@ def main():
     num_computers1_button = Button(number_img, 525, 310, '1', white, 1.5)
     num_computers2_button = Button(number_img, 600, 310, '2', white, 1.5)
     num_computers3_button = Button(number_img, 675, 310, '3', white, 1.5)
-    properties_button = Button(properties_img, 1000, 50, 'Inspect Properties', white, 1.5)
-    board_return_button = Button(board_return_img, 1000, 50, 'Return to Board', white, 1.5)
+    properties_button = Button(properties_img, 910, 50, 'Inspect Properties', white, 1.5)
+    card_button = Button(multiplayer_img, 1110, 50, 'Other cards', white, 1)
+    board_return_button = Button(board_return_img, 1000, 30, 'Return to Board', white, 1.5)
     roll_button = Button(roll_img, 935, 757, 'ROLL', black, 2)
     turn_roll_button = Button(roll_img, 600, 370, 'ROLL', black, 2)
     end_button = Button(singleplayer_img, 970, 680, 'END TURN', black, .75)
@@ -739,6 +870,9 @@ def main():
                  Railroad('Bonaventure Quad', 15),
                  Railroad('Aerial Tramway', 25),
                  Railroad('Gondola One', 35)]
+    #create utilities cards
+    utilities = [Utility('Snow Gun', 12),
+                 Utility('Snow Groomer', 28)]
 
     # created die
     die1 = Die(screen,
@@ -749,6 +883,13 @@ def main():
                screen.get_width() - screen.get_width() * 0.1,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
+
+    #TESTING
+    player1.railroad_list.append(railroads[0])
+    player1.utilities_list.append(utilities[0])
+
+
+
 
     # Game loop
     while True:
@@ -938,11 +1079,14 @@ def main():
                     if not is_rolling:
                         if not has_rolled:
                             if total_players == 2:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 450 +
+                                          turn_index, 268)
                             if total_players == 3:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 370 +
+                                          turn_index, 268)
                             if total_players == 4:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 +
+                                          turn_index, 268)
                             turn_roll_button.draw(screen)
                             if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                 counter = 0
@@ -992,8 +1136,9 @@ def main():
                     die2.draw(screen)
 
         elif current_screen == screens.get('BOARD'):
-            board_screen(screen, icon_positions, properties, railroads)
+            board_screen(screen, icon_positions, properties, railroads, utilities)
             properties_button.draw(screen)
+            card_button.draw(screen)
 
             # display bank account money
             draw_text(screen, 'Money: $', medium_font, black, 900, 90)
@@ -1024,11 +1169,17 @@ def main():
                 result = card_pop_up(screen, result)
             elif str(result)[:3] == 'You':
                 draw_text(screen, result, medium_font, black, 900, 300)
+            elif result == 'jail':
+                result = jail_pop_up(screen, active_player, result)
 
             #dice and turn
             if turn == active_player.name:
                 if not is_rolling:
                     draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
+                    #print message that player can't roll since they are in jail
+                    if active_player.jail:
+                        draw_text(screen, 'You are in jail.', medium_font, black, 920, 450)
+                    #don't roll if player is in jail
                     if not has_rolled:
                         roll_button.draw(screen)
                         if keys[pygame.K_SPACE]:  # rolls on a space key or button click
@@ -1067,9 +1218,10 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 11
-                            # player icon moves number of spaces rolled
-                            active_player.movement(roll)
+                            # roll = 30
+                            # player icon moves number of spaces rolled (only if player is not in jail)
+                            if not active_player.jail:
+                                active_player.movement(roll)
                             # interact with that spot on the board
                             result = interact(active_player, players, properties, railroads, cards)
 
@@ -1085,17 +1237,38 @@ def main():
             if properties_button.check_new_press():
                 if properties_button.check_click():  # click to move to property screen
                     current_screen = screens.get('PROPS')
+            if card_button.check_new_press():
+                if card_button.check_click():  # click to move to property screen
+                    current_screen = screens.get('CARDS')
 
         elif current_screen == screens.get('PROPS'):
             # Player 1
             if turn == 'Player 1':
-                card_screen(screen, font, player1.property_list)
+                prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
-                card_screen(screen, font, player2.property_list)
+                prop_card_screen(screen, font, player2)
             elif turn == 'Player 3':
-                card_screen(screen, font, player3.property_list)
+                prop_card_screen(screen, font, player3)
             else:
-                card_screen(screen, font, player4.property_list)
+                prop_card_screen(screen, font, player4)
+            board_return_button.draw(screen)
+            if keys[pygame.K_g]:  # press g to return to game
+                current_screen = screens.get('BOARD')
+            if board_return_button.check_new_press():
+                if board_return_button.check_click():  # click to move to board screen
+                    current_screen = screens.get('BOARD')
+
+        elif current_screen == screens.get('CARDS'):
+            # Player 1
+            if turn == 'Player 1':
+                other_card_screen(screen, font, player1)
+            elif turn == 'Player 2':
+                other_card_screen(screen, font, player2)
+            elif turn == 'Player 3':
+                other_card_screen(screen, font, player3)
+            else:
+                other_card_screen(screen, font, player4)
+
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
