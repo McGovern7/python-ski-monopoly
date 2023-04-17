@@ -135,6 +135,8 @@ class Player:
         if self.rolls_in_jail >= 3:
             self.bank.withdraw(50)
             self.jail = False
+            return ''
+        return 'jail'
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):

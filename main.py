@@ -329,8 +329,9 @@ def interact(active_player, players, properties, railroads, cards):
         return 'jail'
     #interaction for if you are in jail
     if int(active_player.location) == 10 and active_player.jail:
-        active_player.go_to_jail()
-        return 'jail'
+        #will return 'jail' unless it is the person's third time rolling
+        result = active_player.go_to_jail()
+        return result
     # interaction for community chest
     if int(active_player.location) == 2 or int(active_player.location) == 17 or int(active_player.location) == 33:
         for card in cards:
@@ -1053,7 +1054,6 @@ def main():
                     #print message that player can't roll since they are in jail
                     if active_player.jail:
                         draw_text(screen, 'You are in jail.', medium_font, black, 920, 450)
-                        draw_text(screen, 'Pay $50 to get out or try to roll doubles', medium_font, black, 800, 480)
                     #don't roll if player is in jail
                     if not has_rolled:
                         roll_button.draw(screen)
