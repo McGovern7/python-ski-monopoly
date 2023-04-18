@@ -6,19 +6,19 @@ class Card:
         self.payment = resulting_payment
         self.movement = resulting_movement
 
-    #function to return the message of the card and impact your bank account
+    #function to do what the card says (move player/gain or lose money)
     def play(self, player):
         bank = player.bank
         #if the payment is positive, deposit money
-        print(self.payment)
         if int(self.payment) > 0:
             bank.deposit(self.payment)
-            print("deposit")
+        elif int(self.payment) == 0:
+            pass
         else:
             # if negative withdraw money from account
             #take off negative sign
-            bank.withdraw(int(self.payment[1:]))
-            print("withdraw")
+            amount = self.payment[1:]
+            bank.withdraw(int(amount))
         #if there is a movement forward
         if self.movement[0] == '+':
             player.movement(int(self.movement[1]))
@@ -30,9 +30,7 @@ class Card:
             return
         #if there is a movement to a spot
         else:
-            print('moved to a spot')
             player.location = int(self.movement)
-
     def print(self):
         print(self.kind + ": " + self.message)
 

@@ -19,7 +19,7 @@ class Property:
         #location on the board (this aligns with icon_positions[location])
         self.location = board_location
         #start with no houses or hotels on property
-        self.num_houses = 0
+        self.num_houses = 4
         self.num_hotels = 0
         #start with no owner
         self.owner = 'NONE'
@@ -29,6 +29,9 @@ class Property:
         self.part_of_monopoly = False
         #starts off having no mortgage
         self.mortgaged = False
+        #how many players are on the square
+        self.occupancy = 0
+
     #function to double rent if the property becomes part of a monopoly
     def in_monopoly(self):
         self.part_of_monopoly = True
@@ -122,9 +125,3 @@ class Property:
     def print(self):
         print("Property name: " + self.property_name + "\nRent: " + str(format(self.rent)))
 
-#TEST
-# P1BA = Bank_Account("Player 1")
-# Boardwalk = Property("Boardwalk", "Blue", 400, 200, 200, 50,  200, 600, 1400, 1700, 2000)
-# Boardwalk.in_monopoly()
-# Boardwalk.buy_house(P1BA)
-# Boardwalk.print()

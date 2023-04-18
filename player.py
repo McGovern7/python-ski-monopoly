@@ -21,17 +21,43 @@ class Player:
         self.property_list = []
         #all player start the game with no railroads
         self.railroad_list = []
+        # all player start the game with no utilities
+        self.utilities_list = []
         #all players are created with it not being their turn to play
-        self.turn = False
         self.jail= False
+        self.rolls_in_jail = -1
+        self.jail_free = 0
+        #TODO - have an end to the game if someone goes bankrupt
         self.bankrupt = False
 
     def draw(self, screen):
         player_icon = pygame.image.load(self.image).convert_alpha()
         width = player_icon.get_width()
         height = player_icon.get_height()
-        screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
-                    self.board_positions[int(self.location)])
+
+        #get coordinate for where to draw player (only need this if want to chance their position)
+        coordinates = str(self.board_positions[int(self.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
+
+        #have a different location for if player is in jail/just visiting
+        if self.jail and self.location == 10:
+            #in jail
+            screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                        (x_coord+20, y_coord+20))
+        elif not self.jail and self.location == 10:
+            #just visiting jail
+            screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                        (x_coord-30, y_coord))
+
+        #if there are no edits to position on a square
+        else:
+            screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                        self.board_positions[int(self.location)])
+
+    '''elif self.occupancy == 2:
+                screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
 
     # function to buy a property
     def buy_property(self, new_property):
@@ -90,6 +116,23 @@ class Player:
         # give them the money back
         self.bank.deposit(railroad.price)
 
+    # function to buy utility
+    def buy_utility(self, new_utility):
+        # withdraw the money from player's account
+        self.bank.withdraw(new_utility.price)
+        # add this player's railroad list
+        self.utilities_list.append(new_utility)
+        # update the owner
+        new_utility.owner = self.name
+
+        # function to sell a railroad
+    def sell_utility(self, utility):
+        # remove property from player's property list
+        self.utilities_list.remove(utility)
+        # give them the money back
+        self.bank.deposit(utility.price)
+
+
     # function pay taxes -- pays either 10% of your income or $200 (whichever is smaller)
     def pay_taxes(self):
         # 10% of income
@@ -109,14 +152,20 @@ class Player:
         else:
             self.location += spaces_moved
 
+        # remove player from that property's occupancy
+        ''' self.location.occupancy -= 1 '''
+        #add player to new location occupancy
+    '''    self.location.occupancy += 1 '''
+
     def check_position(self):
         return self.board_positions[self.location]
 
     # function to pay another player rent when you land on their property
     # pass the property owner's bank account and the rent you owe them
-    def pay_rent(self, property_owner_account, rent_owed):
+    def pay_rent(self, landlord, rent_owed):
         self.bank.withdraw(rent_owed)
-        property_owner_account.deposit(rent_owed)
+        landlord_bank = landlord.bank
+        landlord_bank.deposit(rent_owed)
 
     # function to call everytime a player goes over "GO" board space
     def go(self):
@@ -132,11 +181,25 @@ class Player:
         self.jail = True
         #go to the jail spot
         self.location = 10
+        #increment number of times player rolled in jail
+        self.rolls_in_jail += 1
+        #if the number of rolls is 3, the player must get out by paying a fine of $50
+        if self.rolls_in_jail >= 3:
+            self.bank.withdraw(50)
+            self.jail = False
+            return ''
+        return 'jail'
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):
-        pass
-        # self.jail_free = false
+        if self.jail_free == 0:
+            print('You don\'t have this card to use')
+            return
+        #get out of jail
+        self.jail = False
+        #once used, you lose the card
+        self.jail_free -= 1
+
 
     # Updates bankrupt field, indicating the player loses
     def gone_bankrupt(self):
