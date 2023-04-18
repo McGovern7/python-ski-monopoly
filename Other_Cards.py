@@ -54,11 +54,9 @@ class Utility:
         #if the owner own only 1 utility, rent is 4 times dice roll
         if len(utility_owner.utilities_list) == 1:
             rent = 4*dice_roll
-            print(rent)
         #if the owner has 2 utilities, rent is 10 times dice roll
         elif len(utility_owner.utilities_list) == 2:
             rent = 10*dice_roll
-            print(rent)
         else:
             print("something went wrong - too many utilities owned")
             rent = 0

@@ -20,8 +20,6 @@ from network import Network
 pygame.init()
 
 # Constants
-# which font should we use?
-# print(pygame.font.get_fonts())
 FONT_NAME = 'timesnewroman'
 font = pygame.font.SysFont(FONT_NAME, 30)
 small_font_1 = pygame.font.SysFont(FONT_NAME, 16)
@@ -162,8 +160,6 @@ def load_properties():
     # Strips the newline character
     for line in lines:
         count += 1
-        # DEBUGGING
-        # print('Line{}: {}'.format(count, line.strip()))
         # split the line by commas
         property_features = line.split(',')
         # create a property object
@@ -183,8 +179,6 @@ def load_cards():
     count = 0
     for line in lines:
         count += 1
-        # DEBUGGING
-        # print('Line{}: {}'.format(count, line.strip()))
         # split the line by commas
         card_features = line.strip().split(',')
         # create a property object
@@ -329,30 +323,27 @@ def jail_pop_up(screen, active_player):
 
 def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
     # shuffle the cards!
-    random.shuffle(cards)
+    #random.shuffle(cards)
 
     # interaction for properties
     for property in properties:
         if int(active_player.location) == int(property.location):
-            print("inside")
             # check if property is owned by anyone
             if property.owner == 'NONE':
                 # send message to call pop-up back to main
                 return 'landlord opportunity'
             #if the property is owned by someone, active player must pay owner rent
             else:
-                #DEBUGGING
-                #print("real landlord: " + property.owner)
                 #see who the landlord is
                 for landlord in players:
+                    #make sure it is not the active player
                     if property.owner == landlord.name:
-                        #DEBUG
-                        #print("landlord chosen: " + landlord.name)
                         active_player.pay_rent(landlord, property.rent)
-                        #DEBUG MONEY
-                        #bank_l = landlord.bank
-                        #print("landlord money now: ", bank_l.total)
-                        message = "You paid $" + str(property.rent) + " in rent!"
+                        # make sure it is not the active player
+                        if property.owner != active_player.name:
+                            message = "You paid $" + str(property.rent) + " in rent!"
+                        else:
+                            message = ''
                         return message
 
 
@@ -368,7 +359,11 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                 for landlord in players:
                     if railroad.owner == landlord.name:
                         active_player.pay_rent(landlord, railroad.rent)
-                        message = "You paid $" + str(railroad.rent) + " in rent!"
+                        # make sure it is not the active player
+                        if railroad.owner != active_player.name:
+                            message = "You paid $" + str(property.rent) + " in rent!"
+                        else:
+                            message = ''
                         return message
 
 
@@ -385,7 +380,11 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                     if utility.owner == landlord.name:
                         rent = utility.calculate_rent(landlord, dice_roll)
                         active_player.pay_rent(landlord, rent)
-                        message = "You paid $" + str(rent) + " in rent!"
+                        # make sure it is not the active player
+                        if utility.owner != active_player.name:
+                            message = "You paid $" + str(property.rent) + " in rent!"
+                        else:
+                            message = ''
                         return message
 
 
@@ -919,6 +918,7 @@ def main():
     turn = 'Player 1'
 
     result = '' #start with there being no results from an interaction (no pop-ups)
+    text = '' #start with there being no text message from card
     # load community chest and chance cards
     cards = load_cards()
     # load property cards
@@ -1219,36 +1219,42 @@ def main():
             # draw_text(screen, 'properties ' + str(active_player.property_list), medium_font, black, 900, 600)
 
             # print pop-ups if needed
+            # pop-up for property
             if result == 'landlord opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
+            #pop-up for railroad
             elif result == 'railroad opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+            #pop-up for utility
             elif result == 'utility opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
+            #pop-up for community chest/chance
             elif str(result)[:8] == 'message:':
                 #save the message for later use
-                message = str(result)[:8]
-                print(message.find('Advance'))
-
+                text = result
                 #if the player gets a get out of jail free card, add it to their other cards
-                if message == 'Get out of jail free.':
+                if text == 'Get out of jail free.':
                     active_player.jail_free += 1
                 #if the player goes to jail
-                elif message == 'Go to jail.':
+                elif text == 'Go to jail.':
                     active_player.jail = True
-
+                #pop up
                 result = card_pop_up(screen, result)
-                # if the message has the words advance or go, there is another movement
-                if message.find('Advance') != -1 or message.find('Go') != -1:
-                    #interact with the new square
-                    result = interact(active_player, players, properties, railroads, utilities, 0, cards)
-
+            #pop-up message for paying rent
             elif str(result)[:3] == 'You':
                 draw_text(screen, result, medium_font, black, 900, 300)
+            #pop-up message to tell you if you are in jail
             elif result == 'jail':
                 result = jail_pop_up(screen, active_player)
+            #pop-up message for paying taxes
             elif result == 'tax':
                 draw_text(screen, "Taxes due!", medium_font, black, 900, 300)
+            # check if there was player movement from previous card pulled
+            elif result == '':
+                # if the message has the words advance or go, there is another movement
+                if text.find('Advance') != -1 or text.find('Go') != -1:
+                    # interact with the new square
+                    result = interact(active_player, players, properties, railroads, utilities, 0, cards)
 
             #dice and turn
             if turn == active_player.name:
