@@ -942,13 +942,6 @@ def main():
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
 
-    #TESTING
-    player1.railroad_list.append(railroads[0])
-    player1.utilities_list.append(utilities[0])
-
-
-
-
     # Game loop
     while True:
         for event in pygame.event.get():
@@ -1302,7 +1295,7 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 7
+                            #roll = 7
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
