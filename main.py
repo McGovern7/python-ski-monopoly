@@ -743,11 +743,23 @@ def prop_card_screen(screen, font, active_player):
     draw_text(screen, 'Properties: ', font, white, 50, 10)
     start_x = 50
     start_y = 70
+    button_x_offset = 75  # y distance below each card
+    button_y_offset = 230
+    mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
+    mortgage_idx = 0
+    mortgage_buttons = []
+
     #make 3 rows for properties (7 cards fit in one row)
     #if there are less than seven properties, then one row
     if len(active_player.property_list) < 8:
         for property in active_player.property_list:
             create_card(screen, start_x, start_y, property)
+
+            # code for mortgages
+            mortgage_buttons.append(Button(mortgage_img, start_x + button_x_offset, start_y + button_y_offset, 'Mortgage',
+                                           white, 1))
+            mortgage_buttons[mortgage_idx].draw(screen)
+            mortgage_idx += 1
             start_x += 160
     # if there are between 7-14 properties, then two rows
     elif len(active_player.property_list) > 7 and len(active_player.property_list) < 15:
@@ -779,6 +791,8 @@ def prop_card_screen(screen, font, active_player):
         for i in range(13, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             start_x += 160
+
+    return mortgage_buttons
 
 #other card screen
 def other_card_screen(screen, font, active_player):
@@ -1111,7 +1125,7 @@ def main():
 
         elif current_screen == screens.get('DECIDE_TURN'):
             turn_screen(screen, total_players)
-            # (Created once) loads the number of players into each list based on the amount chosen in first screen
+            # (Created once) loads the number of players into list based on the amount chosen in first screen
             if not players_loaded:
                 unset_players = load_players(total_players, player1, player2, player3, player4, unset_players)
                 players_loaded = True
@@ -1301,9 +1315,9 @@ def main():
                             # Both dice are at the start. Reset values
                             is_rolling = False
                             print('You rolled a', die1_value + die2_value)
-                            roll = die1_value + die2_value
+                            # roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            #roll = 7
+                            roll = 3
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
@@ -1329,13 +1343,13 @@ def main():
         elif current_screen == screens.get('PROPS'):
             # Player 1
             if turn == 'Player 1':
-                prop_card_screen(screen, font, player1)
+                mortgage_buttons = prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
-                prop_card_screen(screen, font, player2)
+                mortgage_buttons = prop_card_screen(screen, font, player2)
             elif turn == 'Player 3':
-                prop_card_screen(screen, font, player3)
+                mortgage_buttons = prop_card_screen(screen, font, player3)
             else:
-                prop_card_screen(screen, font, player4)
+                mortgage_buttons = prop_card_screen(screen, font, player4)
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
