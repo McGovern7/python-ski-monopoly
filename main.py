@@ -1303,14 +1303,14 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            #roll = 7
+                            roll = 3
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
 
                                 for player in players:
                                     if active_player.location == player.location:
-
+                                        active_player.fix_overlap(screen)
                             # interact with that spot on the board
                             result = interact(active_player, players, properties, railroads, utilities, roll, cards)
 

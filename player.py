@@ -59,7 +59,7 @@ class Player:
         x_coord = float(coordinates_list[0])
         y_coord = float(coordinates_list[1])
 
-        screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))
+        screen.blit(self.player_icon, (x_coord + 100, y_coord + 100))
 
 
     # function to buy a property
