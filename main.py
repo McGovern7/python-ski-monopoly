@@ -411,8 +411,8 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
     if int(active_player.location) == 7 or int(active_player.location) == 22 or int(active_player.location) == 36:
         for card in cards:
             if card.kind == 'Chance':
-                chosen_card = card
-                action = chosen_card.play(active_player)
+                chosen_card = cards[19]
+                chosen_card.play(active_player)
                 cards.remove(chosen_card)
                 return chosen_card.message
 
@@ -694,8 +694,8 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         x += center_dimension / 9  # Spaces all the squares evenly
 
     # tax squares
-    draw_text(screen, 'TAX', small_cs_font_4, black, 75, 463)
-    draw_text(screen, 'TAX', small_cs_font_4, black, 208, 725)
+    draw_text(screen, 'Ski Wax', small_cs_font_4, black, 75, 463)
+    draw_text(screen, 'Gear upgrade', small_cs_font_4, black, 208, 725)
 
     # chance
     chance_logo = pygame.image.load("images/chance.png")
@@ -1226,11 +1226,23 @@ def main():
             elif result == 'utility opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
             elif str(result)[:8] == 'message:':
+                #save the message for later use
+                message = str(result)[:8]
+                print(message.find('Advance'))
+
                 #if the player gets a get out of jail free card, add it to their other cards
-                if str(result)[:8] == 'Get out of jail free.':
+                if message == 'Get out of jail free.':
                     active_player.jail_free += 1
-                print(result)
+                #if the player goes to jail
+                elif message == 'Go to jail.':
+                    active_player.jail = True
+
                 result = card_pop_up(screen, result)
+                # if the message has the words advance or go, there is another movement
+                if message.find('Advance') != -1 or message.find('Go') != -1:
+                    #interact with the new square
+                    result = interact(active_player, players, properties, railroads, utilities, 0, cards)
+
             elif str(result)[:3] == 'You':
                 draw_text(screen, result, medium_font, black, 900, 300)
             elif result == 'jail':
@@ -1284,7 +1296,7 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 30
+                            roll = 7
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
