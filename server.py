@@ -36,8 +36,9 @@ def threaded_client(conn, p):
                 if not data:
                     break
                 else:
-                    if data == "games":
-                        pass
+                    if data == "START":
+                        if p == 0:
+                            game.current_screen = "TURNS"
                         # conn.sendall(pickle.dumps(games))
                     elif data != "get":
                         game.play(p, data)
@@ -70,9 +71,9 @@ while True:
     game_id = (id_count - 1) // 4
 
     if id_count > 5:
-        conn.send(str.encode("full"))
+        conn.send(pickle.dumps("full"))
     else:
         if id_count == 1:
             games[game_id] = Game(game_id)
-        conn.send(str.encode(str(id_count)))
+        conn.send(pickle.dumps(games[game_id]))
         start_new_thread(threaded_client, (conn, id_count))

@@ -1,4 +1,5 @@
 import pygame
+from Bank_Account import Bank_Account
 
 pygame.init()
 
@@ -7,13 +8,12 @@ class Player:
     # Creates a player object
     # Player has a name, position on the board, bank account, property list, get out of jail free card,
     # and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, player_icon, player_name, bank_account, scale, icon_positions):
+    def __init__(self, image, player_name, scale, icon_positions):
         # TODO -- Need a field for player vs computer
-        width = player_icon.get_width()
-        height = player_icon.get_height()
-        self.player_icon = pygame.transform.scale(player_icon, (int(width * scale), int(height * scale)))
+        self.image = image
         self.name = player_name
-        self.bank = bank_account
+        self.scale = scale
+        self.bank = Bank_Account(self.name)
         self.board_positions = icon_positions
         #start location is at icon_positions[0] (this is a coordinate)
         self.location = 0
@@ -27,7 +27,11 @@ class Player:
         self.bankrupt = False
 
     def draw(self, screen):
-        screen.blit(self.player_icon, self.board_positions[int(self.location)])
+        player_icon = pygame.image.load(self.image).convert_alpha()
+        width = player_icon.get_width()
+        height = player_icon.get_height()
+        screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                    self.board_positions[int(self.location)])
 
     # function to buy a property
     def buy_property(self, new_property):

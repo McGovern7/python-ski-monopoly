@@ -579,14 +579,15 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     screens = {
         'START': 1,
-        'BOARD': 2,
-        'PROPS': 3
+        'TURNS': 2,
+        'BOARD': 3,
+        'PROPS': 4
     }
     current_screen = screens.get('START')
 
     is_rolling = False
     has_rolled = False
-    counter = 0
+    roll_counter = 0
     die1_value = -1
     die2_value = -1
     turn = 'Player 1'
@@ -601,7 +602,7 @@ def main():
 
     # Multiplayer initializations
     ip_address = ''
-    input_rect = pygame.Rect(SCREEN_WIDTH / 2 - 100, 300, 200, 32)
+    input_rect = pygame.Rect(SCREEN_WIDTH / 2 - 100, 280, 200, 32)
     color_active = pygame.Color('white')
     color_passive = pygame.Color('gray')
     box_color = color_passive
@@ -610,6 +611,8 @@ def main():
     connected = False
     error = False
     is_full = False
+    my_player = ''
+    my_icon = ''
 
     # define fonts
     large_font = pygame.font.SysFont('Verdana', 25)
@@ -624,10 +627,14 @@ def main():
     properties_img = pygame.image.load('images/properties.png').convert_alpha()
     board_return_img = pygame.image.load('images/board-return.png').convert_alpha()
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
-    icon1_img = pygame.image.load('images/icon1.png').convert_alpha()
-    icon2_img = pygame.image.load('images/icon2.png').convert_alpha()
-    icon3_img = pygame.image.load('images/icon3.png').convert_alpha()
-    icon4_img = pygame.image.load('images/icon4.png').convert_alpha()
+    icon1 = 'images/icon1.png'
+    icon2 = 'images/icon2.png'
+    icon3 = 'images/icon3.png'
+    icon4 = 'images/icon4.png'
+    icon1_img = pygame.image.load(icon1).convert_alpha()
+    icon2_img = pygame.image.load(icon2).convert_alpha()
+    icon3_img = pygame.image.load(icon3).convert_alpha()
+    icon4_img = pygame.image.load(icon4).convert_alpha()
 
     # draw buttons
     singleplayer_button = Button(singleplayer_img, 500, 210, 'Single-Player', white, 1)
@@ -649,16 +656,11 @@ def main():
     # load board positions
     icon_positions = get_icon_positions()
 
-    # Bank accounts
-    bank1 = Bank_Account('Player 1')
-    bank2 = Bank_Account('Player 2')
-    bank3 = Bank_Account('Player 3')
-    bank4 = Bank_Account('Player 4')
     # create player objects
-    player1 = Player(icon1_img, 'Player 1', bank1, .6, icon_positions)
-    player2 = Player(icon2_img, 'Player 2', bank2, .6, icon_positions)
-    player3 = Player(icon3_img, 'Player 3', bank3, .6, icon_positions)
-    player4 = Player(icon4_img, 'Player 4', bank4, .6, icon_positions)
+    player1 = Player(icon1, 'Player 1', .6, icon_positions)
+    player2 = Player(icon2, 'Player 2', .6, icon_positions)
+    player3 = Player(icon3, 'Player 3', .6, icon_positions)
+    player4 = Player(icon4, 'Player 4', .6, icon_positions)
     unset_players = [player1, player2]
     # turn screen variables
     players = []
@@ -727,32 +729,33 @@ def main():
             singleplayer_button.draw(screen)
             multiplayer_button.draw(screen)
 
-            if pygame.mouse.get_pressed() and new_press:
-                new_press = False
-                if singleplayer_button.check_click():
-                    game_singleplayer = True
-                    game_multiplayer = False
-                    multiplayer_button.clicked = False
-                if multiplayer_button.check_click():
-                    game_multiplayer = True
-                    game_singleplayer = False
-                    singleplayer_button.clicked = False
+            if pygame.mouse.get_pressed():
+                if singleplayer_button.check_new_press():
+                    if singleplayer_button.check_click():
+                        game_singleplayer = True
+                        game_multiplayer = False
+                        multiplayer_button.clicked = False
+                if multiplayer_button.check_new_press():
+                    if multiplayer_button.check_click():
+                        game_multiplayer = True
+                        game_singleplayer = False
+                        singleplayer_button.clicked = False
                 # set number of computers
-                if num_computers1_button.check_click():
-                    num_computers2_button.clicked = False
-                    num_computers3_button.clicked = False
-                    num_computers = 1
-                if num_computers2_button.check_click():
-                    num_computers1_button.clicked = False
-                    num_computers3_button.clicked = False
-                    num_computers = 2
-                if num_computers3_button.check_click():
-                    num_computers2_button.clicked = False
-                    num_computers1_button.clicked = False
-                    num_computers = 3
-                # if startgame button clicked and game setup, move to game screen
-                if startgame_button.clicked:
-                    current_screen = screens.get("DECIDE_TURN")
+                if num_computers1_button.check_new_press():
+                    if num_computers1_button.check_click():
+                        num_computers2_button.clicked = False
+                        num_computers3_button.clicked = False
+                        num_computers = 1
+                if num_computers2_button.check_new_press():
+                    if num_computers2_button.check_click():
+                        num_computers1_button.clicked = False
+                        num_computers3_button.clicked = False
+                        num_computers = 2
+                if num_computers3_button.check_new_press():
+                    if num_computers3_button.check_click():
+                        num_computers2_button.clicked = False
+                        num_computers1_button.clicked = False
+                        num_computers = 3
 
             if game_singleplayer:
                 num_players = 1
@@ -770,10 +773,45 @@ def main():
                     icon3_button.draw(screen)
                     icon4_button.draw(screen)
                     startgame_button.draw(screen)
+
+                    if icon1_button.check_new_press():
+                        if icon1_button.check_click():
+                            player_selected = True
+                            my_icon = icon1
+                            icon2_button.clicked = False
+                            icon3_button.clicked = False
+                            icon4_button.clicked = False
+                    elif icon2_button.check_new_press():
+                        if icon2_button.check_click():
+                            player_selected = True
+                            my_icon = icon2_img
+                            icon1_button.clicked = False
+                            icon3_button.clicked = False
+                            icon4_button.clicked = False
+                    elif icon3_button.check_new_press():
+                        if icon3_button.check_click():
+                            player_selected = True
+                            my_icon = icon3
+                            icon1_button.clicked = False
+                            icon2_button.clicked = False
+                            icon4_button.clicked = False
+                    elif icon4_button.check_new_press():
+                        if icon2_button.check_click():
+                            player_selected = True
+                            my_icon = icon4
+                            icon1_button.clicked = False
+                            icon2_button.clicked = False
+                            icon3_button.clicked = False
+
+                    # if startgame button clicked and game setup, move to game screen
+                    if startgame_button.check_new_press():
+                        if startgame_button.check_click():
+                            player1 = Player(my_icon, "Player 1", .6, icon_positions)
+                            current_screen = screens.get("TURNS")
             elif game_multiplayer:
                 game_singleplayer = False
 
-                draw_text_center(screen, 'Enter server ip:', medium_font, black, 260)
+                draw_text_center(screen, 'Enter server ip:', medium_font, black, 245)
 
                 if active:
                     box_color = color_active
@@ -796,12 +834,13 @@ def main():
                     # Bad style
                     pygame.display.update()
                     n = Network(ip_address)
-                    if n.get_player() is None:
+                    # print(n.get_player())
+                    if n.get_game() is None:
                         error = True
                         ip_address = ''
                         active = True
                         connecting = False
-                    elif int(n.get_player()) >= 5:
+                    elif n.get_game() == "full":
                         is_full = True
                         ip_address = ''
                         active = True
@@ -831,102 +870,140 @@ def main():
                     #               server_box.x + 5,
                     #               server_box.y + 5)
 
-                    draw_text_center(screen, 'You are player ' + str(n.get_player()), medium_font, black, 320)
+                    draw_text_center(screen, 'You are player ', medium_font, black, 320)
                     draw_text_center(screen, 'Choose your Piece', medium_font, black, 350)
                     icon1_button.draw(screen)
                     icon2_button.draw(screen)
                     icon3_button.draw(screen)
                     icon4_button.draw(screen)
+                    player_selected = False
+                    if icon1_button.check_new_press():
+                        if icon1_button.check_click():
+                            player_selected = True
+                            my_icon = icon1
+                            icon2_button.clicked = False
+                            icon3_button.clicked = False
+                            icon4_button.clicked = False
+                    elif icon2_button.check_new_press():
+                        if icon2_button.check_click():
+                            player_selected = True
+                            my_icon = icon2_img
+                            icon1_button.clicked = False
+                            icon3_button.clicked = False
+                            icon4_button.clicked = False
+                    elif icon3_button.check_new_press():
+                        if icon3_button.check_click():
+                            player_selected = True
+                            my_icon = icon3
+                            icon1_button.clicked = False
+                            icon2_button.clicked = False
+                            icon4_button.clicked = False
+                    elif icon4_button.check_new_press():
+                        if icon2_button.check_click():
+                            player_selected = True
+                            my_icon = icon4
+                            icon1_button.clicked = False
+                            icon2_button.clicked = False
+                            icon3_button.clicked = False
                     startgame_button.draw(screen)
-        elif current_screen == screens.get('DECIDE_TURN'):
-            turn_screen(screen, total_players)
-            # (Created once) loads the number of players into each list based on the amount chosen in first screen
-            square_distance = 160
-            if not players_loaded:
-                unset_players = load_players(total_players, player3, player4, unset_players)
-                players = unset_players
-                players_loaded = True
-            i = 0
-            for p in unset_players:  # draw the icons into the squares
-                if total_players == 2:
-                    screen.blit(p.player_icon, (500 + i, 190))
-                    i += square_distance
-                elif total_players == 3:
-                    screen.blit(p.player_icon, (420 + i, 190))
-                    i += square_distance
-                elif total_players == 4:
-                    screen.blit(p.player_icon, (340 + i, 190))
-                    i += square_distance
-            for p in unset_players:  # determine the order by having each player roll
-                p.turn = True
-                if turn == p.name:
-                    if not is_rolling:
-                        if not has_rolled:
-                            if total_players == 2:
-                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
-                            if total_players == 3:
-                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
-                            if total_players == 4:
-                                draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
-                            turn_roll_button.draw(screen)
-                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
-                                counter = 0
-                                is_rolling = True
-                            if turn_roll_button.check_new_press():
-                                if turn_roll_button.check_click():
-                                    counter = 0
+                    if startgame_button.check_click() and player_selected:
+                        my_player = Player(my_icon, "Player", .6, [])
+                        game = n.send("START")
+                        current_screen = game.screen
+        elif current_screen == screens.get('TURNS'):
+            if game_singleplayer:
+                turn_screen(screen, total_players)
+                # (Created once) loads the number of players into each list based on the amount chosen in first screen
+                square_distance = 160
+                if not players_loaded:
+                    unset_players = load_players(total_players, player3, player4, unset_players)
+                    players = unset_players
+                    players_loaded = True
+                i = 0
+                for p in unset_players:  # draw the icons into the squares
+                    if total_players == 2:
+                        screen.blit(pygame.image.load(p.image).convert_alpha(), (500 + i, 190))
+                        i += square_distance
+                    elif total_players == 3:
+                        screen.blit(pygame.image.load(p.image).convert_alpha(), (420 + i, 190))
+                        i += square_distance
+                    elif total_players == 4:
+                        screen.blit(pygame.image.load(p.image).convert_alpha(), (340 + i, 190))
+                        i += square_distance
+                for p in unset_players:  # determine the order by having each player roll
+                    p.turn = True
+                    if turn == p.name:
+                        if not is_rolling:
+                            if not has_rolled:
+                                if total_players == 2:
+                                    draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 450 + turn_index, 268)
+                                if total_players == 3:
+                                    draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 370 + turn_index, 268)
+                                if total_players == 4:
+                                    draw_text(screen, str(p.name) + '\'s Turn', medium_font, white, 290 + turn_index, 268)
+                                turn_roll_button.draw(screen)
+                                if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+                                    roll_counter = 0
                                     is_rolling = True
+                                if turn_roll_button.check_new_press():
+                                    if turn_roll_button.check_click():
+                                        roll_counter = 0
+                                        is_rolling = True
+                            else:
+                                turn_index += square_distance
+                                if turn_index == square_distance * len(unset_players):  # returns player text to beginning
+                                    turn_index = 0
+                                # TODO: Figure out why the turn order is only sometimes correct
+                                if len(turn_rolls) == len(unset_players):
+                                    # reassign player list to the new order
+                                    for j in range(0, len(unset_players)):
+                                        for k in turn_rolls:
+                                            print(str(k) + ", ")
+                                        largest = turn_rolls.index(max(turn_rolls))
+                                        players[j] = unset_players[largest]
+                                        print(players[j].name)
+                                        turn_rolls[largest] = -1 # get rid of the largest element in list
+                                    for new_p in players:
+                                        print(new_p.name)
+                                    current_screen = screens.get('BOARD')
+                                turn = change_turn(unset_players, p, turn)
+                                has_rolled = False
                         else:
-                            turn_index += square_distance
-                            if turn_index == square_distance * len(unset_players):  # returns player text to beginning
-                                turn_index = 0
-                            # TODO: Figure out why the turn order is only sometimes correct
-                            if len(turn_rolls) == len(unset_players):
-                                # reassign player list to the new order
-                                for j in range(0, len(unset_players)):
-                                    for k in turn_rolls:
-                                        print(str(k) + ", ")
-                                    largest = turn_rolls.index(max(turn_rolls))
-                                    players[j] = unset_players[largest]
-                                    print(players[j].name)
-                                    turn_rolls[largest] = -1 # get rid of the largest element in list
-                                for new_p in players:
-                                    print(new_p.name)
-                                current_screen = screens.get('BOARD')
-                            turn = change_turn(unset_players, p, turn)
-                            has_rolled = False
-                    else:
-                        if die1_value == -1:
-                            die1_value = die1.roll(counter)
-                        if die2_value == -1:
-                            die2_value = die2.roll(counter)
-                        if die1_value != -1 and die2_value != -1:
-                            # Both dice are done rolling
-                            has_rolled = True
-                            # Return the dice to the start
-                            if not die1.at_start:
-                                die1.reset()
-                            if not die2.at_start:
-                                die2.reset()
-                            if die1.at_start and die2.at_start:
-                                # Both dice are at the start. Reset values
-                                is_rolling = False
-                                turn_roll = die1_value + die2_value
-                                turn_rolls.append(turn_roll)
+                            if die1_value == -1:
+                                die1_value = die1.roll(roll_counter)
+                            if die2_value == -1:
+                                die2_value = die2.roll(roll_counter)
+                            if die1_value != -1 and die2_value != -1:
+                                # Both dice are done rolling
+                                has_rolled = True
+                                # Return the dice to the start
+                                if not die1.at_start:
+                                    die1.reset()
+                                if not die2.at_start:
+                                    die2.reset()
+                                if die1.at_start and die2.at_start:
+                                    # Both dice are at the start. Reset values
+                                    is_rolling = False
+                                    turn_roll = die1_value + die2_value
+                                    turn_rolls.append(turn_roll)
 
-                                die1_value = -1
-                                die2_value = -1
-                        counter += 1
-                    die1.draw(screen)
-                    die2.draw(screen)
-                # for num in turn_rolls:  # - prints rolled number (needs to move under correct icon)
-                #     if total_players == 2:
-                #         draw_text(screen, str(num), medium_font, white, 510 + turn_dice_idx, 290)
-                #     if total_players == 3:
-                #         draw_text(screen, str(num), medium_font, white, 430 + turn_dice_idx, 290)
-                #     if total_players == 4:
-                #         draw_text(screen, str(num), medium_font, white, 370 + turn_dice_idx, 290)
-
+                                    die1_value = -1
+                                    die2_value = -1
+                            roll_counter += 1
+                        die1.draw(screen)
+                        die2.draw(screen)
+                    # for num in turn_rolls:  # - prints rolled number (needs to move under correct icon)
+                    #     if total_players == 2:
+                    #         draw_text(screen, str(num), medium_font, white, 510 + turn_dice_idx, 290)
+                    #     if total_players == 3:
+                    #         draw_text(screen, str(num), medium_font, white, 430 + turn_dice_idx, 290)
+                    #     if total_players == 4:
+                    #         draw_text(screen, str(num), medium_font, white, 370 + turn_dice_idx, 290)
+            elif game_multiplayer:
+                total_players = len(game.players)
+                turn_screen(screen, total_players)
+                die1.draw(screen)
+                die2.draw(screen)
         elif current_screen == screens.get('BOARD'):
             board_screen(screen, icon_positions, properties)
             properties_button.draw(screen)
@@ -973,11 +1050,11 @@ def main():
                         if not has_rolled:
                             roll_button.draw(screen)
                             if keys[pygame.K_SPACE]:  # rolls on a space key or button click
-                                counter = 0
+                                roll_counter = 0
                                 is_rolling = True
                             if roll_button.check_new_press():
                                 if roll_button.check_click():
-                                    counter = 0
+                                    roll_counter = 0
                                     is_rolling = True
                         else:
                             end_button.draw(screen)
@@ -989,9 +1066,9 @@ def main():
                         # A die_value of -1 indicates the die is not done rolling.
                         # Otherwise, roll() returns a random value from 1 to 6.
                         if die1_value == -1:
-                            die1_value = die1.roll(counter)
+                            die1_value = die1.roll(roll_counter)
                         if die2_value == -1:
-                            die2_value = die2.roll(counter)
+                            die2_value = die2.roll(roll_counter)
                         if die1_value != -1 and die2_value != -1:
                             # Both dice are done rolling
                             has_rolled = True
@@ -1039,9 +1116,10 @@ def main():
                                 die1_value = -1
                                 die2_value = -1
 
-                        counter += 1
-                    die1.draw(screen)
-                    die2.draw(screen)
+                        roll_counter += 1
+
+            die1.draw(screen)
+            die2.draw(screen)
 
             if keys[pygame.K_c]:  # press c to go to property screen
                 current_screen = screens.get('PROPS')

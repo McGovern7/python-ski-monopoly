@@ -11,7 +11,12 @@ class Game:
         self.players = []
         self.player_turn = 0
         self.dice = []
-        self.isPlaying = False
+        self.is_playing = False
+        self.current_screen = "TURNS"
+        self.icons = ['images/icon1.png',
+                      'images/icon2.png',
+                      'images/icon3.png',
+                      'images/icon4.png']
 
     def get_id(self):
         return self.game_id
@@ -24,3 +29,7 @@ class Game:
 
     def get_dice(self):
         return self.dice
+
+    def add_player(self):
+        player_num = len(self.players)
+        self.players[player_num] = Player(self.icons[player_num], 'Player ' + str(player_num), .6, [])
