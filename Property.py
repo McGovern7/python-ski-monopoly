@@ -125,9 +125,3 @@ class Property:
     def print(self):
         print("Property name: " + self.property_name + "\nRent: " + str(format(self.rent)))
 
-#TEST
-# P1BA = Bank_Account("Player 1")
-# Boardwalk = Property("Boardwalk", "Blue", 400, 200, 200, 50,  200, 600, 1400, 1700, 2000)
-# Boardwalk.in_monopoly()
-# Boardwalk.buy_house(P1BA)
-# Boardwalk.print()

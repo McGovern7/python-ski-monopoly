@@ -26,7 +26,7 @@ class Player:
         #all players are created with it not being their turn to play
         self.jail= False
         self.rolls_in_jail = -1
-        self.jail_free = 1
+        self.jail_free = 0
         #TODO - have an end to the game if someone goes bankrupt
         self.bankrupt = False
 
