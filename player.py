@@ -31,8 +31,23 @@ class Player:
         self.bankrupt = False
 
     def draw(self, screen):
-        screen.blit(self.player_icon, self.board_positions[int(self.location)])
+        #get coordinate for where to draw player (only need this if want to chance their position)
+        coordinates = str(self.board_positions[int(self.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
 
+        #have a different location for if player is in jail/just visiting
+        if self.jail and self.location == 10:
+            #in jail
+            screen.blit(self.player_icon, (x_coord+20, y_coord+20))
+        elif not self.jail and self.location == 10:
+            #just visiting jail
+            screen.blit(self.player_icon, (x_coord-30, y_coord))
+
+        #if there are no edits to position on a square
+        else:
+            screen.blit(self.player_icon, self.board_positions[int(self.location)])
     # function to buy a property
     def buy_property(self, new_property):
         new_property.owner = self.name
