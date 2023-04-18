@@ -52,6 +52,16 @@ class Player:
     '''elif self.occupancy == 2:
                 screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
 
+    def fix_overlap(self, screen):
+        # get coordinate for where to draw player (only need this if want to chance their position)
+        coordinates = str(self.board_positions[int(self.location)])
+        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+        x_coord = float(coordinates_list[0])
+        y_coord = float(coordinates_list[1])
+
+        screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))
+
+
     # function to buy a property
     def buy_property(self, new_property):
         new_property.owner = self.name
