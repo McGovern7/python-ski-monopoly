@@ -237,7 +237,12 @@ def buy_pop_up(screen, active_player, message, properties, option):
     no_button.draw(screen)
     for property in properties:  # draws property landed on
         if int(active_player.location) == int(property.location):
-            create_card(screen, 900, 400, property)
+            #if option 1, create card
+            if option == 1:
+                create_card(screen, 900, 400, property)
+            #if option 2, create other card
+            else:
+                create_other_card(screen, 900, 400, property.name, 'railroad')
     # if 'yes' button is clicked, user buys the property/railroad
     if yes_button.check_click():
         # determine what property player is on
