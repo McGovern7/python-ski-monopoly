@@ -297,6 +297,7 @@ def card_pop_up(screen, message):
         return ''
     else:
         return message
+
 def jail_pop_up(screen, active_player):
     # buttons
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
@@ -754,10 +755,9 @@ def prop_card_screen(screen, font, active_player):
     if len(active_player.property_list) < 8:
         for property in active_player.property_list:
             create_card(screen, start_x, start_y, property)
-
             # code for mortgages
-            mortgage_buttons.append(Button(mortgage_img, start_x + button_x_offset, start_y + button_y_offset, 'Mortgage',
-                                           white, 1))
+            mortgage_buttons.append(Button(mortgage_img, start_x + button_x_offset, start_y + button_y_offset,
+                                           'Mortgage', white, 1))
             mortgage_buttons[mortgage_idx].draw(screen)
             mortgage_idx += 1
             start_x += 160
@@ -792,7 +792,6 @@ def prop_card_screen(screen, font, active_player):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             start_x += 160
 
-    return mortgage_buttons
 
 #other card screen
 def other_card_screen(screen, font, active_player):
@@ -1354,13 +1353,13 @@ def main():
         elif current_screen == screens.get('PROPS'):
             # Player 1
             if turn == 'Player 1':
-                mortgage_buttons = prop_card_screen(screen, font, player1)
+                prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
-                mortgage_buttons = prop_card_screen(screen, font, player2)
+                prop_card_screen(screen, font, player2)
             elif turn == 'Player 3':
-                mortgage_buttons = prop_card_screen(screen, font, player3)
+                prop_card_screen(screen, font, player3)
             else:
-                mortgage_buttons = prop_card_screen(screen, font, player4)
+                prop_card_screen(screen, font, player4)
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
