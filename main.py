@@ -1307,6 +1307,10 @@ def main():
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
+
+                                for player in players:
+                                    if active_player.location == player.location:
+
                             # interact with that spot on the board
                             result = interact(active_player, players, properties, railroads, utilities, roll, cards)
 
