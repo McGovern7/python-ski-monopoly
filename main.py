@@ -693,8 +693,14 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         x += center_dimension / 9  # Spaces all the squares evenly
 
     # tax squares
-    draw_text(screen, 'Ski Wax', small_cs_font_4, black, 75, 463)
-    draw_text(screen, 'Gear upgrade', small_cs_font_4, black, 208, 725)
+    draw_text(screen, 'Ski', small_cs_font_3, black, 80, 445)
+    draw_text(screen, 'Wax', small_cs_font_3, black, 78, 460)
+    ski_wax = pygame.image.load("images/ski-wax.png")
+    screen.blit(ski_wax, (10, 430))
+    draw_text(screen, 'Gear', small_cs_font_3, black, 194, 695)
+    draw_text(screen, 'Upgrade', small_cs_font_3, black, 184, 710)
+    boot = pygame.image.load("images/ski-boot.png")
+    screen.blit(boot, (182, 740))
 
     # chance
     chance_logo = pygame.image.load("images/chance.png")
@@ -710,8 +716,8 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     draw_text(screen, 'Community', small_font_3, black, 498, 65)
     draw_text(screen, 'Chest', small_font_3, black, 512, 80)
     screen.blit(chest, (501, 740))
-    draw_text(screen, 'Community', small_font_3, black, 498, 710)
-    draw_text(screen, 'Chest', small_font_3, black, 512, 725)
+    draw_text(screen, 'Community', small_font_3, black, 498, 705)
+    draw_text(screen, 'Chest', small_font_3, black, 512, 720)
     screen.blit(chest, (6, 572))
     draw_text(screen, 'Community', small_font_3, black, 49, 561)
     draw_text(screen, 'Chest', small_font_3, black, 67, 580)
