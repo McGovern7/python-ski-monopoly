@@ -860,7 +860,8 @@ def main():
     counter = 0
     die1_value = -1
     die2_value = -1
-    players_loaded = False
+    doubles = False
+    doubles_count = 0
 
     # game type variables
     game_singleplayer = False
@@ -931,6 +932,7 @@ def main():
     player4 = Player(icon4_img, 'Player 4', bank4, 1, icon_positions)
 
     # turn screen variables
+    players_loaded = False
     square_distance = 160
     unset_players = []  # array of players created in load_players
     players = []  # array of players w/ decided order
@@ -1290,12 +1292,15 @@ def main():
                                 counter = 0
                                 is_rolling = True
                     else:
-                        end_button.draw(screen)
-                        if end_button.check_new_press():
-                            if end_button.check_click():  # rolls on a space key or button click
-                                #change the turn once player hit the end button
-                                turn, active_player = change_turn(players, active_player, turn)
-                                has_rolled = False
+                        if doubles:
+                            has_rolled = False
+                        else:
+                            end_button.draw(screen)
+                            if end_button.check_new_press():
+                                if end_button.check_click():  # rolls on a space key or button click
+                                    #change the turn once player hit the end button
+                                    turn, active_player = change_turn(players, active_player, turn)
+                                    has_rolled = False
                 else:
                     # A die_value of -1 indicates the die is not done rolling.
                     # Otherwise, roll() returns a random value from 1 to 6.
@@ -1315,10 +1320,15 @@ def main():
                         if die1.at_start and die2.at_start:
                             # Both dice are at the start. Reset values
                             is_rolling = False
-                            print('You rolled a', die1_value + die2_value)
-                            # roll = die1_value + die2_value
+                            roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 3
+                            # roll = 3
+                            # check if doubles were rolled
+                            if die1_value == die2_value:
+                                doubles = True
+                            else:
+                                doubles = False
+
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
