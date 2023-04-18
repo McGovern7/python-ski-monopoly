@@ -926,10 +926,10 @@ def main():
     bank3 = Bank_Account('Player 3')
     bank4 = Bank_Account('Player 4')
     # create player objects
-    player1 = Player(icon1_img, 'Player 1', bank1, .6, icon_positions)
-    player2 = Player(icon2_img, 'Player 2', bank2, .6, icon_positions)
-    player3 = Player(icon3_img, 'Player 3', bank3, .6, icon_positions)
-    player4 = Player(icon4_img, 'Player 4', bank4, .6, icon_positions)
+    player1 = Player(icon1_img, 'Player 1', bank1, 1, icon_positions)
+    player2 = Player(icon2_img, 'Player 2', bank2, 1, icon_positions)
+    player3 = Player(icon3_img, 'Player 3', bank3, 1, icon_positions)
+    player4 = Player(icon4_img, 'Player 4', bank4, 1, icon_positions)
 
     # turn screen variables
     square_distance = 160
@@ -963,6 +963,8 @@ def main():
                screen.get_width() - screen.get_width() * 0.1,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
+
+
 
     # Game loop
     while True:
@@ -1321,6 +1323,15 @@ def main():
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
+
+                            #if icons are on the same spot, change their position on the square
+                            new_players = players.copy()
+                            new_players.remove(active_player)
+                            for check_player in new_players:
+                                if int(active_player.location) == int(check_player.location):
+                                    #icons are overlapping on the board
+                                    active_player.overlap = True
+
                             # interact with that spot on the board
                             result = interact(active_player, players, properties, railroads, utilities, roll, cards)
 

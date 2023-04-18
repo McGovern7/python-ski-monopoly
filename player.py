@@ -23,14 +23,17 @@ class Player:
         self.railroad_list = []
         # all player start the game with no utilities
         self.utilities_list = []
+        self.scale = scale
         #all players are created with it not being their turn to play
         self.jail= False
         self.rolls_in_jail = -1
         self.jail_free = 0
         #TODO - have an end to the game if someone goes bankrupt
         self.bankrupt = False
+        self.overlap = False
 
     def draw(self, screen):
+
         #get coordinate for where to draw player (only need this if want to chance their position)
         coordinates = str(self.board_positions[int(self.location)])
         coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
@@ -44,6 +47,8 @@ class Player:
         elif not self.jail and self.location == 10:
             #just visiting jail
             screen.blit(self.player_icon, (x_coord-30, y_coord))
+        elif self.overlap:
+            screen.blit(self.player_icon, (x_coord + 30, y_coord))
 
         #if there are no edits to position on a square
         else:
@@ -51,6 +56,7 @@ class Player:
 
     '''elif self.occupancy == 2:
                 screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
+
 
     # function to buy a property
     def buy_property(self, new_property):
