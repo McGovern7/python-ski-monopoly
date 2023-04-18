@@ -653,7 +653,13 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
 
     #GO square
     go_icon = pygame.image.load('images/go.png')
-    screen.blit(go_icon, (10, 700))
+    screen.blit(go_icon, (2, 692))
+    text = small_font_1.render('COLLECT', True, black)
+    text = pygame.transform.rotate(text, 90)
+    screen.blit(text, [70, 698])
+    text = small_font_1.render('$200', True, black)
+    text = pygame.transform.rotate(text, 90)
+    screen.blit(text, [90, 714])
 
     # tile lines
     y = center_y
@@ -685,6 +691,13 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     screen.blit(chance_logo3, (287, 694))
 
     # community chest
+    chest = pygame.image.load("images/chest.png")
+    screen.blit(chest, (501, 10))
+    draw_text(screen, 'Community', small_font_3, black, 498, 65)
+    draw_text(screen, 'Chest', small_font_3, black, 512, 80)
+    screen.blit(chest, (501, 740))
+    draw_text(screen, 'Community', small_font_3, black, 498, 710)
+    draw_text(screen, 'Chest', small_font_3, black, 512, 725)
 
     # free parking
     draw_text(screen, 'FREE', small_font_1, black, 720, 4)
