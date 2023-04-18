@@ -14,7 +14,7 @@ Community Chest,message:You rescued an injured skier. //Collect $50.,50,*
 Community Chest,message:You need to repair the resort. //Pay $200.,-200,*
 Community Chest,message:You go off trail and get lost. //Pay Ski Patrol $50.,-50,*
 Community Chest,message:You find a free hot chocolate //on the table in the lodge. Collect $5.,5,*
-Chance,message:Go to jail.,0,10*
+Chance,message:Go to jail.,0,10,*
 Chance,message:Get out of jail free.,0,*
 Chance,message:Advance to go (collect $200).,200,0
 Chance,message:Your friends plan a ski trip. //Advance to Vail.,0,39

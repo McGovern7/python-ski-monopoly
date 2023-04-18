@@ -225,6 +225,7 @@ def get_icon_positions():
 
 
 def buy_pop_up(screen, active_player, message, properties, option):
+    #option 1 is for properties, option 2 is for railroads, option 3 is for utilities
     # buttons
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
     yes_button = Button(roll_img, 950, 300, 'yes', black, 1)
@@ -240,33 +241,44 @@ def buy_pop_up(screen, active_player, message, properties, option):
             #if option 1, create card
             if option == 1:
                 create_card(screen, 900, 400, property)
-            #if option 2, create other card
-            else:
+            #if option 2, create other card (railroad)
+            elif option == 3:
                 create_other_card(screen, 900, 400, property.name, 'railroad')
+            #if option 3, create other card (utility)
+            else:
+                create_other_card(screen, 900, 400, property.name, 'utility')
     # if 'yes' button is clicked, user buys the property/railroad
     if yes_button.check_click():
         # determine what property player is on
         for property in properties:
             if int(active_player.location) == int(property.location):
-                # option 2 is buying a railroad
-                if option == 2:
-                    active_player.buy_railroad(property)
-                    return ''
-                    # option 1 is buying a property
-                elif option == 1:
+                # option 1 is buying a property
+                if option == 1:
                     active_player.buy_property(property)
                     return ''
+                # option 2 is buying a railroad
+                elif option == 2:
+                    active_player.buy_railroad(property)
+                    return ''
+                # option 3 is buying a utility
+                else:
+                    active_player.buy_utility(property)
+                    return ''
+
 
     # if no button is clicked, user does not buy the property
     if no_button.check_click():
         return ''
     else:
-        # if railroad, return railroad opportunity
-        if option == 2:
-            return 'railroad opportunity'
-        # otherwise it's a normal property
-        else:
+        # if property, return landlord opportunity
+        if option == 1:
             return 'landlord opportunity'
+        # if railroad, return railroad opportunity
+        elif option == 2:
+            return 'railroad opportunity'
+        #if utility, return utility opportunity
+        else:
+            return 'utility opportunity'
 
 
 def card_pop_up(screen, message):
@@ -287,12 +299,11 @@ def card_pop_up(screen, message):
         draw_text(screen, message_edit, small_cs_font_1, black, 870, 330)
     okay_button.draw(screen)
     # if ok button is clicked, player can move on
-
     if okay_button.check_click():
         return ''
     else:
         return message
-def jail_pop_up(screen, active_player, message):
+def jail_pop_up(screen, active_player):
     # buttons
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
     yes_button = Button(roll_img, 950, 300, 'yes', black, 1)
@@ -323,6 +334,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
     # interaction for properties
     for property in properties:
         if int(active_player.location) == int(property.location):
+            print("inside")
             # check if property is owned by anyone
             if property.owner == 'NONE':
                 # send message to call pop-up back to main
@@ -392,6 +404,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
             if card.kind == 'Community Chest':
                 chosen_card = card
                 chosen_card.play(active_player)
+                cards.remove(chosen_card)
                 return chosen_card.message
 
     # interaction for chance
@@ -399,12 +412,14 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
         for card in cards:
             if card.kind == 'Chance':
                 chosen_card = card
-                message = chosen_card.play(active_player)
-                return message
+                action = chosen_card.play(active_player)
+                cards.remove(chosen_card)
+                return chosen_card.message
 
     # interaction for tax
     if int(active_player.location) == 4 or int(active_player.location) == 38:
         active_player.pay_taxes()
+        return 'tax'
 
 
 def change_turn(players, active_player, turn):
@@ -1191,12 +1206,20 @@ def main():
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
             elif result == 'railroad opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+            elif result == 'utility opportunity':
+                result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
             elif str(result)[:8] == 'message:':
+                #if the player gets a get out of jail free card, add it to their other cards
+                if str(result)[:8] == 'Get out of jail free.':
+                    active_player.jail_free += 1
+                print(result)
                 result = card_pop_up(screen, result)
             elif str(result)[:3] == 'You':
                 draw_text(screen, result, medium_font, black, 900, 300)
             elif result == 'jail':
-                result = jail_pop_up(screen, active_player, result)
+                result = jail_pop_up(screen, active_player)
+            elif result == 'tax':
+                draw_text(screen, "Taxes due!", medium_font, black, 900, 300)
 
             #dice and turn
             if turn == active_player.name:
@@ -1244,7 +1267,7 @@ def main():
                             print('You rolled a', die1_value + die2_value)
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            # roll = 30
+                            roll = 7
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
                                 active_player.movement(roll)
