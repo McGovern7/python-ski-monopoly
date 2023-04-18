@@ -1251,9 +1251,9 @@ def main():
                                     current_screen = screens.get('BOARD')
                         else:
                             if die1_value == -1:
-                                die1_value = die1.roll(counter)
+                                die1_value = die1.roll(roll_counter)
                             if die2_value == -1:
-                                die2_value = die2.roll(counter)
+                                die2_value = die2.roll(roll_counter)
                             if die1_value != -1 and die2_value != -1:
                                 # Both dice are done rolling
                                 has_rolled = True
