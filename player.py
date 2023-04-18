@@ -26,6 +26,8 @@ class Player:
         #all players are created with it not being their turn to play
         self.jail= False
         self.rolls_in_jail = -1
+        self.jail_free = 1
+        #TODO - have an end to the game if someone goes bankrupt
         self.bankrupt = False
 
     def draw(self, screen):
@@ -159,8 +161,14 @@ class Player:
 
     # Sets the get out of jail free card to negative when the player uses it
     def use_jail_free(self):
-        pass
-        # self.jail_free = false
+        if self.jail_free == 0:
+            print('You don\'t have this card to use')
+            return
+        #get out of jail
+        self.jail = False
+        #once used, you lose the card
+        self.jail_free -= 1
+
 
     # Updates bankrupt field, indicating the player loses
     def gone_bankrupt(self):

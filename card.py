@@ -7,6 +7,7 @@ class Card:
         self.movement = resulting_movement
 
     #function to return the message of the card and impact your bank account
+    #TODO - debug this function (something is wrong with withdraw)
     def play(self, player):
         bank = player.bank
         #if the payment is positive, deposit money
@@ -14,10 +15,15 @@ class Card:
         if int(self.payment) > 0:
             bank.deposit(self.payment)
             print("deposit")
+        elif int(self.payment) == 0:
+            pass
         else:
             # if negative withdraw money from account
             #take off negative sign
             amount = self.payment[1:]
+            #DEBUGGING
+            print(self.message)
+            print(amount)
             bank.withdraw(int(amount))
             print("withdraw")
         #if there is a movement forward

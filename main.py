@@ -15,6 +15,7 @@ from Other_Cards import Railroad
 from Other_Cards import Utility
 from network import Network
 
+
 # Initialize PyGame
 pygame.init()
 
@@ -51,32 +52,6 @@ red = (255, 0, 0)
 yellow = (255, 255, 0)
 green = (0, 100, 0)
 blue = (30, 144, 225)
-
-
-# house graphic
-def create_house(screen, x, y):
-    '''
-    Function to draw a house icon on a property
-    :param screen: game screen
-    :param x: x coordinate where icon will be drawn
-    :param y: y coordinate where icon will be drawn
-    :return: nothing
-    '''
-    house = pygame.image.load('images/home.png')
-    screen.blit(house, (x, y))
-
-
-# hotel graphic
-def create_hotel(screen, x, y):
-    '''
-    Function to draw a hotel icon on a property
-    :param screen: game screen
-    :param x: x coordinate where icon will be drawn
-    :param y: y coordinate where icon will be drawn
-    :return: nothing
-    '''
-    hotel = pygame.image.load('images/hotel.png')
-    screen.blit(hotel, (x, y))
 
 
 def create_card(screen, x, y, property):
@@ -149,6 +124,14 @@ def create_other_card(screen, x, y, object_name, type):
         draw_text(screen, 'If both \"Utilities\" owned rent', small_font_3, black, x + 5, y + 150)
         draw_text(screen, 'is 10 times amount on dice', small_font_3, black, x + 5, y + 170)
 
+def create_jail_free_card(screen, x, y):
+    pygame.draw.rect(screen, white, (x, y, 200, 150))
+    lift = pygame.image.load('images/escape.png')
+    screen.blit(lift, (x + 120, y + 50))
+    draw_text(screen, 'Chance', small_font_3, black, x + 25, y + 30)
+    draw_text(screen, 'GET OUT OF JAIL', small_font_3, black, x + 15, y + 60)
+    draw_text(screen, 'FREE', small_font_3, black, x + 25, y + 75)
+    draw_text(screen, 'This card may be kept until needed', small_font_4, black, x + 25, y + 120)
 
 
 def draw_text(screen, text, font, text_col, x, y):
@@ -254,7 +237,12 @@ def buy_pop_up(screen, active_player, message, properties, option):
     no_button.draw(screen)
     for property in properties:  # draws property landed on
         if int(active_player.location) == int(property.location):
-            create_card(screen, 900, 400, property)
+            #if option 1, create card
+            if option == 1:
+                create_card(screen, 900, 400, property)
+            #if option 2, create other card
+            else:
+                create_other_card(screen, 900, 400, property.name, 'railroad')
     # if 'yes' button is clicked, user buys the property/railroad
     if yes_button.check_click():
         # determine what property player is on
@@ -328,7 +316,7 @@ def jail_pop_up(screen, active_player, message):
     else:
         return 'jail'
 
-def interact(active_player, players, properties, railroads, cards):
+def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
     # shuffle the cards!
     random.shuffle(cards)
 
@@ -363,6 +351,31 @@ def interact(active_player, players, properties, railroads, cards):
             if railroad.owner == 'NONE':
                 # send message to call pop-up back to main
                 return 'railroad opportunity'
+            else:
+                # see who the owns the railroad
+                for landlord in players:
+                    if railroad.owner == landlord.name:
+                        active_player.pay_rent(landlord, railroad.rent)
+                        message = "You paid $" + str(railroad.rent) + " in rent!"
+                        return message
+
+
+    #interation for utilities
+    for utility in utilities:
+        if int(active_player.location) == int(utility.location):
+            # check if property is owned by anyone
+            if utility.owner == 'NONE':
+                # send message to call pop-up back to main
+                return 'utility opportunity'
+            else:
+                # see who the owns the utility
+                for landlord in players:
+                    if utility.owner == landlord.name:
+                        rent = utility.calculate_rent(landlord, dice_roll)
+                        active_player.pay_rent(landlord, rent)
+                        message = "You paid $" + str(rent) + " in rent!"
+                        return message
+
 
     # interaction for go to jail spot (send player to jail)
     if int(active_player.location) == 30:
@@ -496,7 +509,7 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     logo = pygame.image.load('images/ski-resort.png')
     screen.blit(logo, (center_x + 20, center_y + 20))
 
-    house = pygame.image.load("images/home.png")
+    home = pygame.image.load("images/home.png")
 
     # draw the name of each property on the square and district colors
     for property in properties:
@@ -567,10 +580,12 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
 
+            #TODO - should we do rectangles or house images?
             # logic to print houses along the bottom row
             houseX = x_coord - 32 + (64 / (property.num_houses + 1)) - 4
             for house in range(property.num_houses):
-                pygame.draw.rect(screen, black, (houseX, 688, 8, 8))
+                screen.blit(home, (houseX, 688))
+                #pygame.draw.rect(screen, black, (houseX, 688, 8, 8))
                 houseX += (64 / (property.num_houses + 1))
 
     #print railroads
@@ -748,6 +763,7 @@ def other_card_screen(screen, font, active_player):
     start_y = 70
     for railroad in active_player.railroad_list:
         create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
+        start_x += 160
 
     # DRAW UTILITIES
     draw_text(screen, 'Utilities: ', font, white, 50, 290)
@@ -755,6 +771,15 @@ def other_card_screen(screen, font, active_player):
     start_y = 330
     for utility in active_player.utilities_list:
         create_other_card(screen, start_x, start_y, utility.name, 'utilities')
+        start_x += 160
+
+    #DRAW GET OUT OF JAIL FREE
+    draw_text(screen, 'Get out of jail free: ', font, white, 50, 550)
+    start_x = 50
+    start_y = 590
+    for i in range(0,int(active_player.jail_free)):
+        create_jail_free_card(screen, start_x, start_y)
+        start_x += 210
 
 def main():
     '''
@@ -1228,7 +1253,7 @@ def main():
                             if not active_player.jail:
                                 active_player.movement(roll)
                             # interact with that spot on the board
-                            result = interact(active_player, players, properties, railroads, cards)
+                            result = interact(active_player, players, properties, railroads, utilities, roll, cards)
 
                             die1_value = -1
                             die2_value = -1

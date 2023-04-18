@@ -28,8 +28,6 @@ class Utility:
     #creates a railroad based on name
     def __init__(self, utility_name, board_location):
         self.name = utility_name
-        #rent doesn't have a specific rent (depends on dice value)
-        self.rent = 0
         self.price = 150
         self.owner = 'NONE'
         #location on board
@@ -50,3 +48,16 @@ class Utility:
         bank_account.withdraw(self.price/2 + self.price/2*.1)
         #mark property as not mortgaged (active now)
         self.mortgaged = False
+
+    #Function to determine what the rent should be (based on dice roll value)
+    def calculate_rent(self, utility_owner, dice_roll):
+        #if the owner own only 1 utility, rent is 4 times dice roll
+        if len(utility_owner.utilities_list) == 1:
+            rent = 4*dice_roll
+        #if the owner has 2 utilities, rent is 10 times dice roll
+        elif len(utility_owner.utilities_list) == 2:
+            rent = 10*dice_roll
+        else:
+            print("something went wrong - too many utilities owned")
+            rent = 0
+        return rent
