@@ -328,7 +328,7 @@ def jail_pop_up(screen, active_player, message):
     else:
         return 'jail'
 
-def interact(active_player, players, properties, railroads, cards):
+def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
     # shuffle the cards!
     random.shuffle(cards)
 
@@ -363,6 +363,31 @@ def interact(active_player, players, properties, railroads, cards):
             if railroad.owner == 'NONE':
                 # send message to call pop-up back to main
                 return 'railroad opportunity'
+            else:
+                # see who the owns the railroad
+                for landlord in players:
+                    if railroad.owner == landlord.name:
+                        active_player.pay_rent(landlord, railroad.rent)
+                        message = "You paid $" + str(railroad.rent) + " in rent!"
+                        return message
+
+
+    #interation for utilities
+    for utility in utilities:
+        if int(active_player.location) == int(utility.location):
+            # check if property is owned by anyone
+            if utility.owner == 'NONE':
+                # send message to call pop-up back to main
+                return 'utility opportunity'
+            else:
+                # see who the owns the utility
+                for landlord in players:
+                    if utility.owner == landlord.name:
+                        rent = utility.calculate_rent(landlord, dice_roll)
+                        active_player.pay_rent(landlord, rent)
+                        message = "You paid $" + str(rent) + " in rent!"
+                        return message
+
 
     # interaction for go to jail spot (send player to jail)
     if int(active_player.location) == 30:
@@ -1224,7 +1249,7 @@ def main():
                             if not active_player.jail:
                                 active_player.movement(roll)
                             # interact with that spot on the board
-                            result = interact(active_player, players, properties, railroads, cards)
+                            result = interact(active_player, players, properties, railroads, utilities, roll, cards)
 
                             die1_value = -1
                             die2_value = -1
