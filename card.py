@@ -7,6 +7,7 @@ class Card:
         self.movement = resulting_movement
 
     #function to return the message of the card and impact your bank account
+    #TODO - debug this function (something is wrong with withdraw)
     def play(self, player):
         bank = player.bank
         #if the payment is positive, deposit money
