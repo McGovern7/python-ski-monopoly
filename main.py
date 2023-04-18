@@ -713,7 +713,9 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     screen.blit(chest, (501, 740))
     draw_text(screen, 'Community', small_font_3, black, 498, 710)
     draw_text(screen, 'Chest', small_font_3, black, 512, 725)
-
+    screen.blit(chest, (6, 572))
+    draw_text(screen, 'Community', small_font_3, black, 49, 561)
+    draw_text(screen, 'Chest', small_font_3, black, 67, 580)
     # free parking
     draw_text(screen, 'FREE', small_font_1, black, 720, 4)
     parking = pygame.image.load("images/freeParking.png")

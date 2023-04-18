@@ -48,6 +48,10 @@ class Player:
         #if there are no edits to position on a square
         else:
             screen.blit(self.player_icon, self.board_positions[int(self.location)])
+
+    '''elif self.occupancy == 2:
+                screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
+
     # function to buy a property
     def buy_property(self, new_property):
         new_property.owner = self.name
@@ -133,6 +137,7 @@ class Player:
             self.bank.withdraw(200)
 
     def movement(self, spaces_moved):
+
         #make sure icon loops back to beginning of list if it reaches the end
         if (self.location + spaces_moved) > 39:
             #player passed go
@@ -140,6 +145,11 @@ class Player:
             self.location = (self.location + spaces_moved) % 40
         else:
             self.location += spaces_moved
+
+        # remove player from that property's occupancy
+        ''' self.location.occupancy -= 1 '''
+        #add player to new location occupancy
+    '''    self.location.occupancy += 1 '''
 
     def check_position(self):
         return self.board_positions[self.location]

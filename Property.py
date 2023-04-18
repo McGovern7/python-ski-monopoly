@@ -29,6 +29,9 @@ class Property:
         self.part_of_monopoly = False
         #starts off having no mortgage
         self.mortgaged = False
+        #how many players are on the square
+        self.occupancy = 0
+
     #function to double rent if the property becomes part of a monopoly
     def in_monopoly(self):
         self.part_of_monopoly = True
