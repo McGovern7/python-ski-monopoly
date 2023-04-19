@@ -728,6 +728,9 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     draw_text(screen, 'PARKING', small_font_1, black, 705, 90)
     screen.blit(parking, (705, 25))
 
+    #Utilities
+    snow_gun = pygame.image.load('images/snow-gun.png')
+    screen.blit(snow_gun, (183, 48))
 
 # card screen
 def prop_card_screen(screen, font, active_player):
