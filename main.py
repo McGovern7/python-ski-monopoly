@@ -615,26 +615,33 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         y_coord = float(coordinates_list[1])
         # up the left side
         if x_coord == 35:
-            screen.blit(tbar, (x_coord, y_coord-25))
-            draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord-30)
+            screen.blit(tbar, (x_coord - 2, y_coord-13))
+            draw_text(screen, railroad.name, small_cs_font_4, black, x_coord - 32, y_coord-32)
         # across the top
         elif y_coord == 35:
-            screen.blit(quad, (x_coord-25, y_coord+5))
+            screen.blit(quad, (x_coord-25, y_coord+8))
             # if railroad name has more than two words, display it differently
             if railroad.name.find(' ') > -1:
                 name = railroad.name.split(' ')
-                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 30, y_coord - 30)
-                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 22, y_coord - 15)
+                draw_text(screen, name[0], small_cs_font_4, black, x_coord - 28, y_coord - 30)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 18, y_coord - 15)
             else:
                 draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 30)
         # down the right side
         elif x_coord == 765:
-            screen.blit(tram, (x_coord - 45, y_coord - 25))
+            screen.blit(tram, (x_coord - 45, y_coord - 12))
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 70, y_coord - 30)
         #across the bottom
         else:
-            screen.blit(gondola, (x_coord - 25, y_coord - 45))
-            draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 70)
+            if railroad.name.find(' ') > -1:
+                name = railroad.name.split(' ')
+                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 22, y_coord - 70)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 14, y_coord - 55)
+            else:
+                draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 30)
+
+            screen.blit(gondola, (x_coord - 25, y_coord - 30))
+
 
     #draw utilities
     for utility in utilities:
