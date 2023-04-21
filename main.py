@@ -241,8 +241,11 @@ def buy_pop_up(screen, active_player, message, properties, option):
             #if option 3, create other card (utility)
             else:
                 create_other_card(screen, 900, 400, property.name, 'utility')
-    # if 'yes' button is clicked, user buys the property/railroad
-    if yes_button.check_click():
+    #PLAYER CHOICE (click yes or no for buying)
+    if active_player.computer:
+        #computer always buys property -- (automatic yes)
+        #delay a little so human can read what they buy
+        #pygame.time.wait(1000)
         # determine what property player is on
         for property in properties:
             if int(active_player.location) == int(property.location):
@@ -258,24 +261,43 @@ def buy_pop_up(screen, active_player, message, properties, option):
                 else:
                     active_player.buy_utility(property)
                     return ''
-
-
-    # if no button is clicked, user does not buy the property
-    if no_button.check_click():
-        return ''
+        pass
+    #player must interact with buttons to move on
     else:
-        # if property, return landlord opportunity
-        if option == 1:
-            return 'landlord opportunity'
-        # if railroad, return railroad opportunity
-        elif option == 2:
-            return 'railroad opportunity'
-        #if utility, return utility opportunity
+        # if 'yes' button is clicked, user buys the property/railroad
+        if yes_button.check_click():
+            # determine what property player is on
+            for property in properties:
+                if int(active_player.location) == int(property.location):
+                    # option 1 is buying a property
+                    if option == 1:
+                        active_player.buy_property(property)
+                        return ''
+                    # option 2 is buying a railroad
+                    elif option == 2:
+                        active_player.buy_railroad(property)
+                        return ''
+                    # option 3 is buying a utility
+                    else:
+                        active_player.buy_utility(property)
+                        return ''
+
+
+        # if no button is clicked, user does not buy the property
+        if no_button.check_click():
+            return ''
         else:
-            return 'utility opportunity'
+            # if property, return landlord opportunity
+            if option == 1:
+                return 'landlord opportunity'
+            # if railroad, return railroad opportunity
+            elif option == 2:
+                return 'railroad opportunity'
+            #if utility, return utility opportunity
+            else:
+                return 'utility opportunity'
 
-
-def card_pop_up(screen, message):
+def card_pop_up(screen, active_player, message):
     # buttons
     roll_img = pygame.image.load('images/roll.png').convert_alpha()
     okay_button = Button(roll_img, 950, 400, 'ok', black, 1)
@@ -292,11 +314,19 @@ def card_pop_up(screen, message):
     else:
         draw_text(screen, message_edit, small_cs_font_1, black, 870, 330)
     okay_button.draw(screen)
-    # if ok button is clicked, player can move on
-    if okay_button.check_click():
+    #PLAYER CHOICE (click okay button to move on)
+    if active_player.computer:
+        #wait a little so human can read
+        #pygame.time.delay(100)
+        #computer automatically hits the okay button
         return ''
+    #human must actually hit the okay button to move on
     else:
-        return message
+        # if ok button is clicked, player can move on
+        if okay_button.check_click():
+            return ''
+        else:
+            return message
 
 def jail_pop_up(screen, active_player):
     # buttons
@@ -309,18 +339,29 @@ def jail_pop_up(screen, active_player):
     draw_text(screen, "Do you want to pay $50 to get out of jail?", small_cs_font_1, black, 865, 240)
     yes_button.draw(screen)
     no_button.draw(screen)
-    # if 'yes' button is clicked, user pays 50 to get out of jail
-    if yes_button.check_click():
+    #PLAYER CHOICE (pay to get out of jail)
+    if active_player.computer:
+        #computer will automatically pay to get out of jail
+        #wait a little so human can read
+        #pygame.time.delay(60)
         bank = active_player.bank
         bank.withdraw(50)
         active_player.jail = False
         return ''
-
-    # if no button is clicked, user does not buy the property
-    if no_button.check_click():
-        return ''
+    #player must hit yes or no to move on
     else:
-        return 'jail'
+        # if 'yes' button is clicked, user pays 50 to get out of jail
+        if yes_button.check_click():
+            bank = active_player.bank
+            bank.withdraw(50)
+            active_player.jail = False
+            return ''
+
+        # if no button is clicked, user does not buy the property
+        if no_button.check_click():
+            return ''
+        else:
+            return 'jail'
 
 def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
     # shuffle the cards!
@@ -937,11 +978,11 @@ def main():
     bank2 = Bank_Account('Player 2')
     bank3 = Bank_Account('Player 3')
     bank4 = Bank_Account('Player 4')
-    # create player objects
-    player1 = Player(icon1_img, 'Player 1', bank1, 1, icon_positions)
-    player2 = Player(icon2_img, 'Player 2', bank2, 1, icon_positions)
-    player3 = Player(icon3_img, 'Player 3', bank3, 1, icon_positions)
-    player4 = Player(icon4_img, 'Player 4', bank4, 1, icon_positions)
+    # create player objects (all start at human players)
+    player1 = Player(False, icon1_img, 'Player 1', bank1, 1, icon_positions)
+    player2 = Player(False, icon2_img, 'Player 2', bank2, 1, icon_positions)
+    player3 = Player(False, icon3_img, 'Player 3', bank3, 1, icon_positions)
+    player4 = Player(False, icon4_img, 'Player 4', bank4, 1, icon_positions)
 
     # turn screen variables
     players_loaded = False
@@ -1033,12 +1074,21 @@ def main():
                 if num_computers1_button.check_new_press():
                     if num_computers1_button.check_click():
                         num_computers = 1
+                        #player 2 is a computer
+                        player2.computer = True
                 if num_computers2_button.check_new_press():
                     if num_computers2_button.check_click():
                         num_computers = 2
+                        #player 2 and 3 are computers
+                        player2.computer = True
+                        player3.computer = True
                 if num_computers3_button.check_new_press():
                     if num_computers3_button.check_click():
                         num_computers = 3
+                        #players 2, 3, 4 are computers
+                        player2.computer = True
+                        player3.computer = True
+                        player4.computer = True
 
                 total_players = num_players + num_computers
 
@@ -1177,13 +1227,22 @@ def main():
                                 draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 +
                                           turn_index, 268)
                             turn_roll_button.draw(screen)
-                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+                            #PLAYER CHOICE (roll dice to determine player order)
+                            if active_player.computer:
+                                #computer automatically rolls
                                 counter = 0
                                 is_rolling = True
-                            if turn_roll_button.check_new_press():
-                                if turn_roll_button.check_click():
+                                #wait a little bit
+                                pygame.time.delay(1000)
+                            #human has to roll
+                            else:
+                                if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                     counter = 0
                                     is_rolling = True
+                                if turn_roll_button.check_new_press():
+                                    if turn_roll_button.check_click():
+                                        counter = 0
+                                        is_rolling = True
                         else:
                             turn_index += square_distance
                             if turn_index == square_distance * len(unset_players):  # returns player text to beginning
@@ -1275,7 +1334,14 @@ def main():
                 result = card_pop_up(screen, result)
             #pop-up message for paying rent
             elif str(result)[:3] == 'You':
-                draw_text(screen, result, medium_font, black, 900, 300)
+                #chance message if player is computer
+                if active_player.computer:
+                    comp_message = str(active_player.name) + ' '
+                    comp_message += str(result)[3:]
+                    draw_text(screen, comp_message, medium_font, black, 900, 300)
+                    pygame.time.wait(30)
+                else:
+                    draw_text(screen, result, medium_font, black, 900, 300)
             #pop-up message to tell you if you are in jail
             elif result == 'jail':
                 result = jail_pop_up(screen, active_player)
@@ -1299,23 +1365,40 @@ def main():
                     #don't roll if player is in jail
                     if not has_rolled:
                         roll_button.draw(screen)
-                        if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+                        #PLAYER CHOICE (to roll)
+                        if active_player.computer:
+                            #computer rolls automatically
                             counter = 0
                             is_rolling = True
-                        if roll_button.check_new_press():
-                            if roll_button.check_click():
+                        #player must interact
+                        else:
+                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                 counter = 0
                                 is_rolling = True
+                            if roll_button.check_new_press():
+                                if roll_button.check_click():
+                                    counter = 0
+                                    is_rolling = True
                     else:
                         if doubles:
                             has_rolled = False
                         else:
                             end_button.draw(screen)
-                            if end_button.check_new_press():
-                                if end_button.check_click():  # rolls on a space key or button click
-                                    #change the turn once player hit the end button
-                                    turn, active_player = change_turn(players, active_player, turn)
-                                    has_rolled = False
+                            #PLAYER CHOICE (to end turn)
+                            if active_player.computer:
+                                #TODO - figure out when a computer should end their turn
+                                #computer ends turn after 20 milliseconds
+                                #pygame.time.delay(40)
+                                #end turn
+                                turn, active_player = change_turn(players, active_player, turn)
+                                has_rolled = False
+                            #player must hit end button to move on
+                            else:
+                                if end_button.check_new_press():
+                                    if end_button.check_click():  # rolls on a space key or button click
+                                        #change the turn once player hit the end button
+                                        turn, active_player = change_turn(players, active_player, turn)
+                                        has_rolled = False
                 else:
                     # A die_value of -1 indicates the die is not done rolling.
                     # Otherwise, roll() returns a random value from 1 to 6.

@@ -7,8 +7,8 @@ class Player:
     # Creates a player object
     # Player has a name, position on the board, bank account, property list, get out of jail free card,
     # and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, player_icon, player_name, bank_account, scale, icon_positions):
-        # TODO -- Need a field for player vs computer
+    def __init__(self, is_computer, player_icon, player_name, bank_account, scale, icon_positions):
+        self.computer = is_computer
         width = player_icon.get_width()
         height = player_icon.get_height()
         self.player_icon = pygame.transform.scale(player_icon, (int(width * scale), int(height * scale)))
@@ -28,12 +28,10 @@ class Player:
         self.jail= False
         self.rolls_in_jail = -1
         self.jail_free = 0
-        #TODO - have an end to the game if someone goes bankrupt
         self.bankrupt = False
         self.overlap = False
 
     def draw(self, screen):
-
         #get coordinate for where to draw player (only need this if want to chance their position)
         coordinates = str(self.board_positions[int(self.location)])
         coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
@@ -201,9 +199,5 @@ class Player:
         self.jail_free -= 1
 
 
-    # Updates bankrupt field, indicating the player loses
-    def gone_bankrupt(self):
-        pass
-        # self.bankrupt = true
 
 
