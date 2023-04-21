@@ -913,8 +913,7 @@ def main():
     counter = 0
     die1_value = -1
     die2_value = -1
-    doubles = False
-    doubles_count = 0
+    doubles = 0
 
     # game type variables
     game_singleplayer = False
@@ -1380,7 +1379,7 @@ def main():
                                     counter = 0
                                     is_rolling = True
                     else:
-                        if doubles:
+                        if doubles:  # keep turn on doubles
                             has_rolled = False
                         else:
                             end_button.draw(screen)
@@ -1420,12 +1419,14 @@ def main():
                             is_rolling = False
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 3
-                            # check if doubles were rolled
-                            if die1_value == die2_value:
-                                doubles = True
+                            # roll = 3
+                            if die1_value == die2_value:  # check if doubles were rolled
+                                doubles += 1
                             else:
-                                doubles = False
+                                doubles = 0
+                            if doubles >= 3:  # go to jail on 3rd double
+                                doubles = 0
+                                active_player.go_to_jail()
 
                             # player icon moves number of spaces rolled (only if player is not in jail)
                             if not active_player.jail:
