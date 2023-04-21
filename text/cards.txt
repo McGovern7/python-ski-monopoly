@@ -27,6 +27,6 @@ Chance,message:The mountain is very icy. //Advance forward 2 spaces.,0,+2
 Chance,message:You win a free ride on the snow groomer. //Advance to the snow groomer.,0,29
 Chance,message:You take a bad fall. Pay $10.,-10,*
 Chance,message:A friend buys you pizza in the lodge. //Collect $15.,15,*
-Chance,message:You try to race everyone to the bottom of the mountain. //Advance 3 spaces.,0,+3
+Chance,message:You try to race everyone to the //bottom of the mountain. //Advance 3 spaces.,0,+3
 Chance,message:You take too long to strap into your //snowboard bindings. //Pay $50.,-50,*
 Chance,message:You do a 360 off a jump. Collect $50.,50,*

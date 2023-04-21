@@ -325,6 +325,8 @@ def jail_pop_up(screen, active_player):
 def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
     # shuffle the cards!
     #random.shuffle(cards)
+    #DEBUGGING
+    print(dice_roll)
 
     # interaction for properties
     for property in properties:
@@ -383,7 +385,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                         active_player.pay_rent(landlord, rent)
                         # make sure it is not the active player
                         if utility.owner != active_player.name:
-                            message = "You paid $" + str(property.rent) + " in rent!"
+                            message = "You paid $" + str(rent) + " in rent!"
                         else:
                             message = ''
                         return message
@@ -411,7 +413,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
     if int(active_player.location) == 7 or int(active_player.location) == 22 or int(active_player.location) == 36:
         for card in cards:
             if card.kind == 'Chance':
-                chosen_card = cards[19]
+                chosen_card = card
                 chosen_card.play(active_player)
                 cards.remove(chosen_card)
                 return chosen_card.message
@@ -1332,7 +1334,7 @@ def main():
                             is_rolling = False
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            # roll = 3
+                            roll = 12
                             # check if doubles were rolled
                             if die1_value == die2_value:
                                 doubles = True
@@ -1350,6 +1352,8 @@ def main():
                                 if int(active_player.location) == int(check_player.location):
                                     #icons are overlapping on the board
                                     active_player.overlap = True
+                                elif int(active_player.location) != int(check_player.location):
+                                    active_player.overlap = False
 
                             # interact with that spot on the board
                             result = interact(active_player, players, properties, railroads, utilities, roll, cards)
