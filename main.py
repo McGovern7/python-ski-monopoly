@@ -593,7 +593,7 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
             pygame.draw.rect(screen, black, (x_coord - 33, 685, 63.9, 20), 1)  # black outline
-            draw_text(screen, property.property_name, small_cs_font_3, red, x_coord - 32, y_coord - 55)
+            draw_text(screen, property.property_name, small_cs_font_3, red, x_coord - (len(property.property_name)/2), y_coord - 55)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
 
