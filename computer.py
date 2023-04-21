@@ -1,1 +1,3 @@
-test
+class Computer(Player):
+    pass
+
