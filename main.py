@@ -364,7 +364,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                         active_player.pay_rent(landlord, railroad.rent)
                         # make sure it is not the active player
                         if railroad.owner != active_player.name:
-                            message = "You paid $" + str(property.rent) + " in rent!"
+                            message = "You paid $" + str(railroad.rent) + " in rent!"
                         else:
                             message = ''
                         return message
@@ -1334,7 +1334,7 @@ def main():
                             is_rolling = False
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 12
+                            roll = 3
                             # check if doubles were rolled
                             if die1_value == die2_value:
                                 doubles = True
