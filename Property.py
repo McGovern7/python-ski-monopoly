@@ -110,7 +110,7 @@ class Property:
     #function to mortgage a property
     def mortgage(self, bank_account):
         #return half the money to the player
-        bank_account.deposit(self.price/2)
+        bank_account.deposit(int(self.price) / 2)
         #mark the property as mortgaged (player will not collect rent anymore)
         self.mortgaged = True
 
