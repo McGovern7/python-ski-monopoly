@@ -981,6 +981,7 @@ def main():
 
     # Game loop
     while True:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1224,6 +1225,7 @@ def main():
                     die2.draw(screen)
 
         elif current_screen == screens.get('BOARD'):
+
             board_screen(screen, icon_positions, properties, railroads, utilities)
             properties_button.draw(screen)
             card_button.draw(screen)
@@ -1240,6 +1242,7 @@ def main():
                 bank_account = player4.bank
             draw_text(screen, str(bank_account.total), medium_font, black, 995, 90)
 
+            #draw players and make sure no one has lost the game
             for p in players:
                 p.draw(screen)
             #DEBUGGING
