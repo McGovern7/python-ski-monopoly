@@ -897,13 +897,14 @@ def other_card_screen(screen, font, active_player):
     draw_text(screen, 'Railroads: ', font, white, 50, 100)
     start_x = 50
     start_y = 160
-    mortgage_rail_buttons = []
+    mor_rail_buttons = []
+    unmor_rail_buttons = []
     mortgage_rail_idx = 0
 
     for railroad in active_player.railroad_list:
         create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
-        mortgage_rail_buttons = mortgage_card(screen, railroad, active_player, mortgage_rail_buttons, mortgage_rail_idx,
-                                              start_x, start_y)
+        mor_rail_buttons, unmor_rail_buttons = mortgage_card(screen, railroad, active_player, mor_rail_buttons,
+                                                             unmor_rail_buttons, mortgage_rail_idx, start_x, start_y)
         mortgage_rail_idx += 1
         start_x += 160
 
@@ -911,12 +912,13 @@ def other_card_screen(screen, font, active_player):
     draw_text(screen, 'Utilities: ', font, white, 690, 100)
     start_x = 690
     start_y = 160
-    mortgage_util_buttons = []
+    mor_util_buttons = []
+    unmor_util_buttons = []
     mortgage_util_idx = 0
     for utility in active_player.utilities_list:
         create_other_card(screen, start_x, start_y, utility.name, 'utilities')
-        mortgage_util_buttons = mortgage_card(screen, utility, active_player, mortgage_util_buttons, mortgage_util_idx,
-                                              start_x, start_y)
+        mor_util_buttons, unmor_util_buttons = mortgage_card(screen, utility, active_player, mor_util_buttons,
+                                                             unmor_util_buttons, mortgage_util_idx, start_x, start_y)
         mortgage_util_idx += 1
         start_x += 160
 
@@ -1297,10 +1299,10 @@ def main():
                             if len(turn_rolls) == len(unset_players):
                                 # reassign player list to the new order
                                 for j in range(0, len(unset_players)):
-                                    # players.append(unset_players[j])
-                                    largest = turn_rolls.index(max(turn_rolls))
-                                    players.append(unset_players[largest])  # appends correct player to empty list
-                                    turn_rolls[largest] = -1  # get rid of the largest element in list
+                                    players.append(unset_players[j])
+                                    # largest = turn_rolls.index(max(turn_rolls))
+                                    # players.append(unset_players[largest])  # appends correct player to empty list
+                                    # turn_rolls[largest] = -1  # get rid of the largest element in list
                                 turn = players[0].name
                                 active_player = players[0]
                                 current_screen = screens.get('BOARD')
@@ -1464,9 +1466,9 @@ def main():
                         if die1.at_start and die2.at_start:
                             # Both dice are at the start. Reset values
                             is_rolling = False
-                            roll = die1_value + die2_value
+                            # roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            # roll = 3
+                            roll = 12
                             if die1_value == die2_value:  # check if doubles were rolled
                                 doubles += 1
                             else:

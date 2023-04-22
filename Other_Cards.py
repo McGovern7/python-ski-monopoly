@@ -18,6 +18,12 @@ class Railroad:
         #mark the property as mortgaged (player will not collect rent anymore)
         self.mortgaged = True
 
+    # to unmortgage railroad
+    def unmortgage(self, bank_account):
+        # costs full price to unmortgage
+        bank_account.withdraw(int(self.price))
+        self.mortgaged = False
+
     #function to remove mortgage from railroad
     def remove_mortgage(self, bank_account):
         #player owes half the price of the property + 10%
@@ -41,6 +47,12 @@ class Utility:
         bank_account.deposit(self.price/2)
         #mark the property as mortgaged (player will not collect rent anymore)
         self.mortgaged = True
+
+    # to unmortgage utility
+    def unmortgage(self, bank_account):
+        # costs full price to unmortgage
+        bank_account.withdraw(int(self.price))
+        self.mortgaged = False
 
     #function to remove mortgage from railroad
     def remove_mortgage(self, bank_account):
