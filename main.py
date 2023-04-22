@@ -303,7 +303,7 @@ def buy_pop_up(screen, active_player, message, properties, option):
 
 def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, card_idx, start_x, start_y):
     button_x_offset = start_x + 75
-    button_y_offset = start_y + 220
+    button_y_offset = start_y + 225
     mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
     unmortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
     mortgage_buttons.append(Button(mortgage_img, button_x_offset, button_y_offset, 'Mortgage', white, 1))
@@ -320,8 +320,8 @@ def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_butt
 
 
 def buy_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
-    button_x_offset = start_x + 40
-    button_y_offset = start_y + 260
+    button_x_offset = start_x + 36
+    button_y_offset = start_y + 270
     house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
     house_buttons.append(Button(house_button_img, button_x_offset, button_y_offset, 'House', white, 1))
     if not card.mortgaged and card.part_of_monopoly and card.num_houses < 4 and card.num_hotels == 0:
@@ -330,6 +330,19 @@ def buy_house(screen, card, active_player, house_buttons, card_idx, start_x, sta
             card.buy_house(active_player.bank)
 
     return house_buttons
+
+
+def buy_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x, start_y):
+    button_x_offset = start_x + 114
+    button_y_offset = start_y + 270
+    hotel_button_img = pygame.image.load('images/hotel_button.png').convert_alpha()
+    hotel_buttons.append(Button(hotel_button_img, button_x_offset, button_y_offset, 'Hotel', white, 1))
+    if not card.mortgaged and card.part_of_monopoly and card.num_houses == 4 and card.num_hotels == 0:
+        hotel_buttons[card_idx].draw(screen)
+        if hotel_buttons[card_idx].check_click():
+            card.buy_hotel(active_player.bank)
+
+    return hotel_buttons
 
 
 def card_pop_up(screen, active_player, message):
@@ -402,7 +415,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
     # shuffle the cards!
     #random.shuffle(cards)
     #DEBUGGING
-    print(dice_roll)
+    # print(dice_roll)
 
     # interaction for properties
     for property in properties:
@@ -425,7 +438,6 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                             message = ''
                         return message
 
-
     # interaction for railroads
     for railroad in railroads:
         if int(active_player.location) == int(railroad.location):
@@ -444,7 +456,6 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                         else:
                             message = ''
                         return message
-
 
     #interation for utilities
     for utility in utilities:
@@ -465,7 +476,6 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                         else:
                             message = ''
                         return message
-
 
     # interaction for go to jail spot (send player to jail)
     if int(active_player.location) == 30:
@@ -814,72 +824,26 @@ def prop_card_screen(screen, font, active_player):
     draw_text(screen, 'Properties: ', font, white, 50, 10)
     start_x = 50
     start_y = 70
-    card_idx = 0
+    level = 1
     mortgage_buttons = []
     unmortgage_buttons = []
     house_buttons = []
     hotel_buttons = []
 
-    #make 3 rows for properties (7 cards fit in one row)
-    #if there are less than seven properties, then one row
-    if len(active_player.property_list) < 8:
-        for property in active_player.property_list:
-            create_card(screen, start_x, start_y, property)
-            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, property, active_player, mortgage_buttons,
-                                                                 unmortgage_buttons, card_idx, start_x, start_y)
-            house_buttons = buy_house(screen, property, active_player, house_buttons, card_idx, start_x, start_y)
-            card_idx += 1
-            start_x += 160
-    # if there are between 7-14 properties, then two rows
-    elif len(active_player.property_list) > 7 and len(active_player.property_list) < 15:
-        for i in range(0, 7):
-            # create card
-            create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
-                                                                 start_x, start_y)
-            card_idx += 1
-            start_x += 160
-        #reset values for the next row
-        start_x = 50
-        start_y = 320
-        for i in range(6, len(active_player.property_list)):
-            create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
-                                                                 start_x, start_y)
-            card_idx += 1
-            start_x += 160
-    #if there are between 14-21 properties, then 3 rows
-    else:
-        for i in range(0, 7):
-            # create card
-            create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
-                                                                 start_x, start_y)
-            card_idx += 1
-            start_x += 160
-        #reset values for the next row
-        start_x = 50
-        start_y = 320
-        for i in range(7, 14):
-            create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
-                                                                 start_x, start_y)
-            card_idx += 1
-            start_x += 160
-        # reset values for the next row
-        start_x = 50
-        start_y = 570
-        for i in range(13, len(active_player.property_list)):
-            create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
-                                                                 start_x, start_y)
-            card_idx += 1
-            start_x += 160
+    for card_idx in range(0, len(active_player.property_list)):
+        create_card(screen, start_x, start_y, active_player.property_list[card_idx])
+        mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[card_idx], active_player,
+                                                             mortgage_buttons, unmortgage_buttons, card_idx,
+                                                             start_x, start_y)
+        house_buttons = buy_house(screen, active_player.property_list[card_idx], active_player, house_buttons, card_idx,
+                                  start_x, start_y)
+        hotel_buttons = buy_hotel(screen, active_player.property_list[card_idx], active_player, hotel_buttons, card_idx,
+                                  start_x, start_y)
+        start_x += 160
+        if level % 7 == 0:
+            start_x = 50
+            start_y += 300
+        level += 1
 
 
 #other card screen
@@ -963,6 +927,7 @@ def main():
     die1_value = -1
     die2_value = -1
     doubles = 0
+    loaded = False
 
     # game type variables
     game_singleplayer = False
@@ -1089,9 +1054,7 @@ def main():
 
         if current_screen == screens.get('START'):
             # game_singleplayer, game_multiplayer = start_screen(screen, game_singleplayer, game_multiplayer)
-            # Fill screen background
-            screen.fill((135, 206, 235))
-
+            screen.fill((135, 206, 235))  # Fill screen background
             draw_text(screen, 'Welcome to CS205 Project: Ski Resort Monopoly!', large_v_font, black, 290, 50)
             draw_text(screen, 'Press \'esc\' to close the program', small_v_font, black, 25, 750)
             draw_text(screen, 'Game Setup', medium_v_font, black, 540, 150)
@@ -1118,18 +1081,18 @@ def main():
                 if num_computers1_button.check_new_press():
                     if num_computers1_button.check_click():
                         num_computers = 1
-                        #player 2 is a computer
+                        # player 2 is a computer
                         player2.computer = True
                 if num_computers2_button.check_new_press():
                     if num_computers2_button.check_click():
                         num_computers = 2
-                        #player 2 and 3 are computers
+                        # player 2 and 3 are computers
                         player2.computer = True
                         player3.computer = True
                 if num_computers3_button.check_new_press():
                     if num_computers3_button.check_click():
                         num_computers = 3
-                        #players 2, 3, 4 are computers
+                        # players 2, 3, 4 are computers
                         player2.computer = True
                         player3.computer = True
                         player4.computer = True
@@ -1235,8 +1198,7 @@ def main():
 
         elif current_screen == screens.get('DECIDE_TURN'):
             turn_screen(screen, total_players)
-            # (Created once) loads the number of players into list based on the amount chosen in first screen
-            if not players_loaded:
+            if not players_loaded:  # (Created once) loads players into list based on amount chosen in first screen
                 unset_players = load_players(total_players, player1, player2, player3, player4, unset_players)
                 players_loaded = True
             i = 0
@@ -1270,15 +1232,13 @@ def main():
                             if total_players == 4 and not active_player.computer:
                                 draw_text(screen, str(active_player.name) + '\'s Turn', medium_v_font, white, 290 +
                                           turn_index, 268)
-                            #PLAYER CHOICE (roll dice to determine player order)
+                            # PLAYER CHOICE (roll dice to determine player order)
                             if active_player.computer:
-                                #computer automatically rolls
+                                # computer automatically rolls
                                 counter = 0
                                 is_rolling = True
-                                #wait a little bit
-                                pygame.time.delay(1000)
-                            #human has to roll
-                            else:
+                                pygame.time.delay(1000)  # wait a little bit
+                            else:  # human has to roll
                                 turn_roll_button.draw(screen)  # doesn't show up for computer
                                 if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                     counter = 0
@@ -1308,20 +1268,17 @@ def main():
                             die1_value = die1.roll(counter)
                         if die2_value == -1:
                             die2_value = die2.roll(counter)
-                        if die1_value != -1 and die2_value != -1:
-                            # Both dice are done rolling
+                        if die1_value != -1 and die2_value != -1:  # Both dice are done rolling
                             has_rolled = True
                             # Return the dice to the start
                             if not die1.at_start:
                                 die1.reset()
                             if not die2.at_start:
                                 die2.reset()
-                            if die1.at_start and die2.at_start:
-                                # Both dice are at the start. Reset values
+                            if die1.at_start and die2.at_start:  # Both dice are at the start. Reset values
                                 is_rolling = False
                                 turn_roll = die1_value + die2_value
                                 turn_rolls.append(turn_roll)
-
                                 die1_value = -1
                                 die2_value = -1
                         counter += 1
@@ -1510,6 +1467,10 @@ def main():
         elif current_screen == screens.get('PROPS'):
             # Player 1
             if turn == 'Player 1':
+                if not loaded:
+                    for property in properties:
+                        player1.property_list.append(property)
+                    loaded = True
                 prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 prop_card_screen(screen, font, player2)
