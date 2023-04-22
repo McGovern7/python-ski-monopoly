@@ -19,7 +19,7 @@ class Property:
         #location on the board (this aligns with icon_positions[location])
         self.location = board_location
         #start with no houses or hotels on property
-        self.num_houses = 4
+        self.num_houses = 0
         self.num_hotels = 0
         #start with no owner
         self.owner = 'NONE'
@@ -114,15 +114,10 @@ class Property:
         #mark the property as mortgaged (player will not collect rent anymore)
         self.mortgaged = True
 
-    # to unmortgage a property
-    def unmortgage(self, bank_account):
-        bank_account.withdraw(int(self.price))
-        self.mortgaged = False
-
     #function to remove mortgage
     def remove_mortgage(self, bank_account):
         #player owes half the price of the property + 10%
-        bank_account.withdraw(self.price/2 + self.price/2*.1)
+        bank_account.withdraw(int(self.price) / 2 + int(self.price) / 2 * .1)
         #mark property as not mortgaged (active now)
         self.mortgaged = False
 

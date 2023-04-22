@@ -30,6 +30,9 @@ small_cs_font_1 = pygame.font.SysFont('comicsansms', 14)
 small_cs_font_3 = pygame.font.SysFont('comicsansms', 11)
 small_cs_font_4 = pygame.font.SysFont('comicsansms', 10)
 corner_font = pygame.font.SysFont('comicsansms', 20)
+small_v_font = pygame.font.SysFont('Verdana', 15)
+medium_v_font = pygame.font.SysFont('Verdana', 20)
+large_v_font = pygame.font.SysFont('Verdana', 25)
 # Create the screen
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 800
@@ -298,22 +301,35 @@ def buy_pop_up(screen, active_player, message, properties, option):
                 return 'utility opportunity'
 
 
-def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, mortgage_idx, start_x, start_y):
+def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, card_idx, start_x, start_y):
     button_x_offset = start_x + 75
-    button_y_offset = start_y + 230
+    button_y_offset = start_y + 220
     mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
     unmortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
     mortgage_buttons.append(Button(mortgage_img, button_x_offset, button_y_offset, 'Mortgage', white, 1))
     unmortgage_buttons.append(Button(unmortgage_img, button_x_offset, button_y_offset, 'Unmortgage', white, 1))
     if not card.mortgaged:
-        mortgage_buttons[mortgage_idx].draw(screen)
-        if mortgage_buttons[mortgage_idx].check_click():
+        mortgage_buttons[card_idx].draw(screen)
+        if mortgage_buttons[card_idx].check_click():
             card.mortgage(active_player.bank)
     else:
-        unmortgage_buttons[mortgage_idx].draw(screen)
-        if unmortgage_buttons[mortgage_idx].check_click():
-            card.unmortgage(active_player.bank)
+        unmortgage_buttons[card_idx].draw(screen)
+        if unmortgage_buttons[card_idx].check_click():
+            card.remove_mortgage(active_player.bank)
     return mortgage_buttons, unmortgage_buttons
+
+
+def buy_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
+    button_x_offset = start_x + 40
+    button_y_offset = start_y + 260
+    house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
+    house_buttons.append(Button(house_button_img, button_x_offset, button_y_offset, 'House', white, 1))
+    if not card.mortgaged and card.part_of_monopoly and card.num_houses < 4 and card.num_hotels == 0:
+        house_buttons[card_idx].draw(screen)
+        if house_buttons[card_idx].check_click():
+            card.buy_house(active_player.bank)
+
+    return house_buttons
 
 
 def card_pop_up(screen, active_player, message):
@@ -532,33 +548,17 @@ def turn_screen(screen, total_players):
     :param total_players: the number of active players
     :return: nothing
     '''
-    medium_font = pygame.font.SysFont('Verdana', 20)
     screen.fill(lightblue)  # Fill screen background
     pygame.draw.rect(screen, (41, 50, 65), (200, 100, 800, 300))
     pygame.draw.rect(screen, black, (200, 100, 800, 300), 4)
-    draw_text(screen, "Roll To Determine Player Order", medium_font, white, 440, 115)
-    draw_text(screen, "Higher Rolls Go First", medium_font, white, 500, 140)
-    if total_players == 2:
-        pygame.draw.rect(screen, white, (480, 175, 80, 80))
-        pygame.draw.rect(screen, black, (480, 175, 80, 80), 3)
-        pygame.draw.rect(screen, white, (640, 175, 80, 80))
-        pygame.draw.rect(screen, black, (640, 175, 80, 80), 3)
-    elif total_players == 3:
-        pygame.draw.rect(screen, white, (400, 175, 80, 80))
-        pygame.draw.rect(screen, black, (400, 175, 80, 80), 3)
-        pygame.draw.rect(screen, white, (560, 175, 80, 80))
-        pygame.draw.rect(screen, black, (560, 175, 80, 80), 3)
-        pygame.draw.rect(screen, white, (720, 175, 80, 80))
-        pygame.draw.rect(screen, black, (720, 175, 80, 80), 3)
-    elif total_players == 4:
-        pygame.draw.rect(screen, white, (320, 175, 80, 80))
-        pygame.draw.rect(screen, black, (320, 175, 80, 80), 3)
-        pygame.draw.rect(screen, white, (480, 175, 80, 80))
-        pygame.draw.rect(screen, black, (480, 175, 80, 80), 3)
-        pygame.draw.rect(screen, white, (640, 175, 80, 80))
-        pygame.draw.rect(screen, black, (640, 175, 80, 80), 3)
-        pygame.draw.rect(screen, white, (800, 175, 80, 80))
-        pygame.draw.rect(screen, black, (800, 175, 80, 80), 3)
+    draw_text(screen, "Roll To Determine Player Order", medium_v_font, white, 440, 115)
+    draw_text(screen, "Higher Rolls Go First", medium_v_font, white, 500, 140)
+    square_distance = 0
+    start_x = 640 - 80 * total_players
+    for i in range(0, total_players):
+        pygame.draw.rect(screen, white, (start_x + square_distance, 175, 80, 80))
+        pygame.draw.rect(screen, black, (start_x + square_distance, 175, 80, 80), 3)
+        square_distance += 160
 
 
 # board screen
@@ -570,8 +570,6 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     :param properties:
     :return: nothing
     '''
-    large_font = pygame.font.SysFont('Verdana', 25)
-
     # Fill screen background
     screen.fill((127, 127, 127))
     # draw board
@@ -816,9 +814,11 @@ def prop_card_screen(screen, font, active_player):
     draw_text(screen, 'Properties: ', font, white, 50, 10)
     start_x = 50
     start_y = 70
-    mortgage_idx = 0
+    card_idx = 0
     mortgage_buttons = []
     unmortgage_buttons = []
+    house_buttons = []
+    hotel_buttons = []
 
     #make 3 rows for properties (7 cards fit in one row)
     #if there are less than seven properties, then one row
@@ -826,8 +826,9 @@ def prop_card_screen(screen, font, active_player):
         for property in active_player.property_list:
             create_card(screen, start_x, start_y, property)
             mortgage_buttons, unmortgage_buttons = mortgage_card(screen, property, active_player, mortgage_buttons,
-                                                                 unmortgage_buttons, mortgage_idx, start_x, start_y)
-            mortgage_idx += 1
+                                                                 unmortgage_buttons, card_idx, start_x, start_y)
+            house_buttons = buy_house(screen, property, active_player, house_buttons, card_idx, start_x, start_y)
+            card_idx += 1
             start_x += 160
     # if there are between 7-14 properties, then two rows
     elif len(active_player.property_list) > 7 and len(active_player.property_list) < 15:
@@ -835,9 +836,9 @@ def prop_card_screen(screen, font, active_player):
             # create card
             create_card(screen, start_x, start_y, active_player.property_list[i])
             mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
                                                                  start_x, start_y)
-            mortgage_idx += 1
+            card_idx += 1
             start_x += 160
         #reset values for the next row
         start_x = 50
@@ -845,9 +846,9 @@ def prop_card_screen(screen, font, active_player):
         for i in range(6, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
                                                                  start_x, start_y)
-            mortgage_idx += 1
+            card_idx += 1
             start_x += 160
     #if there are between 14-21 properties, then 3 rows
     else:
@@ -855,9 +856,9 @@ def prop_card_screen(screen, font, active_player):
             # create card
             create_card(screen, start_x, start_y, active_player.property_list[i])
             mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
                                                                  start_x, start_y)
-            mortgage_idx += 1
+            card_idx += 1
             start_x += 160
         #reset values for the next row
         start_x = 50
@@ -865,9 +866,9 @@ def prop_card_screen(screen, font, active_player):
         for i in range(7, 14):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
                                                                  start_x, start_y)
-            mortgage_idx += 1
+            card_idx += 1
             start_x += 160
         # reset values for the next row
         start_x = 50
@@ -875,9 +876,9 @@ def prop_card_screen(screen, font, active_player):
         for i in range(13, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
             mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
-                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 mortgage_buttons, unmortgage_buttons, card_idx,
                                                                  start_x, start_y)
-            mortgage_idx += 1
+            card_idx += 1
             start_x += 160
 
 
@@ -899,13 +900,13 @@ def other_card_screen(screen, font, active_player):
     start_y = 160
     mor_rail_buttons = []
     unmor_rail_buttons = []
-    mortgage_rail_idx = 0
+    rail_idx = 0
 
     for railroad in active_player.railroad_list:
         create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
         mor_rail_buttons, unmor_rail_buttons = mortgage_card(screen, railroad, active_player, mor_rail_buttons,
-                                                             unmor_rail_buttons, mortgage_rail_idx, start_x, start_y)
-        mortgage_rail_idx += 1
+                                                             unmor_rail_buttons, rail_idx, start_x, start_y)
+        rail_idx += 1
         start_x += 160
 
     # DRAW UTILITIES
@@ -914,12 +915,12 @@ def other_card_screen(screen, font, active_player):
     start_y = 160
     mor_util_buttons = []
     unmor_util_buttons = []
-    mortgage_util_idx = 0
+    util_idx = 0
     for utility in active_player.utilities_list:
         create_other_card(screen, start_x, start_y, utility.name, 'utilities')
         mor_util_buttons, unmor_util_buttons = mortgage_card(screen, utility, active_player, mor_util_buttons,
-                                                             unmor_util_buttons, mortgage_util_idx, start_x, start_y)
-        mortgage_util_idx += 1
+                                                             unmor_util_buttons, util_idx, start_x, start_y)
+        util_idx += 1
         start_x += 160
 
     #DRAW GET OUT OF JAIL FREE
@@ -981,10 +982,6 @@ def main():
     connected = False
     error = False
 
-    # define fonts
-    large_font = pygame.font.SysFont('Verdana', 25)
-    medium_font = pygame.font.SysFont('Verdana', 20)
-    small_font = pygame.font.SysFont('Verdana', 15)
 
     # load button images
     singleplayer_img = pygame.image.load('images/singleplayer.png').convert_alpha()
@@ -1095,9 +1092,9 @@ def main():
             # Fill screen background
             screen.fill((135, 206, 235))
 
-            draw_text(screen, 'Welcome to CS205 Project: Ski Resort Monopoly!', large_font, black, 290, 50)
-            draw_text(screen, 'Press \'esc\' to close the program', small_font, black, 25, 750)
-            draw_text(screen, 'Game Setup', medium_font, black, 540, 150)
+            draw_text(screen, 'Welcome to CS205 Project: Ski Resort Monopoly!', large_v_font, black, 290, 50)
+            draw_text(screen, 'Press \'esc\' to close the program', small_v_font, black, 25, 750)
+            draw_text(screen, 'Game Setup', medium_v_font, black, 540, 150)
 
             singleplayer_button.draw(screen)
             multiplayer_button.draw(screen)
@@ -1112,7 +1109,7 @@ def main():
             if game_singleplayer:
                 game_multiplayer = False
                 num_players = 1
-                draw_text(screen, 'Number of Computers', medium_font, black, 490, 250)
+                draw_text(screen, 'Number of Computers', medium_v_font, black, 490, 250)
                 num_computers1_button.draw(screen)
                 num_computers2_button.draw(screen)
                 num_computers3_button.draw(screen)
@@ -1140,7 +1137,7 @@ def main():
                 total_players = num_players + num_computers
 
                 if num_computers > 0:
-                    draw_text(screen, 'Choose your Piece', medium_font, black, 510, 350)
+                    draw_text(screen, 'Choose your Piece', medium_v_font, black, 510, 350)
                     icon1_button.draw(screen)
                     icon2_button.draw(screen)
                     icon3_button.draw(screen)
@@ -1171,7 +1168,7 @@ def main():
             elif game_multiplayer:
                 game_singleplayer = False
 
-                draw_text(screen, 'Enter server ip:', medium_font, black, 320, 260)
+                draw_text(screen, 'Enter server ip:', medium_v_font, black, 320, 260)
 
                 if active:
                     box_color = color_active
@@ -1180,7 +1177,7 @@ def main():
 
                 pygame.draw.rect(screen, box_color, input_rect)
                 pygame.draw.rect(screen, pygame.Color('black'), input_rect, 3, 1)
-                draw_text(screen, ip_address, medium_font, black, input_rect.x + 5, input_rect.y + 4)
+                draw_text(screen, ip_address, medium_v_font, black, input_rect.x + 5, input_rect.y + 4)
 
                 message = ''
                 if not active and not connecting:
@@ -1188,7 +1185,7 @@ def main():
                     connecting = True
                     draw_text(screen,
                               'Loading...',
-                              medium_font,
+                              medium_v_font,
                               black,
                               285, 375)
                     # Bad style
@@ -1211,7 +1208,7 @@ def main():
                         connected = True
 
                 if error:
-                    draw_text(screen, message, medium_font, black, 285, 375)
+                    draw_text(screen, message, medium_v_font, black, 285, 375)
 
                 if connected:
                     games = n.get_games()
@@ -1224,12 +1221,12 @@ def main():
                     #     pygame.draw.rect(screen, server_box_color, server_box)
                     #     draw_text(screen,
                     #               'Game #' + str(games[i].get_id() + 1),
-                    #               medium_font,
+                    #               medium_v_font,
                     #               black,
                     #               server_box.x + 5,
                     #               server_box.y + 5)
 
-                    draw_text(screen, 'Choose your Piece', medium_font, black, 305, 350)
+                    draw_text(screen, 'Choose your Piece', medium_v_font, black, 305, 350)
                     icon1_button.draw(screen)  # instead of player1_button renamed to icon1_button
                     icon2_button.draw(screen)
                     icon3_button.draw(screen)
@@ -1256,24 +1253,23 @@ def main():
             for active_player in unset_players:  # determine the order by having each player roll
                 for num in range(0, len(turn_rolls)):  # - prints rolled number under icon
                     if total_players == 2:
-                        draw_text(screen, str(turn_rolls[num]), medium_font, white, 510 + num * square_distance, 268)
+                        draw_text(screen, str(turn_rolls[num]), medium_v_font, white, 510 + num * square_distance, 268)
                     if total_players == 3:
-                        draw_text(screen, str(turn_rolls[num]), medium_font, white, 435 + num * square_distance, 268)
+                        draw_text(screen, str(turn_rolls[num]), medium_v_font, white, 435 + num * square_distance, 268)
                     if total_players == 4:
-                        draw_text(screen, str(turn_rolls[num]), medium_font, white, 350 + num * square_distance, 268)
+                        draw_text(screen, str(turn_rolls[num]), medium_v_font, white, 350 + num * square_distance, 268)
                 if turn == active_player.name:
                     if not is_rolling:
                         if not has_rolled:
-                            if total_players == 2:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 450 +
+                            if total_players == 2 and not active_player.computer:  # so name doesn't pop up for 1 frame
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_v_font, white, 450 +
                                           turn_index, 268)
-                            if total_players == 3:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 370 +
+                            if total_players == 3 and not active_player.computer:
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_v_font, white, 370 +
                                           turn_index, 268)
-                            if total_players == 4:
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_font, white, 290 +
+                            if total_players == 4 and not active_player.computer:
+                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_v_font, white, 290 +
                                           turn_index, 268)
-                            turn_roll_button.draw(screen)
                             #PLAYER CHOICE (roll dice to determine player order)
                             if active_player.computer:
                                 #computer automatically rolls
@@ -1283,6 +1279,7 @@ def main():
                                 pygame.time.delay(1000)
                             #human has to roll
                             else:
+                                turn_roll_button.draw(screen)  # doesn't show up for computer
                                 if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                     counter = 0
                                     is_rolling = True
@@ -1299,10 +1296,10 @@ def main():
                             if len(turn_rolls) == len(unset_players):
                                 # reassign player list to the new order
                                 for j in range(0, len(unset_players)):
-                                    players.append(unset_players[j])
-                                    # largest = turn_rolls.index(max(turn_rolls))
-                                    # players.append(unset_players[largest])  # appends correct player to empty list
-                                    # turn_rolls[largest] = -1  # get rid of the largest element in list
+                                    # players.append(unset_players[j])
+                                    largest = turn_rolls.index(max(turn_rolls))
+                                    players.append(unset_players[largest])  # appends correct player to empty list
+                                    turn_rolls[largest] = -1  # get rid of the largest element in list
                                 turn = players[0].name
                                 active_player = players[0]
                                 current_screen = screens.get('BOARD')
@@ -1338,7 +1335,7 @@ def main():
             card_button.draw(screen)
 
             # display bank account money
-            draw_text(screen, 'Money: $', medium_font, black, 900, 90)
+            draw_text(screen, 'Money: $', medium_v_font, black, 900, 90)
             if turn == 'Player 1':
                 bank_account = player1.bank
             elif turn == 'Player 2':
@@ -1347,16 +1344,16 @@ def main():
                 bank_account = player3.bank
             else:
                 bank_account = player4.bank
-            draw_text(screen, str(bank_account.total), medium_font, black, 995, 90)
+            draw_text(screen, str(bank_account.total), medium_v_font, black, 995, 90)
 
             #draw players and make sure no one has lost the game
             for p in players:
                 p.draw(screen)
             #DEBUGGING
-            # draw_text(screen, 'player ' + str(active_player.name), medium_font, black, 900, 300)
-            # draw_text(screen, 'bank ' + str(bank_account.total), medium_font, black, 900, 400)
-            # draw_text(screen, 'location ' + str(active_player.location), medium_font, black, 900, 500)
-            # draw_text(screen, 'properties ' + str(active_player.property_list), medium_font, black, 900, 600)
+            # draw_text(screen, 'player ' + str(active_player.name), medium_v_font, black, 900, 300)
+            # draw_text(screen, 'bank ' + str(bank_account.total), medium_v_font, black, 900, 400)
+            # draw_text(screen, 'location ' + str(active_player.location), medium_v_font, black, 900, 500)
+            # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
 
             # print pop-ups if needed
             # pop-up for property
@@ -1379,23 +1376,23 @@ def main():
                 elif text == 'Go to jail.':
                     active_player.jail = True
                 #pop up
-                result = card_pop_up(screen, result)
+                result = card_pop_up(screen, active_player, result)
             #pop-up message for paying rent
             elif str(result)[:3] == 'You':
                 #chance message if player is computer
                 if active_player.computer:
                     comp_message = str(active_player.name) + ' '
                     comp_message += str(result)[3:]
-                    draw_text(screen, comp_message, medium_font, black, 900, 300)
+                    draw_text(screen, comp_message, medium_v_font, black, 900, 300)
                     pygame.time.wait(30)
                 else:
-                    draw_text(screen, result, medium_font, black, 900, 300)
+                    draw_text(screen, result, medium_v_font, black, 900, 300)
             #pop-up message to tell you if you are in jail
             elif result == 'jail':
                 result = jail_pop_up(screen, active_player)
             #pop-up message for paying taxes
             elif result == 'tax':
-                draw_text(screen, "Taxes due!", medium_font, black, 900, 300)
+                draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
             # check if there was player movement from previous card pulled
             elif result == '':
                 # if the message has the words advance or go, there is another movement
@@ -1406,10 +1403,10 @@ def main():
             #dice and turn
             if turn == active_player.name:
                 if not is_rolling:
-                    draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
+                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
                     #print message that player can't roll since they are in jail
                     if active_player.jail:
-                        draw_text(screen, 'You are in jail.', medium_font, black, 920, 450)
+                        draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
                     #don't roll if player is in jail
                     if not has_rolled:
                         roll_button.draw(screen)
@@ -1466,9 +1463,9 @@ def main():
                         if die1.at_start and die2.at_start:
                             # Both dice are at the start. Reset values
                             is_rolling = False
-                            # roll = die1_value + die2_value
+                            roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 12
+                            # roll = 3
                             if die1_value == die2_value:  # check if doubles were rolled
                                 doubles += 1
                             else:
