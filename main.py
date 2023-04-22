@@ -298,7 +298,7 @@ def buy_pop_up(screen, active_player, message, properties, option):
                 return 'utility opportunity'
 
 
-def mortgage_prop(screen, property, active_player, mortgage_buttons, mortgage_idx, start_x, start_y):
+def mortgage_card(screen, card, active_player, mortgage_buttons, mortgage_idx, start_x, start_y):
     text_font = pygame.font.SysFont('Verdana', 20)
     button_x_offset = start_x + 75
     button_y_offset = start_y + 230
@@ -306,10 +306,10 @@ def mortgage_prop(screen, property, active_player, mortgage_buttons, mortgage_id
     text_y = start_y + 215
     mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
     mortgage_buttons.append(Button(mortgage_img, button_x_offset, button_y_offset, 'Mortgage', white, 1))
-    if not property.mortgaged:
+    if not card.mortgaged:
         mortgage_buttons[mortgage_idx].draw(screen)
         if mortgage_buttons[mortgage_idx].check_click():
-            property.mortgage(active_player.bank)
+            card.mortgage(active_player.bank)
     else:
         draw_text(screen, "Mortgaged", text_font, white, text_x, text_y)
     return mortgage_buttons
@@ -823,7 +823,7 @@ def prop_card_screen(screen, font, active_player):
     if len(active_player.property_list) < 8:
         for property in active_player.property_list:
             create_card(screen, start_x, start_y, property)
-            mortgage_buttons = mortgage_prop(screen, property, active_player, mortgage_buttons, mortgage_idx, start_x,
+            mortgage_buttons = mortgage_card(screen, property, active_player, mortgage_buttons, mortgage_idx, start_x,
                                              start_y)
             mortgage_idx += 1
             start_x += 160
@@ -832,7 +832,7 @@ def prop_card_screen(screen, font, active_player):
         for i in range(0, 7):
             # create card
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_prop(screen, active_player.property_list[i], active_player, mortgage_buttons,
+            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
                                              mortgage_idx, start_x, start_y)
             mortgage_idx += 1
             start_x += 160
@@ -841,7 +841,7 @@ def prop_card_screen(screen, font, active_player):
         start_y = 320
         for i in range(6, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_prop(screen, active_player.property_list[i], active_player, mortgage_buttons,
+            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
                                              mortgage_idx, start_x, start_y)
             mortgage_idx += 1
             start_x += 160
@@ -850,7 +850,7 @@ def prop_card_screen(screen, font, active_player):
         for i in range(0, 7):
             # create card
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_prop(screen, active_player.property_list[i], active_player, mortgage_buttons,
+            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
                                              mortgage_idx, start_x, start_y)
             mortgage_idx += 1
             start_x += 160
@@ -859,7 +859,7 @@ def prop_card_screen(screen, font, active_player):
         start_y = 320
         for i in range(7, 14):
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_prop(screen, active_player.property_list[i], active_player, mortgage_buttons,
+            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
                                              mortgage_idx, start_x, start_y)
             mortgage_idx += 1
             start_x += 160
@@ -868,7 +868,7 @@ def prop_card_screen(screen, font, active_player):
         start_y = 570
         for i in range(13, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_prop(screen, active_player.property_list[i], active_player, mortgage_buttons,
+            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
                                              mortgage_idx, start_x, start_y)
             mortgage_idx += 1
             start_x += 160
@@ -887,19 +887,30 @@ def other_card_screen(screen, font, active_player):
     screen.fill(green)
 
     # DRAW RAILROADS
-    draw_text(screen, 'Railroads: ', font, white, 50, 10)
+    draw_text(screen, 'Railroads: ', font, white, 50, 100)
     start_x = 50
-    start_y = 70
+    start_y = 160
+    mortgage_rail_buttons = []
+    mortgage_rail_idx = 0
+
     for railroad in active_player.railroad_list:
         create_other_card(screen, start_x, start_y, railroad.name, 'railroad')
+        mortgage_rail_buttons = mortgage_card(screen, railroad, active_player, mortgage_rail_buttons, mortgage_rail_idx,
+                                              start_x, start_y)
+        mortgage_rail_idx += 1
         start_x += 160
 
     # DRAW UTILITIES
-    draw_text(screen, 'Utilities: ', font, white, 50, 290)
-    start_x = 50
-    start_y = 330
+    draw_text(screen, 'Utilities: ', font, white, 690, 100)
+    start_x = 690
+    start_y = 160
+    mortgage_util_buttons = []
+    mortgage_util_idx = 0
     for utility in active_player.utilities_list:
         create_other_card(screen, start_x, start_y, utility.name, 'utilities')
+        mortgage_util_buttons = mortgage_card(screen, utility, active_player, mortgage_util_buttons, mortgage_util_idx,
+                                              start_x, start_y)
+        mortgage_util_idx += 1
         start_x += 160
 
     #DRAW GET OUT OF JAIL FREE
