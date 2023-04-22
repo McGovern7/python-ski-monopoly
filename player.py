@@ -15,46 +15,45 @@ class Player:
         self.name = player_name
         self.bank = bank_account
         self.board_positions = icon_positions
-        #start location is at icon_positions[0] (this is a coordinate)
+        # start location is at icon_positions[0] (this is a coordinate)
         self.location = 0
-        #all players start the game with no properties
+        # all players start the game with no properties
         self.property_list = []
-        #all player start the game with no railroads
+        # all player start the game with no railroads
         self.railroad_list = []
         # all player start the game with no utilities
         self.utilities_list = []
         self.scale = scale
-        #all players are created with it not being their turn to play
-        self.jail= False
+        # all players are created with it not being their turn to play
+        self.jail = False
         self.rolls_in_jail = -1
         self.jail_free = 0
         self.bankrupt = False
         self.overlap = False
 
     def draw(self, screen):
-        #get coordinate for where to draw player (only need this if want to chance their position)
+        # get coordinate for where to draw player (only need this if want to chance their position)
         coordinates = str(self.board_positions[int(self.location)])
         coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
         x_coord = float(coordinates_list[0])
         y_coord = float(coordinates_list[1])
 
-        #have a different location for if player is in jail/just visiting
+        # have a different location for if player is in jail/just visiting
         if self.jail and self.location == 10:
-            #in jail
-            screen.blit(self.player_icon, (x_coord+20, y_coord+20))
+            # in jail
+            screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))
         elif not self.jail and self.location == 10:
-            #just visiting jail
-            screen.blit(self.player_icon, (x_coord-30, y_coord))
+            # just visiting jail
+            screen.blit(self.player_icon, (x_coord - 30, y_coord))
         elif self.overlap:
             screen.blit(self.player_icon, (x_coord + 30, y_coord))
 
-        #if there are no edits to position on a square
+        # if there are no edits to position on a square
         else:
             screen.blit(self.player_icon, self.board_positions[int(self.location)])
 
     '''elif self.occupancy == 2:
                 screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
-
 
     # function to buy a property
     def buy_property(self, new_property):
@@ -91,9 +90,9 @@ class Player:
         # update the owner
         new_railroad.owner = self.name
 
-        #if this is the first railroad, rent is the same
+        # if this is the first railroad, rent is the same
         if len(self.railroad_list) > 1:
-            #update what the rent is for every railroad if owns more than 1 railroad
+            # update what the rent is for every railroad if owns more than 1 railroad
             if len(self.railroad_list) == 2:
                 new_rent = 50
             elif len(self.railroad_list) == 3:
@@ -123,12 +122,12 @@ class Player:
         new_utility.owner = self.name
 
         # function to sell a railroad
+
     def sell_utility(self, utility):
         # remove property from player's property list
         self.utilities_list.remove(utility)
         # give them the money back
         self.bank.deposit(utility.price)
-
 
     # function pay taxes -- pays either 10% of your income or $200 (whichever is smaller)
     def pay_taxes(self):
@@ -142,9 +141,9 @@ class Player:
 
     def movement(self, spaces_moved):
 
-        #make sure icon loops back to beginning of list if it reaches the end
+        # make sure icon loops back to beginning of list if it reaches the end
         if (self.location + spaces_moved) > 39:
-            #player passed go
+            # player passed go
             self.go()
             self.location = (self.location + spaces_moved) % 40
         else:
@@ -152,7 +151,8 @@ class Player:
 
         # remove player from that property's occupancy
         ''' self.location.occupancy -= 1 '''
-        #add player to new location occupancy
+        # add player to new location occupancy
+
     '''    self.location.occupancy += 1 '''
 
     def check_position(self):
@@ -177,11 +177,11 @@ class Player:
     # Sets the get out of jail free card to positive when the player obtains one
     def go_to_jail(self):
         self.jail = True
-        #go to the jail spot
+        # go to the jail spot
         self.location = 10
-        #increment number of times player rolled in jail
+        # increment number of times player rolled in jail
         self.rolls_in_jail += 1
-        #if the number of rolls is 3, the player must get out by paying a fine of $50
+        # if the number of rolls is 3, the player must get out by paying a fine of $50
         if self.rolls_in_jail >= 3:
             self.bank.withdraw(50)
             self.jail = False
@@ -193,11 +193,7 @@ class Player:
         if self.jail_free == 0:
             print('You don\'t have this card to use')
             return
-        #get out of jail
+        # get out of jail
         self.jail = False
-        #once used, you lose the card
+        # once used, you lose the card
         self.jail_free -= 1
-
-
-
-
