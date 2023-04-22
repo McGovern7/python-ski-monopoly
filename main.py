@@ -298,21 +298,22 @@ def buy_pop_up(screen, active_player, message, properties, option):
                 return 'utility opportunity'
 
 
-def mortgage_card(screen, card, active_player, mortgage_buttons, mortgage_idx, start_x, start_y):
-    text_font = pygame.font.SysFont('Verdana', 20)
+def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, mortgage_idx, start_x, start_y):
     button_x_offset = start_x + 75
     button_y_offset = start_y + 230
-    text_x = start_x + 20
-    text_y = start_y + 215
     mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
+    unmortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
     mortgage_buttons.append(Button(mortgage_img, button_x_offset, button_y_offset, 'Mortgage', white, 1))
+    unmortgage_buttons.append(Button(unmortgage_img, button_x_offset, button_y_offset, 'Unmortgage', white, 1))
     if not card.mortgaged:
         mortgage_buttons[mortgage_idx].draw(screen)
         if mortgage_buttons[mortgage_idx].check_click():
             card.mortgage(active_player.bank)
     else:
-        draw_text(screen, "Mortgaged", text_font, white, text_x, text_y)
-    return mortgage_buttons
+        unmortgage_buttons[mortgage_idx].draw(screen)
+        if unmortgage_buttons[mortgage_idx].check_click():
+            card.unmortgage(active_player.bank)
+    return mortgage_buttons, unmortgage_buttons
 
 
 def card_pop_up(screen, active_player, message):
@@ -817,14 +818,15 @@ def prop_card_screen(screen, font, active_player):
     start_y = 70
     mortgage_idx = 0
     mortgage_buttons = []
+    unmortgage_buttons = []
 
     #make 3 rows for properties (7 cards fit in one row)
     #if there are less than seven properties, then one row
     if len(active_player.property_list) < 8:
         for property in active_player.property_list:
             create_card(screen, start_x, start_y, property)
-            mortgage_buttons = mortgage_card(screen, property, active_player, mortgage_buttons, mortgage_idx, start_x,
-                                             start_y)
+            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, property, active_player, mortgage_buttons,
+                                                                 unmortgage_buttons, mortgage_idx, start_x, start_y)
             mortgage_idx += 1
             start_x += 160
     # if there are between 7-14 properties, then two rows
@@ -832,8 +834,9 @@ def prop_card_screen(screen, font, active_player):
         for i in range(0, 7):
             # create card
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
-                                             mortgage_idx, start_x, start_y)
+            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
+                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 start_x, start_y)
             mortgage_idx += 1
             start_x += 160
         #reset values for the next row
@@ -841,8 +844,9 @@ def prop_card_screen(screen, font, active_player):
         start_y = 320
         for i in range(6, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
-                                             mortgage_idx, start_x, start_y)
+            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
+                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 start_x, start_y)
             mortgage_idx += 1
             start_x += 160
     #if there are between 14-21 properties, then 3 rows
@@ -850,8 +854,9 @@ def prop_card_screen(screen, font, active_player):
         for i in range(0, 7):
             # create card
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
-                                             mortgage_idx, start_x, start_y)
+            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
+                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 start_x, start_y)
             mortgage_idx += 1
             start_x += 160
         #reset values for the next row
@@ -859,8 +864,9 @@ def prop_card_screen(screen, font, active_player):
         start_y = 320
         for i in range(7, 14):
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
-                                             mortgage_idx, start_x, start_y)
+            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
+                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 start_x, start_y)
             mortgage_idx += 1
             start_x += 160
         # reset values for the next row
@@ -868,8 +874,9 @@ def prop_card_screen(screen, font, active_player):
         start_y = 570
         for i in range(13, len(active_player.property_list)):
             create_card(screen, start_x, start_y, active_player.property_list[i])
-            mortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player, mortgage_buttons,
-                                             mortgage_idx, start_x, start_y)
+            mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[i], active_player,
+                                                                 mortgage_buttons, unmortgage_buttons, mortgage_idx,
+                                                                 start_x, start_y)
             mortgage_idx += 1
             start_x += 160
 
@@ -1290,10 +1297,10 @@ def main():
                             if len(turn_rolls) == len(unset_players):
                                 # reassign player list to the new order
                                 for j in range(0, len(unset_players)):
-                                    players.append(unset_players[j])
-                                    # largest = turn_rolls.index(max(turn_rolls))
-                                    # players.append(unset_players[largest])  # appends correct player to empty list
-                                    # turn_rolls[largest] = -1  # get rid of the largest element in list
+                                    # players.append(unset_players[j])
+                                    largest = turn_rolls.index(max(turn_rolls))
+                                    players.append(unset_players[largest])  # appends correct player to empty list
+                                    turn_rolls[largest] = -1  # get rid of the largest element in list
                                 turn = players[0].name
                                 active_player = players[0]
                                 current_screen = screens.get('BOARD')

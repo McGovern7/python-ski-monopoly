@@ -114,6 +114,11 @@ class Property:
         #mark the property as mortgaged (player will not collect rent anymore)
         self.mortgaged = True
 
+    # to unmortgage a property
+    def unmortgage(self, bank_account):
+        bank_account.withdraw(int(self.price))
+        self.mortgaged = False
+
     #function to remove mortgage
     def remove_mortgage(self, bank_account):
         #player owes half the price of the property + 10%
