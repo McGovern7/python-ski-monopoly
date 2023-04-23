@@ -249,9 +249,7 @@ def buy_pop_up(screen, active_player, message, properties, option):
     # PLAYER CHOICE (click yes or no for buying)
     if active_player.computer:
         # computer always buys property -- (automatic yes)
-        # delay a little so human can read what they buy
-        # pygame.time.wait(1000)
-        # determine what property player is on
+        # determine what property player is on and delay a little so human can read what they buy
         for property in properties:
             if int(active_player.location) == int(property.location):
                 # option 1 is buying a property
@@ -266,7 +264,6 @@ def buy_pop_up(screen, active_player, message, properties, option):
                 else:
                     active_player.buy_utility(property)
                     return ''
-        pass
     # player must interact with buttons to move on
     else:
         # if 'yes' button is clicked, user buys the property/railroad
@@ -912,6 +909,7 @@ def main():
     :return: nothing
     '''
 
+
     # Constants
     DICE_DIMS = (40, 40)
     TEST_DICE = True
@@ -1039,7 +1037,7 @@ def main():
 
     # Game loop
     while True:
-
+        current_time = pygame.time.get_ticks()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1245,7 +1243,7 @@ def main():
                                 # computer automatically rolls
                                 counter = 0
                                 is_rolling = True
-                                pygame.time.delay(1000)  # wait a little bit
+
                             else:  # human has to roll
                                 turn_roll_button.draw(screen)  # doesn't show up for computer
                                 if keys[pygame.K_SPACE]:  # rolls on a space key or button click
@@ -1346,10 +1344,9 @@ def main():
             elif str(result)[:3] == 'You':
                 # chance message if player is computer
                 if active_player.computer:
-                    comp_message = str(active_player.name) + ' '
+                    comp_message = str(active_player.name)
                     comp_message += str(result)[3:]
                     draw_text(screen, comp_message, medium_v_font, black, 900, 300)
-                    pygame.time.wait(30)
                 else:
                     draw_text(screen, result, medium_v_font, black, 900, 300)
             # pop-up message to tell you if you are in jail
@@ -1360,6 +1357,11 @@ def main():
                 draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
             # check if there was player movement from previous card pulled
             elif result == '':
+                #print message about whose movement it is
+                if active_player.computer:
+                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 930, 200)
+                else:
+                    draw_text(screen, "Your turn!", medium_v_font, black, 930, 200)
                 # if the message has the words advance or go, there is another movement
                 if text.find('Advance') != -1 or text.find('Go') != -1:
                     # interact with the new square
@@ -1380,6 +1382,8 @@ def main():
                             # computer rolls automatically
                             counter = 0
                             is_rolling = True
+                            #record time that roll starts
+                            time_of_roll = pygame.time.get_ticks()
                         # player must interact
                         else:
                             if keys[pygame.K_SPACE]:  # rolls on a space key or button click
@@ -1393,17 +1397,15 @@ def main():
                         if doubles:  # keep turn on doubles
                             has_rolled = False
                         else:
-                            end_button.draw(screen)
                             # PLAYER CHOICE (to end turn)
                             if active_player.computer:
-                                # TODO - figure out when a computer should end their turn
-                                # computer ends turn after 20 milliseconds
-                                # pygame.time.delay(40)
-                                # end turn
-                                turn, active_player = change_turn(players, active_player, turn)
-                                has_rolled = False
+                                if current_time - time_of_roll > 3000:
+                                    # end turn
+                                    turn, active_player = change_turn(players, active_player, turn)
+                                    has_rolled = False
                             # player must hit end button to move on
                             else:
+                                end_button.draw(screen)
                                 if end_button.check_new_press():
                                     if end_button.check_click():  # rolls on a space key or button click
                                         # change the turn once player hit the end button
@@ -1430,7 +1432,7 @@ def main():
                             is_rolling = False
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            # roll = 3
+                            roll = 6
                             if die1_value == die2_value:  # check if doubles were rolled
                                 doubles += 1
                             else:
