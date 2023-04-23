@@ -704,14 +704,17 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         elif x_coord == 765:
             screen.blit(tram, (x_coord - 45, y_coord - 12))
             draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 70, y_coord - 30)
+            draw_text(screen, '$' + str(railroad.price), small_cs_font_3, black, x_coord - 4, y_coord - 10)
         # across the bottom
         else:
             if railroad.name.find(' ') > -1:
                 name = railroad.name.split(' ')
-                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 22, y_coord - 70)
-                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 14, y_coord - 55)
+                draw_text(screen, name[0], small_cs_font_3, black, x_coord - 22, y_coord - 80)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 14, y_coord - 65)
+                draw_text(screen, '$' + str(railroad.price), small_cs_font_3, black, x_coord - 18, y_coord - 48)
             else:
                 draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 30)
+                draw_text(screen, '$' + str(railroad.price), small_cs_font_3, black, x_coord - 18, y_coord - 48)
 
             screen.blit(gondola, (x_coord - 25, y_coord - 30))
 
@@ -724,9 +727,11 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         # across the top
         if y_coord == 35:
             draw_text(screen, utility.name, small_cs_font_3, black, x_coord - 25, y_coord - 30)
+            draw_text(screen, '$' + str(utility.price), small_cs_font_3, black, x_coord-16, y_coord-10)
         # down the right side
         elif x_coord == 765:
             draw_text(screen, utility.name, small_cs_font_3, black, x_coord - 70, y_coord - 30)
+            draw_text(screen, '$' + str(utility.price), small_cs_font_3, black, x_coord - 10, y_coord - 5)
 
     # draw jail
     jail = pygame.image.load('images/jail.png')
@@ -810,6 +815,8 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
     # Utilities
     snow_gun = pygame.image.load('images/snow-gun.png')
     screen.blit(snow_gun, (183, 48))
+    snow_groomer = pygame.image.load('images/snowPlow.png')
+    screen.blit(snow_groomer, (700, 578))
 
 
 # card screen
