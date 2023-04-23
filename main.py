@@ -829,7 +829,7 @@ def prop_card_screen(screen, font, active_player):
     screen.fill(green)
 
     # DRAW FIRST 14 PROPERTIES
-    draw_text(screen, ' Your Properties: ', font, white, 50, 20)
+    draw_text(screen, ' Your Properties: Add Houses & Hotels, Or Mortgage For Money', font, white, 50, 20)
     start_x = 50
     start_y = 70
     level = 1
@@ -861,7 +861,7 @@ def prop_card_screen2(screen, font, active_player):
     screen.fill(green)
 
     # DRAW REMAINING PROPERTIES
-    draw_text(screen, ' Your Properties: ', font, white, 50, 20)
+    draw_text(screen, ' Your Properties: Add Houses & Hotels, Or Mortgage For Money', font, white, 50, 20)
     start_x = 50
     start_y = 70
     level = 1
