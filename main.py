@@ -310,10 +310,10 @@ def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_butt
         mortgage_buttons[card_idx].draw(screen)
         if mortgage_buttons[card_idx].check_click():
             card.mortgage(active_player.bank)
-    # else:
-        # unmortgage_buttons[card_idx].draw(screen)
-        # if unmortgage_buttons[card_idx].check_click():
-        #     card.remove_mortgage(active_player.bank)
+    else:
+        unmortgage_buttons[card_idx].draw(screen)
+        if unmortgage_buttons[card_idx].check_click():
+            card.remove_mortgage(active_player.bank)
     return mortgage_buttons, unmortgage_buttons
 
 
@@ -322,7 +322,7 @@ def buy_sell_house(screen, card, active_player, house_buttons, card_idx, start_x
     button_y_offset = start_y + 270
     house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
     house_buttons.append(Button(house_button_img, button_x_offset, button_y_offset, 'House', white, 1))
-    card.part_of_monopoly = True
+    # card.part_of_monopoly = True
     if not card.mortgaged and card.part_of_monopoly and card.num_houses < 4 and card.num_hotels == 0:
         house_buttons[card_idx].draw(screen)
         if house_buttons[card_idx].check_click():
@@ -976,9 +976,9 @@ def main():
     die1_value = -1
     die2_value = -1
     doubles = 0
-    loaded = False
-    rail_loaded = False
-    util_loaded = False
+    # loaded = False  # DEBUGGING VARIABLES
+    # rail_loaded = False
+    # util_loaded = False
 
     # game type variables
     game_singleplayer = False
@@ -1505,7 +1505,7 @@ def main():
                             is_rolling = False
                             roll = die1_value + die2_value
                             # TODO -- test spaces here by changing the roll value
-                            roll = 6
+                            # roll = 6
                             if die1_value == die2_value:  # check if doubles were rolled
                                 doubles += 1
                             else:
@@ -1550,10 +1550,10 @@ def main():
         elif current_screen == screens.get('PROPS'):  # shows only first 14 properties
             # Player 1
             if turn == 'Player 1':
-                if not loaded:
-                    for property in properties:
-                        player1.property_list.append(property)
-                    loaded = True
+                # if not loaded:  # LOADS ALL PROPERTIES INTO PLAYER1
+                #     for property in properties:
+                #         player1.property_list.append(property)
+                #     loaded = True
                 prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 prop_card_screen(screen, font, player2)
@@ -1562,7 +1562,7 @@ def main():
             else:
                 prop_card_screen(screen, font, player4)
             board_return_button.draw(screen)
-            if len(active_player.property_list) > 13:  # move to next properties screen
+            if len(active_player.property_list) > 13:  # move to next properties screen if too many cards to show
                 next_cards_button.draw(screen)
                 if next_cards_button.check_new_press():
                     if next_cards_button.check_click():
@@ -1591,7 +1591,7 @@ def main():
             prev_cards_button.draw(screen)
             if prev_cards_button.check_new_press():
                 if prev_cards_button.check_click():
-                    current_screen = screens.get('PROPS')
+                    current_screen = screens.get('PROPS')  # Go back to prev Prop screen
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
             if board_return_button.check_new_press():
@@ -1601,14 +1601,14 @@ def main():
         elif current_screen == screens.get('CARDS'):
             # Player 1
             if turn == 'Player 1':
-                if not rail_loaded:
-                    for railroad in railroads:
-                        player1.railroad_list.append(railroad)
-                        rail_loaded = True
-                if not util_loaded:
-                    for utility in utilities:
-                        player1.utilities_list.append(utility)
-                        util_loaded = True
+                # if not rail_loaded:
+                #     for railroad in railroads:
+                #         player1.railroad_list.append(railroad)
+                #         rail_loaded = True
+                # if not util_loaded:
+                #     for utility in utilities:
+                #         player1.utilities_list.append(utility)
+                #         util_loaded = True
                 other_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 other_card_screen(screen, font, player2)

@@ -21,7 +21,7 @@ class Property:
         # location on the board (this aligns with icon_positions[location])
         self.location = board_location
         # start with no houses or hotels on property
-        self.num_houses = 3
+        self.num_houses = 0
         self.num_hotels = 0
         # start with no owner
         self.owner = 'NONE'
