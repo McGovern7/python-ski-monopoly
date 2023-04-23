@@ -1230,7 +1230,7 @@ def main():
                     if not is_rolling:
                         if not has_rolled:
                             if total_players == 2 and not active_player.computer:  # so name doesn't pop up for 1 frame
-                                draw_text(screen, str(active_player.name) + '\'s Turn', medium_v_font, white, 450 +
+                                draw_text(screen, 'Your Turn', medium_v_font, white, 470 +
                                           turn_index, 268)
                             if total_players == 3 and not active_player.computer:
                                 draw_text(screen, str(active_player.name) + '\'s Turn', medium_v_font, white, 370 +
@@ -1318,20 +1318,29 @@ def main():
             # draw_text(screen, 'location ' + str(active_player.location), medium_v_font, black, 900, 500)
             # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
 
-            # print pop-ups if needed
-            # pop-up for property
+            # print pop-ups if needed (only for human player) - computer gets summary text
+            turn_summary = ''
             if result == 'landlord opportunity':
-                result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
+                if not active_player.computer:
+                    result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
+                else:
+                    turn_summary += "Player bought property"
             # pop-up for railroad
             elif result == 'railroad opportunity':
-                result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+                if not active_player.computer:
+                    result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+                else:
+                    turn_summary += "Player bought ski lift"
             # pop-up for utility
             elif result == 'utility opportunity':
-                result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
+                if not active_player.computer:
+                    result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
+                else:
+                    turn_summary += "Player bought machinery"
             # pop-up for community chest/chance
             elif str(result)[:8] == 'message:':
                 # save the message for later use
-                text = result
+                text = result[7:]
                 # if the player gets a get out of jail free card, add it to their other cards
                 if text == 'Get out of jail free.':
                     active_player.jail_free += 1
@@ -1339,27 +1348,35 @@ def main():
                 elif text == 'Go to jail.':
                     active_player.jail = True
                 # pop up
-                result = card_pop_up(screen, active_player, result)
+                if not active_player.computer:
+                    result = card_pop_up(screen, active_player, result)
+                else:
+                    turn_summary += 'Player got a card that said:\n' + text
+
             # pop-up message for paying rent
             elif str(result)[:3] == 'You':
-                # chance message if player is computer
-                if active_player.computer:
-                    comp_message = str(active_player.name)
-                    comp_message += str(result)[3:]
-                    draw_text(screen, comp_message, medium_v_font, black, 900, 300)
-                else:
+                # change message if player is computer
+                if not active_player.computer:
                     draw_text(screen, result, medium_v_font, black, 900, 300)
+                else:
+                    turn_summary += str(active_player.name) + str(result)[3:]
             # pop-up message to tell you if you are in jail
             elif result == 'jail':
-                result = jail_pop_up(screen, active_player)
+                if not active_player.computer:
+                    result = jail_pop_up(screen, active_player)
+                else:
+                    turn_summary += 'Player paid $50 to get out of jail'
             # pop-up message for paying taxes
             elif result == 'tax':
-                draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
+                if not active_player.computer:
+                    draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
+                else:
+                    turn_summary += 'Player paid taxes'
             # check if there was player movement from previous card pulled
             elif result == '':
                 #print message about whose movement it is
                 if active_player.computer:
-                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 930, 200)
+                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 910, 200)
                 else:
                     draw_text(screen, "Your turn!", medium_v_font, black, 930, 200)
                 # if the message has the words advance or go, there is another movement
@@ -1370,7 +1387,7 @@ def main():
             # dice and turn
             if turn == active_player.name:
                 if not is_rolling:
-                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
+                    #draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
                     # print message that player can't roll since they are in jail
                     if active_player.jail:
                         draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
@@ -1399,10 +1416,19 @@ def main():
                         else:
                             # PLAYER CHOICE (to end turn)
                             if active_player.computer:
-                                if current_time - time_of_roll > 3000:
+                                #fix spacing if text goes off of line for printing the summary of comp's turn
+                                if len(str(turn_summary)) > 30:
+                                    words = turn_summary.split(' ')
+                                    draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
+                                    draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
+                                else:
+                                    draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
+                                if current_time - time_of_roll > 5000:
                                     # end turn
                                     turn, active_player = change_turn(players, active_player, turn)
                                     has_rolled = False
+                                    # clear all pop-ups for next turn
+                                    result = ''
                             # player must hit end button to move on
                             else:
                                 end_button.draw(screen)
@@ -1411,6 +1437,8 @@ def main():
                                         # change the turn once player hit the end button
                                         turn, active_player = change_turn(players, active_player, turn)
                                         has_rolled = False
+                                        #clear all pop-ups for next turn
+                                        result = ''
                 else:
                     # A die_value of -1 indicates the die is not done rolling.
                     # Otherwise, roll() returns a random value from 1 to 6.
