@@ -22,7 +22,7 @@ class Property:
         self.location = board_location
         # start with no houses or hotels on property
         self.num_houses = 0
-        self.num_hotels = 1
+        self.num_hotels = 0
         # start with no owner
         self.owner = 'NONE'
         # current rent is the original rent (at the start)

@@ -310,18 +310,19 @@ def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_butt
         mortgage_buttons[card_idx].draw(screen)
         if mortgage_buttons[card_idx].check_click():
             card.mortgage(active_player.bank)
-    # else:
-        # unmortgage_buttons[card_idx].draw(screen)
-        # if unmortgage_buttons[card_idx].check_click():
-        #     card.remove_mortgage(active_player.bank)
+    else:
+        unmortgage_buttons[card_idx].draw(screen)
+        if unmortgage_buttons[card_idx].check_click():
+            card.remove_mortgage(active_player.bank)
     return mortgage_buttons, unmortgage_buttons
 
 
-def buy_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
+def buy_sell_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
     button_x_offset = start_x + 36
     button_y_offset = start_y + 270
     house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
     house_buttons.append(Button(house_button_img, button_x_offset, button_y_offset, 'House', white, 1))
+    # card.part_of_monopoly = True
     if not card.mortgaged and card.part_of_monopoly and card.num_houses < 4 and card.num_hotels == 0:
         house_buttons[card_idx].draw(screen)
         if house_buttons[card_idx].check_click():
@@ -330,7 +331,7 @@ def buy_house(screen, card, active_player, house_buttons, card_idx, start_x, sta
     return house_buttons
 
 
-def buy_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x, start_y):
+def buy_sell_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x, start_y):
     button_x_offset = start_x + 114
     button_y_offset = start_y + 270
     hotel_button_img = pygame.image.load('images/hotel_button.png').convert_alpha()
@@ -824,8 +825,8 @@ def prop_card_screen(screen, font, active_player):
     pygame.display.set_caption('Your cards')
     screen.fill(green)
 
-    # DRAW PROPERTIES
-    draw_text(screen, 'Properties: ', font, white, 50, 10)
+    # DRAW FIRST 14 PROPERTIES
+    draw_text(screen, ' Your Properties: Add Houses & Hotels, Or Mortgage For Money', font, white, 50, 20)
     start_x = 50
     start_y = 70
     level = 1
@@ -839,9 +840,47 @@ def prop_card_screen(screen, font, active_player):
         mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[card_idx], active_player,
                                                              mortgage_buttons, unmortgage_buttons, card_idx,
                                                              start_x, start_y)
-        house_buttons = buy_house(screen, active_player.property_list[card_idx], active_player, house_buttons, card_idx,
+        house_buttons = buy_sell_house(screen, active_player.property_list[card_idx], active_player, house_buttons, card_idx,
                                   start_x, start_y)
-        hotel_buttons = buy_hotel(screen, active_player.property_list[card_idx], active_player, hotel_buttons, card_idx,
+        hotel_buttons = buy_sell_hotel(screen, active_player.property_list[card_idx], active_player, hotel_buttons, card_idx,
+                                  start_x, start_y)
+        start_x += 160
+        if level % 7 == 0:
+            start_x = 50
+            start_y += 300
+        level += 1
+        if card_idx >= 13:
+            break
+
+
+def prop_card_screen2(screen, font, active_player):
+    pygame.display.set_caption('Your cards')
+    screen.fill(green)
+
+    # DRAW REMAINING PROPERTIES
+    draw_text(screen, ' Your Properties: Add Houses & Hotels, Or Mortgage For Money', font, white, 50, 20)
+    start_x = 50
+    start_y = 70
+    level = 1
+    mortgage_buttons = []
+    unmortgage_buttons = []
+    house_buttons = []
+    hotel_buttons = []
+    offset = 14
+    for i in range(0, offset):  # filler space in arrays
+        mortgage_buttons.append(0)
+        unmortgage_buttons.append(0)
+        house_buttons.append(0)
+        hotel_buttons.append(0)
+
+    for card_idx in range(offset, len(active_player.property_list)):
+        create_card(screen, start_x, start_y, active_player.property_list[card_idx])
+        mortgage_buttons, unmortgage_buttons = mortgage_card(screen, active_player.property_list[card_idx],
+                                                             active_player, mortgage_buttons, unmortgage_buttons,
+                                                             card_idx, start_x, start_y)
+        house_buttons = buy_sell_house(screen, active_player.property_list[card_idx], active_player, house_buttons, card_idx,
+                                  start_x, start_y)
+        hotel_buttons = buy_sell_hotel(screen, active_player.property_list[card_idx], active_player, hotel_buttons, card_idx,
                                   start_x, start_y)
         start_x += 160
         if level % 7 == 0:
@@ -878,8 +917,8 @@ def other_card_screen(screen, font, active_player):
         start_x += 160
 
     # DRAW UTILITIES
-    draw_text(screen, 'Utilities: ', font, white, 690, 100)
-    start_x = 690
+    draw_text(screen, 'Utilities: ', font, white, 850, 100)
+    start_x = 850
     start_y = 160
     mor_util_buttons = []
     unmor_util_buttons = []
@@ -952,9 +991,10 @@ def main():
         'DECIDE_TURN': 2,
         'BOARD': 3,
         'PROPS': 4,
-        'CARDS': 5,
-        'LOSE': 6,
-        'WIN': 7
+        'PROPS2': 5,
+        'CARDS': 6,
+        'LOSE': 7,
+        'WIN': 8
     }
     current_screen = screens.get('START')
 
@@ -964,7 +1004,9 @@ def main():
     die1_value = -1
     die2_value = -1
     doubles = 0
-    loaded = False
+    # loaded = False  # DEBUGGING VARIABLES
+    # rail_loaded = False
+    # util_loaded = False
 
     # game type variables
     game_singleplayer = False
@@ -996,6 +1038,7 @@ def main():
     icon2_img = pygame.image.load('images/icon2.png').convert_alpha()
     icon3_img = pygame.image.load('images/icon3.png').convert_alpha()
     icon4_img = pygame.image.load('images/icon4.png').convert_alpha()
+    next_cards_img = pygame.image.load('images/next_cards.png').convert_alpha()
 
     # draw buttons
     singleplayer_button = Button(singleplayer_img, 500, 210, 'Single-Player', white, 1)
@@ -1006,7 +1049,7 @@ def main():
     num_computers3_button = Button(number_img, 675, 310, '3', white, 1.5)
     properties_button = Button(properties_img, 910, 50, 'Inspect Properties', white, 1.5)
     card_button = Button(multiplayer_img, 1110, 50, 'Other cards', white, 1)
-    board_return_button = Button(board_return_img, 1000, 30, 'Return to Board', white, 1.5)
+    board_return_button = Button(board_return_img, 1050, 35, 'Return to Board', white, 1.5)
     roll_button = Button(roll_img, 935, 757, 'ROLL', black, 2)
     turn_roll_button = Button(roll_img, 600, 370, 'ROLL', black, 2)
     end_button = Button(singleplayer_img, 970, 680, 'END TURN', black, .75)
@@ -1014,6 +1057,8 @@ def main():
     icon2_button = Button(icon2_img, 550, 420, 'Icon 2', white, 1)
     icon3_button = Button(icon3_img, 650, 420, 'Icon 3', white, 1)
     icon4_button = Button(icon4_img, 750, 420, 'Icon 4', white, 1)
+    next_cards_button = Button(next_cards_img, 1050, 770, 'Next Cards', white, 1)
+    prev_cards_button = Button(next_cards_img, 1050, 770, 'Prev Cards', white, 1)
 
     # load board positions
     icon_positions = get_icon_positions()
@@ -1059,7 +1104,7 @@ def main():
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
     die2 = Die(screen,
-               screen.get_width( ) - screen.get_width() * 0.1,
+               screen.get_width() - screen.get_width() * 0.1,
                screen.get_height() - DICE_DIMS[0] * 1.5,
                DICE_DIMS)
 
@@ -1072,9 +1117,7 @@ def main():
     bankruptcies = 0
     # Game loop
     while True:
-
         current_time = pygame.time.get_ticks()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1341,7 +1384,6 @@ def main():
                 print('skipped bankrupt player')
                 turn, active_player = change_turn(players, active_player, turn)
 
-
             board_screen(screen, icon_positions, properties, railroads, utilities)
             properties_button.draw(screen)
             card_button.draw(screen)
@@ -1535,7 +1577,6 @@ def main():
                 die1.draw(screen)
                 die2.draw(screen)
 
-
             if keys[pygame.K_c]:  # press c to go to property screen
                 current_screen = screens.get('PROPS')
             if properties_button.check_new_press():
@@ -1545,13 +1586,13 @@ def main():
                 if card_button.check_click():  # click to move to property screen
                     current_screen = screens.get('CARDS')
 
-        elif current_screen == screens.get('PROPS'):
+        elif current_screen == screens.get('PROPS'):  # shows only first 14 properties
             # Player 1
             if turn == 'Player 1':
-                if not loaded:
-                    # for property in properties:
-                    #     player1.property_list.append(property)
-                    loaded = True
+                # if not loaded:  # LOADS ALL PROPERTIES INTO PLAYER1
+                #     for property in properties:
+                #         player1.property_list.append(property)
+                #     loaded = True
                 prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 prop_card_screen(screen, font, player2)
@@ -1560,6 +1601,36 @@ def main():
             else:
                 prop_card_screen(screen, font, player4)
             board_return_button.draw(screen)
+            if len(active_player.property_list) > 13:  # move to next properties screen if too many cards to show
+                next_cards_button.draw(screen)
+                if next_cards_button.check_new_press():
+                    if next_cards_button.check_click():
+                        current_screen = screens.get('PROPS2')
+            if keys[pygame.K_g]:  # press g to return to game
+                current_screen = screens.get('BOARD')
+            if board_return_button.check_new_press():
+                if board_return_button.check_click():  # click to move to board screen
+                    current_screen = screens.get('BOARD')
+
+        elif current_screen == screens.get('PROPS2'):  # shows remaining properties
+            # Player 1
+            if turn == 'Player 1':
+                if not loaded:
+                    # for property in properties:
+                    #     player1.property_list.append(property)
+                    loaded = True
+                prop_card_screen2(screen, font, player1)
+            elif turn == 'Player 2':
+                prop_card_screen2(screen, font, player2)
+            elif turn == 'Player 3':
+                prop_card_screen2(screen, font, player3)
+            else:
+                prop_card_screen2(screen, font, player4)
+            board_return_button.draw(screen)
+            prev_cards_button.draw(screen)
+            if prev_cards_button.check_new_press():
+                if prev_cards_button.check_click():
+                    current_screen = screens.get('PROPS')  # Go back to prev Prop screen
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
             if board_return_button.check_new_press():
@@ -1569,6 +1640,14 @@ def main():
         elif current_screen == screens.get('CARDS'):
             # Player 1
             if turn == 'Player 1':
+                # if not rail_loaded:
+                #     for railroad in railroads:
+                #         player1.railroad_list.append(railroad)
+                #         rail_loaded = True
+                # if not util_loaded:
+                #     for utility in utilities:
+                #         player1.utilities_list.append(utility)
+                #         util_loaded = True
                 other_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 other_card_screen(screen, font, player2)
