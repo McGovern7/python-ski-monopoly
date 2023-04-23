@@ -22,7 +22,7 @@ class Player:
         # all player start the game with no railroads
         self.railroad_list = []
         # all player start the game with no utilities
-        self.utilities_list = []
+        self.utility_list = []
         self.scale = scale
         # all players are created with it not being their turn to play
         self.jail = False
@@ -32,28 +32,27 @@ class Player:
         self.overlap = False
 
     def draw(self, screen):
-        # get coordinate for where to draw player (only need this if want to chance their position)
-        coordinates = str(self.board_positions[int(self.location)])
-        coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
-        x_coord = float(coordinates_list[0])
-        y_coord = float(coordinates_list[1])
+        #only draw if the player isn't bankrupt
+        if not self.bankrupt:
+            # get coordinate for where to draw player (only need this if want to chance their position)
+            coordinates = str(self.board_positions[int(self.location)])
+            coordinates_list = coordinates[1:len(coordinates) - 1].split(',')
+            x_coord = float(coordinates_list[0])
+            y_coord = float(coordinates_list[1])
 
-        # have a different location for if player is in jail/just visiting
-        if self.jail and self.location == 10:
-            # in jail
-            screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))
-        elif not self.jail and self.location == 10:
-            # just visiting jail
-            screen.blit(self.player_icon, (x_coord - 30, y_coord))
-        elif self.overlap:
-            screen.blit(self.player_icon, (x_coord + 30, y_coord))
+            # have a different location for if player is in jail/just visiting
+            if self.jail and self.location == 10:
+                # in jail
+                screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))
+            elif not self.jail and self.location == 10:
+                # just visiting jail
+                screen.blit(self.player_icon, (x_coord - 30, y_coord))
+            elif self.overlap:
+                screen.blit(self.player_icon, (x_coord + 30, y_coord))
 
-        # if there are no edits to position on a square
-        else:
-            screen.blit(self.player_icon, self.board_positions[int(self.location)])
-
-    '''elif self.occupancy == 2:
-                screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
+            # if there are no edits to position on a square
+            else:
+                screen.blit(self.player_icon, self.board_positions[int(self.location)])
 
     # function to buy a property
     def buy_property(self, new_property):
