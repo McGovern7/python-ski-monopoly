@@ -1,13 +1,7 @@
 import sys
 import pygame
-import socket
-import pickle
-
-import player
-import random
 from button import Button
 from button_group import ButtonGroup
-from Bank_Account import Bank_Account
 from die import Die
 from Property import Property
 from card import Card
@@ -15,7 +9,6 @@ from player import Player
 from Other_Cards import Railroad
 from Other_Cards import Utility
 from network import Network
-from game import Game
 
 
 # Initialize PyGame
@@ -53,7 +46,6 @@ pink = (255, 192, 203)
 orange = (255, 165, 0)
 red = (255, 0, 0)
 yellow = (255, 255, 0)
-green = (0, 100, 0)
 blue = (30, 144, 225)
 
 
@@ -1674,7 +1666,8 @@ def main():
                     if not active_player.computer:
                         draw_text(screen, result, medium_v_font, black, 900, 300)
                     else:
-                        turn_summary += str(active_player.name) + str(result)[3:]
+                        turn_summary += str(active_player.name) + str(result[3:])
+                        result = ''
                 # pop-up message to tell you if you are in jail
                 elif result == 'jail':
                     result = jail_pop_up(screen, active_player, yes_button, no_button)
@@ -1729,12 +1722,12 @@ def main():
                                 # PLAYER CHOICE (to end turn)
                                 if active_player.computer:
                                     # fix spacing if text goes off of line for printing the summary of comp's turn
-                                    if len(str(turn_summary)) > 60:
+                                    if len(str(turn_summary)) > 65:
                                         words = turn_summary.split(' ')
                                         draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 870, 300)
                                         draw_text(screen, ' '.join(words[5:10]), medium_v_font, black, 870, 325)
                                         draw_text(screen, ' '.join(words[10:]), medium_v_font, black, 870, 350)
-                                    elif 30 < len(str(turn_summary)) < 60:
+                                    elif 35 < len(str(turn_summary)) < 65:
                                         words = turn_summary.split(' ')
                                         draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
                                         draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
