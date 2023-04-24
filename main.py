@@ -1665,9 +1665,6 @@ def main():
                     # change message if player is computer
                     if not active_player.computer:
                         draw_text(screen, result, medium_v_font, black, 900, 300)
-                    else:
-                        turn_summary += str(active_player.name) + str(result[3:])
-                        result = ''
                 # pop-up message to tell you if you are in jail
                 elif result == 'jail':
                     result = jail_pop_up(screen, active_player, yes_button, no_button)
@@ -1676,9 +1673,6 @@ def main():
                 elif result == 'tax':
                     if not active_player.computer:
                         draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
-                    else:
-                        turn_summary += 'Player paid taxes'
-                        result = ''
                 # check if there was player movement from previous card pulled
                 elif result == '':
                     # print message about whose movement it is
