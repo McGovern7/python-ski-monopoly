@@ -1678,6 +1678,7 @@ def main():
                         draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
                     else:
                         turn_summary += 'Player paid taxes'
+                        result = ''
                 # check if there was player movement from previous card pulled
                 elif result == '':
                     # print message about whose movement it is
