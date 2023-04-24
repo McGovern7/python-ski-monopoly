@@ -27,7 +27,7 @@ class Player:
         # all players are created with it not being their turn to play
         self.jail = False
         self.rolls_in_jail = -1
-        self.jail_free = 0
+        self.jail_free = 1
         self.bankrupt = False
         self.overlap = False
 
@@ -74,12 +74,6 @@ class Player:
             for i in range(0, property.num_houses):
                 property.sell_house(self.bank)
 
-    def check_properties(self, new_property):
-        if new_property in self.property_list:
-            return True
-        else:
-            return False
-
     # function to buy railroad
     def buy_railroad(self, new_railroad):
         # withdraw the money from player's account
@@ -116,7 +110,7 @@ class Player:
         # withdraw the money from player's account
         self.bank.withdraw(new_utility.price)
         # add this player's railroad list
-        self.utilities_list.append(new_utility)
+        self.utility_list.append(new_utility)
         # update the owner
         new_utility.owner = self.name
 
@@ -124,7 +118,7 @@ class Player:
 
     def sell_utility(self, utility):
         # remove property from player's property list
-        self.utilities_list.remove(utility)
+        self.utility_list.remove(utility)
         # give them the money back
         self.bank.deposit(utility.price)
 
@@ -147,12 +141,6 @@ class Player:
             self.location = (self.location + spaces_moved) % 40
         else:
             self.location += spaces_moved
-
-        # remove player from that property's occupancy
-        ''' self.location.occupancy -= 1 '''
-        # add player to new location occupancy
-
-    '''    self.location.occupancy += 1 '''
 
     def check_position(self):
         return self.board_positions[self.location]
