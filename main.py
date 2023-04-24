@@ -1083,6 +1083,7 @@ def main():
     turn_rolls = []  # the holding the roll number of each unset_player
     turn = 'Player 1'
     bankruptcies = 0
+    turn_summary = ''
 
     result = '' # start with there being no results from an interaction (no pop-ups)
     text = '' # start with there being no text message from card
@@ -1403,9 +1404,9 @@ def main():
             # draw_text(screen, 'location ' + str(active_player.location), medium_v_font, black, 900, 500)
             # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
             # draw_text(screen, 'railroads' + str(len(active_player.railroad_list)), medium_v_font, black, 900, 620)
+
             # draw_text(screen, 'utilities' + str(len(active_player.utility_list)), medium_v_font, black, 900, 640)
             # print pop-ups if needed (only for human player) - computer gets summary text
-            turn_summary = ''
             if result == 'landlord opportunity':
                 result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
                 turn_summary += "Player bought property"
@@ -1449,6 +1450,15 @@ def main():
                     turn_summary += 'Player paid taxes'
             # check if there was player movement from previous card pulled
             elif result == '':
+                if active_player.computer:
+                    print('turn summary: ' + str(turn_summary))
+                    # fix spacing if text goes off of line for printing the summary of comp's turn
+                    if len(str(turn_summary)) > 30:
+                        words = turn_summary.split(' ')
+                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
+                        draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
+                    else:
+                        draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
                 #print message about whose movement it is
                 if active_player.computer:
                     draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 910, 200)
@@ -1491,13 +1501,13 @@ def main():
                         else:
                             # PLAYER CHOICE (to end turn)
                             if active_player.computer:
-                                #fix spacing if text goes off of line for printing the summary of comp's turn
-                                if len(str(turn_summary)) > 30:
-                                    words = turn_summary.split(' ')
-                                    draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
-                                    draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
-                                else:
-                                    draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
+                                # #fix spacing if text goes off of line for printing the summary of comp's turn
+                                # if len(str(turn_summary)) > 30:
+                                #     words = turn_summary.split(' ')
+                                #     draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
+                                #     draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
+                                # else:
+                                #     draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
 
                                 if current_time - time_of_roll > 5000:
                                     bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
@@ -1506,6 +1516,7 @@ def main():
                                     has_rolled = False
                                     # clear all pop-ups for next turn
                                     result = ''
+                                    turn_summary =''
                             # player must hit end button to move on
                             else:
                                 end_button.draw(screen)
@@ -1517,6 +1528,7 @@ def main():
                                         has_rolled = False
                                         #clear all pop-ups for next turn
                                         result = ''
+                                        turn_summary = ''
                 else:
                     # A die_value of -1 indicates the die is not done rolling.
                     # Otherwise, roll() returns a random value from 1 to 6.
