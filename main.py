@@ -1511,41 +1511,41 @@ def main():
                     bank_account = player4.bank
                 draw_text(screen, str(bank_account.total), medium_v_font, black, 995, 90)
 
-            # draw players and make sure no one has lost the game
-            for p in players:
-                p.draw(screen)
-            # DEBUGGING
-            # draw_text(screen, 'player ' + str(active_player.name), medium_v_font, black, 900, 300)
-            # draw_text(screen, 'bank ' + str(bank_account.total), medium_v_font, black, 900, 400)
-            # draw_text(screen, 'location ' + str(active_player.location), medium_v_font, black, 900, 500)
-            # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
-            # draw_text(screen, 'railroads' + str(len(active_player.railroad_list)), medium_v_font, black, 900, 620)
+                # draw players and make sure no one has lost the game
+                for p in players:
+                    p.draw(screen)
+                # DEBUGGING
+                # draw_text(screen, 'player ' + str(active_player.name), medium_v_font, black, 900, 300)
+                # draw_text(screen, 'bank ' + str(bank_account.total), medium_v_font, black, 900, 400)
+                # draw_text(screen, 'location ' + str(active_player.location), medium_v_font, black, 900, 500)
+                # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
+                # draw_text(screen, 'railroads' + str(len(active_player.railroad_list)), medium_v_font, black, 900, 620)
 
-            # draw_text(screen, 'utilities' + str(len(active_player.utility_list)), medium_v_font, black, 900, 640)
-            # print pop-ups if needed (only for human player) - computer gets summary text
-            if result == 'landlord opportunity':
-                result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
-                turn_summary += "Player bought property"
-            # pop-up for railroad
-            elif result == 'railroad opportunity':
-                result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
-                turn_summary += "Player bought ski lift"
-            # pop-up for utility
-            elif result == 'utility opportunity':
-                result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
-                turn_summary += "Player bought machinery"
-            # pop-up for community chest/chance
-            elif str(result)[:8] == 'message:':
-                # save the message for later use
-                text = result[7:]
-                # if the player gets a get out of jail free card, add it to their other cards
-                if text == 'Get out of jail free.':
-                    active_player.jail_free += 1
-                # if the player goes to jail
-                elif text == 'Go to jail.':
-                    active_player.jail = True
-                result = card_pop_up(screen, active_player, result)
-                turn_summary += 'Player got a card that said:\n' + text
+                # draw_text(screen, 'utilities' + str(len(active_player.utility_list)), medium_v_font, black, 900, 640)
+                # print pop-ups if needed (only for human player) - computer gets summary text
+                if result == 'landlord opportunity':
+                    result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
+                    turn_summary += "Player bought property"
+                # pop-up for railroad
+                elif result == 'railroad opportunity':
+                    result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+                    turn_summary += "Player bought ski lift"
+                # pop-up for utility
+                elif result == 'utility opportunity':
+                    result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
+                    turn_summary += "Player bought machinery"
+                # pop-up for community chest/chance
+                elif str(result)[:8] == 'message:':
+                    # save the message for later use
+                    text = result[7:]
+                    # if the player gets a get out of jail free card, add it to their other cards
+                    if text == 'Get out of jail free.':
+                        active_player.jail_free += 1
+                    # if the player goes to jail
+                    elif text == 'Go to jail.':
+                        active_player.jail = True
+                    result = card_pop_up(screen, active_player, result)
+                    turn_summary += 'Player got a card that said:\n' + text
 
                 # pop-up message for paying rent
                 elif str(result)[:3] == 'You':
@@ -1615,36 +1615,36 @@ def main():
                                     else:
                                         draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
 
-                                if current_time - time_of_roll > 5000:
-                                    bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
-                                    # end turn
-                                    turn, active_player = change_turn(players, active_player, turn)
-                                    player_has_rolled = False
-                                    # clear all pop-ups for next turn
-                                    result = ''
-                                    turn_summary = ''
-                            # player must hit end button to move on
-                            else:
-                                end_button.draw(screen)
-                                if end_button.check_new_press():
-                                    if end_button.check_click():  # rolls on a space key or button click
+                                    if current_time - time_of_roll > 5000:
                                         bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
-                                        # change the turn once player hit the end button
+                                        # end turn
                                         turn, active_player = change_turn(players, active_player, turn)
                                         player_has_rolled = False
-                                        #clear all pop-ups for next turn
+                                        # clear all pop-ups for next turn
                                         result = ''
                                         turn_summary = ''
-                else:
-                    # A die_value of -1 indicates the die is not done rolling.
-                    # Otherwise, roll() returns a random value from 1 to 6.
-                    if die1_value == -1:
-                        die1_value = die1.roll(roll_counter)
-                    if die2_value == -1:
-                        die2_value = die2.roll(roll_counter)
-                    if die1_value != -1 and die2_value != -1:
-                        # Both dice are done rolling
-                        player_has_rolled = True
+                                # player must hit end button to move on
+                                else:
+                                    end_button.draw(screen)
+                                    if end_button.check_new_press():
+                                        if end_button.check_click():  # rolls on a space key or button click
+                                            bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
+                                            # change the turn once player hit the end button
+                                            turn, active_player = change_turn(players, active_player, turn)
+                                            player_has_rolled = False
+                                            #clear all pop-ups for next turn
+                                            result = ''
+                                            turn_summary = ''
+                    else:
+                        # A die_value of -1 indicates the die is not done rolling.
+                        # Otherwise, roll() returns a random value from 1 to 6.
+                        if die1_value == -1:
+                            die1_value = die1.roll(roll_counter)
+                        if die2_value == -1:
+                            die2_value = die2.roll(roll_counter)
+                        if die1_value != -1 and die2_value != -1:
+                            # Both dice are done rolling
+                            player_has_rolled = True
 
                             # Return the dice to the start
                             if not die1.at_start:
