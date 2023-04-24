@@ -46,10 +46,11 @@ class Die:
     def get_vel(self):
         return math.sqrt(self.x_vel**2 + self.y_vel**2)
 
-    def roll(self, counter):
+    def roll(self, counter, value=random.randint(0, 5)):
         """
 
         :param counter:
+        :param value:
         :return:
         """
 
@@ -62,7 +63,6 @@ class Die:
             self.face = self.rolling[random.randint(0, 7)]
 
         if -0.3 < self.get_vel() < 0.3:
-            value = random.randint(0, 5)
             self.face = self.faces[value]
             return value + 1
         else:
