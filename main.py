@@ -682,16 +682,19 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         if x_coord == 35:
             screen.blit(tbar, (x_coord - 2, y_coord-13))
             draw_text(screen, railroad.name, small_cs_font_4, black, x_coord - 32, y_coord-32)
+            draw_text(screen, '$' + str(railroad.price), small_cs_font_4, black, x_coord + 40, y_coord )
         # across the top
         elif y_coord == 35:
-            screen.blit(quad, (x_coord-25, y_coord+8))
+            screen.blit(quad, (x_coord-25, y_coord+12))
             # if railroad name has more than two words, display it differently
             if railroad.name.find(' ') > -1:
                 name = railroad.name.split(' ')
-                draw_text(screen, name[0], small_cs_font_4, black, x_coord - 28, y_coord - 30)
-                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 18, y_coord - 15)
+                draw_text(screen, name[0], small_cs_font_4, black, x_coord - 28, y_coord - 36)
+                draw_text(screen, name[1], small_cs_font_3, black, x_coord - 16, y_coord - 26)
+                draw_text(screen, '$' + str(railroad.price), small_cs_font_3, black, x_coord - 14, y_coord - 10)
             else:
                 draw_text(screen, railroad.name, small_cs_font_3, black, x_coord - 32, y_coord - 30)
+                draw_text(screen, '$' + str(railroad.price), small_cs_font_3, black, x_coord - 4, y_coord - 10)
         # down the right side
         elif x_coord == 765:
             screen.blit(tram, (x_coord - 45, y_coord - 12))
