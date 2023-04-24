@@ -13,8 +13,8 @@ class Player:
     # Creates a player object
     # Player has a name, position on the board, bank account, property list, get out of jail free card,
     # and 'bankrupt' bool which signifies if they lose the game
-    def __init__(self, icon_num, player_name, scale, icon_positions):
-        # TODO -- Need a field for player vs computer
+    def __init__(self, is_computer, icon_num, player_name, scale, icon_positions):
+        self.computer = is_computer
         self.icon_num = icon_num
         self.name = player_name
         self.number = int(player_name[7]) - 1
@@ -26,46 +26,47 @@ class Player:
         # All players start the game with no properties, railroads, or utilities
         self.property_list = []
         self.railroad_list = []
-        self.utilities_list = []
+        self.utility_list = []
         # All players are created with it not being their turn to play
-        self.jail= False
+        self.jail = False
         self.rolls_in_jail = -1
         self.jail_free = 0
-        # TODO - have an end to the game if someone goes bankrupt
         self.bankrupt = False
+        self.overlap = False
         self.last_roll = -1
 
     def draw(self, screen, coordinates=0):
-        image = icons[self.icon_num]
-        player_icon = pygame.image.load(image).convert_alpha()
-        width = player_icon.get_width()
-        height = player_icon.get_height()
+        if not self.bankrupt:
+            image = icons[self.icon_num]
+            player_icon = pygame.image.load(image).convert_alpha()
+            width = player_icon.get_width()
+            height = player_icon.get_height()
 
-        # Get coordinate for where to draw player (only need this if want to chance their position)
-        if coordinates == 0:
-            coordinates = str(self.board_positions[int(self.location)])
-            coordinates_split = coordinates[1:len(coordinates)-1].split(', ')
-            coordinates = (float(coordinates_split[0]), float(coordinates_split[1]))
-        x_coord = float(coordinates[0])
-        y_coord = float(coordinates[1])
+            # Get coordinate for where to draw player (only need this if want to chance their position)
+            if coordinates == 0:
+                coordinates = str(self.board_positions[int(self.location)])
+                coordinates_split = coordinates[1:len(coordinates)-1].split(', ')
+                coordinates = (float(coordinates_split[0]), float(coordinates_split[1]))
+            x_coord = float(coordinates[0])
+            y_coord = float(coordinates[1])
 
-        # Have a different location for if player is in jail/just visiting
-        if self.jail and self.location == 10:
-            # In jail
-            screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
-                        (x_coord+20, y_coord+20))
-        elif not self.jail and self.location == 10:
-            # Just visiting jail
-            screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
-                        (x_coord-30, y_coord))
+            # Have a different location for if player is in jail/just visiting
+            if self.jail and self.location == 10:
+                # In jail
+                screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                            (x_coord + 20, y_coord + 20))
+            elif not self.jail and self.location == 10:
+                # Just visiting jail
+                screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                            (x_coord - 30, y_coord))
+            elif self.overlap:
+                screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                            (x_coord + 30, y_coord))
 
-        # If there are no edits to position on a square
-        else:
-            screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
-                        coordinates)
-
-    '''elif self.occupancy == 2:
-                screen.blit(self.player_icon, (x_coord + 20, y_coord + 20))'''
+            # If there are no edits to position on a square
+            else:
+                screen.blit(pygame.transform.scale(player_icon, (int(width * self.scale), int(height * self.scale))),
+                            coordinates)
 
     # function to buy a property
     def buy_property(self, new_property):
@@ -134,6 +135,7 @@ class Player:
         new_utility.owner = self.name
 
         # function to sell a railroad
+
     def sell_utility(self, utility):
         # remove property from player's property list
         self.utilities_list.remove(utility)
@@ -206,8 +208,3 @@ class Player:
         self.jail = False
         # Once used, you lose the card
         self.jail_free -= 1
-
-    # Updates bankrupt field, indicating the player loses
-    def gone_bankrupt(self):
-        pass
-        # self.bankrupt = true
