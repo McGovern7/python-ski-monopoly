@@ -19,11 +19,9 @@ class ButtonGroup:
         for i in range(0, len(self.buttons)):
             if self.buttons[i].check_click():
                 number = i
-            else:
-                self.buttons[i].clicked = False
-        # if number != -1:
-        #     for i in range(0, len(self.buttons)):
-        #         if i == number:
-        #             self.buttons[i].clicked = True
-        #         else:
-        #             self.buttons[i].clicked = False
+        if number != -1:
+            for i in range(0, len(self.buttons)):
+                if i == number:
+                    self.buttons[i].clicked = True
+                else:
+                    self.buttons[i].clicked = False

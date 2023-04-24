@@ -60,13 +60,13 @@ class Utility:
     # Function to determine what the rent should be (based on dice roll value)
     def calculate_rent(self, utility_owner, dice_roll):
         # if the owner own only 1 utility, rent is 4 times dice roll
-        print(len(utility_owner.utilities_list))
+        print(len(utility_owner.utility_list))
         print(dice_roll)
-        if len(utility_owner.utilities_list) == 1:
+        if len(utility_owner.utility_list) == 1:
             rent = 4 * int(dice_roll)
             print(rent)
         # if the owner has 2 utilities, rent is 10 times dice roll
-        elif len(utility_owner.utilities_list) == 2:
+        elif len(utility_owner.utility_list) == 2:
             rent = 10 * int(dice_roll)
         else:
             print("something went wrong - too many utilities owned")

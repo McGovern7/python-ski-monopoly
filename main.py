@@ -288,7 +288,6 @@ def buy_pop_up(screen, active_player, message, properties, option, yes_button, n
     # option 1 is for properties, option 2 is for railroads, option 3 is for utilities
     # draws pop up message (only if player is human)
     if not active_player.computer:
-        roll_img = pygame.image.load('images/roll.png').convert_alpha()
         pygame.draw.rect(screen, red, (850, 210, 300, 150))
         pygame.draw.rect(screen, white, (860, 220, 280, 130))
         draw_text(screen, message, small_cs_font_1, black, 875, 240)
@@ -364,7 +363,6 @@ def buy_pop_up(screen, active_player, message, properties, option, yes_button, n
 def card_pop_up(screen, active_player, message, okay_button):
     #only show pop up if player is human
     if not active_player.computer:
-        roll_img = pygame.image.load('images/roll.png').convert_alpha()
         # draws pop up message
         pygame.draw.rect(screen, red, (850, 210, 300, 150))
         pygame.draw.rect(screen, white, (860, 220, 280, 130))
@@ -395,7 +393,6 @@ def card_pop_up(screen, active_player, message, okay_button):
 def jail_pop_up(screen, active_player, yes_button, no_button):
     #only show pop-up if player is human
     if not active_player.computer:
-        roll_img = pygame.image.load('images/roll.png').convert_alpha()
         # draws pop up message
         pygame.draw.rect(screen, red, (850, 210, 300, 150))
         pygame.draw.rect(screen, white, (860, 220, 280, 130))
@@ -1684,7 +1681,7 @@ def main():
                                 is_rolling = False
                                 roll = die1_value + die2_value
                                 # TODO -- test spaces here by changing the roll value
-                                #roll = 7
+                                # roll = 7
                                 if die1_value == die2_value:  # check if doubles were rolled
                                     doubles += 1
                                 else:
