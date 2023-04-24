@@ -30,7 +30,12 @@ class Card:
             return
         # if there is a movement to a spot
         else:
-            player.location = int(self.movement)
+            #if it is a go to jail card
+            if int(self.movement) == 10:
+                player.go_to_jail()
+            else:
+                player.location = int(self.movement)
+
 
     def print(self):
         print(self.kind + ": " + self.message)
