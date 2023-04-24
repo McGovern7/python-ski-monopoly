@@ -42,7 +42,7 @@ class Game:
         if self.current_screen == screens.get('TURNS'):
             self.turn_rolls.append(last_roll)
         if len(self.turn_rolls) == len(self.players):
-            unset_players = self.players
+            unset_players = self.players.copy()
             for j in range(0, len(unset_players)):
                 largest = self.turn_rolls.index(max(self.turn_rolls))
                 self.players[j] = unset_players[largest]  # appends correct player to empty list

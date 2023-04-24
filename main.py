@@ -1095,16 +1095,11 @@ def main():
     # load board positions
     icon_positions = get_icon_positions()
 
-    # create player objects
-    player1 = Player(0, 'Player 1', 1, icon_positions)
-    player2 = Player(1, 'Player 2', 1, icon_positions)
-    player3 = Player(2, 'Player 3', 1, icon_positions)
-    player4 = Player(3, 'Player 4', 1, icon_positions)
-    # # create player objects (all start at human players)
-    # player1 = Player(False, icon1_img, 'Player 1', bank1, 1, icon_positions)
-    # player2 = Player(False, icon2_img, 'Player 2', bank2, 1, icon_positions)
-    # player3 = Player(False, icon3_img, 'Player 3', bank3, 1, icon_positions)
-    # player4 = Player(False, icon4_img, 'Player 4', bank4, 1, icon_positions)
+    # create player objects (all start at human players)
+    player1 = Player(False, 0, 'Player 1', 1, icon_positions)
+    player2 = Player(False, 1, 'Player 2', 1, icon_positions)
+    player3 = Player(False, 2, 'Player 3', 1, icon_positions)
+    player4 = Player(False, 3, 'Player 4', 1, icon_positions)
 
     # turn screen variables
     players_loaded = False
@@ -1235,7 +1230,7 @@ def main():
 
                     # if startgame button clicked and game setup, move to game screen
                     if player_selected and startgame_button.clicked:
-                        player1 = Player(my_icon, "Player 1", .6, icon_positions)
+                        player1 = Player(False, my_icon, "Player 1", 1, icon_positions)
                         current_screen = screens.get("TURNS")
             elif game_multiplayer:
                 game_singleplayer = False
@@ -1340,13 +1335,13 @@ def main():
                 i = 0
                 for p in unset_players:  # draw the icons into the squares
                     if total_players == 2:
-                        screen.blit(p.player_icon, (500 + i, 190))
+                        p.draw(screen, (500 + i, 190))
                         i += square_distance
                     elif total_players == 3:
-                        screen.blit(p.player_icon, (420 + i, 190))
+                        p.draw(screen, (420 + i, 190))
                         i += square_distance
                     elif total_players == 4:
-                        screen.blit(p.player_icon, (340 + i, 190))
+                        p.draw(screen, (340 + i, 190))
                         i += square_distance
                 for active_player in unset_players:  # determine the order by having each player roll
                     for num in range(0, len(turn_rolls)):  # - prints rolled number under icon
@@ -1432,31 +1427,32 @@ def main():
                     if total_players == 2:
                         p.draw(screen, (500 + i * square_distance, 190))
                         if p.name == game.get_curr_player().name:
-                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_font, white, 450 +
+                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 450 +
                                       i * square_distance, 268)
                         elif p.last_roll != -1:
-                            draw_text(screen, str(p.last_roll), medium_font, white, 450 + i * square_distance, 268)
+                            draw_text(screen, str(p.last_roll), medium_v_font, white, 450 + i * square_distance, 268)
                     elif total_players == 3:
                         p.draw(screen, (420 + i * square_distance, 190))
                         if p.name == game.get_curr_player().name:
-                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_font, white, 370 +
+                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 370 +
                                       i * square_distance, 268)
                         elif p.last_roll != -1:
-                            draw_text(screen, str(p.last_roll), medium_font, white, 370 + i * square_distance, 268)
+                            draw_text(screen, str(p.last_roll), medium_v_font, white, 370 + i * square_distance, 268)
                     elif total_players == 4:
                         p.draw(screen, (340 + i * square_distance, 190))
                         if p.name == game.get_curr_player().name:
-                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_font, white, 290 +
+                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 290 +
                                       i * square_distance, 268)
                         elif p.last_roll != -1:
-                            draw_text(screen, str(p.last_roll), medium_font, white, 290 + i * square_distance, 268)
+                            draw_text(screen, str(p.last_roll), medium_v_font, white, 290 + i * square_distance, 268)
 
                 if not is_rolling:
                     if not player_has_rolled:
                         turn_roll_button.draw(screen)
-                        if my_player - 1 == game.player_turn:
+                        if my_player == game.get_curr_player().name[8]:
                             turn_roll_button.show()
                             if keys[pygame.K_SPACE] or turn_roll_button.clicked:  # rolls on a space key or button click
+                                turn_roll_button.clicked = False
                                 game = network.send('roll')
                                 roll_counter = 0
                                 is_rolling = True
@@ -1587,10 +1583,10 @@ def main():
                 # dice and turn
                 if turn == active_player.name:
                     if not is_rolling:
-                        draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
+                        draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
                         # print message that player can't roll since they are in jail
                         if active_player.jail:
-                            draw_text(screen, 'You are in jail.', medium_font, black, 920, 450)
+                            draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
                         # don't roll if player is in jail
                         if not player_has_rolled:
                             roll_button.draw(screen)
@@ -1675,15 +1671,15 @@ def main():
                                 if not active_player.jail:
                                     active_player.movement(roll)
 
-                            # if icons are on the same spot, change their position on the square
-                            new_players = players.copy()
-                            new_players.remove(active_player)
-                            for check_player in new_players:
-                                if int(active_player.location) == int(check_player.location):
-                                    # icons are overlapping on the board
-                                    active_player.overlap = True
-                                elif int(active_player.location) != int(check_player.location):
-                                    active_player.overlap = False
+                                # if icons are on the same spot, change their position on the square
+                                new_players = players.copy()
+                                new_players.remove(active_player)
+                                for check_player in new_players:
+                                    if int(active_player.location) == int(check_player.location):
+                                        # icons are overlapping on the board
+                                        active_player.overlap = True
+                                    elif int(active_player.location) != int(check_player.location):
+                                        active_player.overlap = False
 
                                 # interact with that spot on the board
                                 result = interact(active_player, players, properties, railroads, utilities, roll, cards)
@@ -1691,8 +1687,7 @@ def main():
                                 die1_value = -1
                                 die2_value = -1
 
-                            roll_counter += 1
-
+                        roll_counter += 1
                     die1.draw(screen)
                     die2.draw(screen)
             if game_multiplayer:
@@ -1702,15 +1697,15 @@ def main():
                 properties_button.draw(screen)
                 card_button.draw(screen)
                 # display bank account money
-                draw_text(screen, 'Money: $', medium_font, black, 900, 90)
-                draw_text(screen, str(game.players[my_player-1].bank.total), medium_font, black, 995, 90)
-                draw_text(screen, str(active_player.name) + '\'s turn', medium_font, black, 900, 700)
+                draw_text(screen, 'Money: $', medium_v_font, black, 900, 90)
+                draw_text(screen, str(game.players[my_player-1].bank.total), medium_v_font, black, 995, 90)
+                draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
 
-                if game.player_turn+1 == my_player:
+                if my_player == game.get_curr_player().name[8]:
                     if not is_rolling:
                         # print message that player can't roll since they are in jail
                         if active_player.jail:
-                            draw_text(screen, 'You are in jail.', medium_font, black, 920, 450)
+                            draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
                         if not player_has_rolled:
                             roll_button.show()
                             roll_button.draw(screen)
@@ -1773,17 +1768,19 @@ def main():
                 prop_card_screen(screen, font, player3)
             else:
                 prop_card_screen(screen, font, player4)
+            board_return_button.show()
             board_return_button.draw(screen)
             if len(active_player.property_list) > 13:  # move to next properties screen if too many cards to show
+                next_cards_button.show()
                 next_cards_button.draw(screen)
-                if next_cards_button.check_new_press():
-                    if next_cards_button.check_click():
-                        current_screen = screens.get('PROPS2')
+                if next_cards_button.clicked:
+                    next_cards_button.clicked = False
+                    current_screen = screens.get('PROPS2')
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
-            if board_return_button.check_new_press():
-                if board_return_button.check_click():  # click to move to board screen
-                    current_screen = screens.get('BOARD')
+            if board_return_button.clicked:
+                board_return_button.clicked = False
+                current_screen = screens.get('BOARD')
 
         elif current_screen == screens.get('PROPS2'):  # shows remaining properties
             # Player 1
@@ -1799,16 +1796,16 @@ def main():
                 prop_card_screen2(screen, font, player3)
             else:
                 prop_card_screen2(screen, font, player4)
+            board_return_button.show()
             board_return_button.draw(screen)
+            prev_cards_button.show()
             prev_cards_button.draw(screen)
-            if prev_cards_button.check_new_press():
-                if prev_cards_button.check_click():
-                    current_screen = screens.get('PROPS')  # Go back to prev Prop screen
-            if keys[pygame.K_g]:  # press g to return to game
+            if prev_cards_button.clicked:
+                prev_cards_button.clicked = False
+                current_screen = screens.get('PROPS')  # Go back to prev Prop screen
+            if keys[pygame.K_g] or board_return_button.clicked:  # press g or click to return to board screen
+                board_return_button.clicked = False
                 current_screen = screens.get('BOARD')
-            if board_return_button.check_new_press():
-                if board_return_button.check_click():  # click to move to board screen
-                    current_screen = screens.get('BOARD')
 
         elif current_screen == screens.get('CARDS'):
             # Player 1
@@ -1829,13 +1826,13 @@ def main():
             else:
                 other_card_screen(screen, font, player4)
 
+            board_return_button.show()
             board_return_button.draw(screen)
             if keys[pygame.K_g]:  # press g to return to game
                 current_screen = screens.get('BOARD')
             if board_return_button.check_new_press():
                 if board_return_button.check_click():  # click to move to board screen
                     current_screen = screens.get('BOARD')
-
 
         elif current_screen == screens.get('LOSE'):
             pygame.display.set_caption('Game over :(')
