@@ -55,7 +55,6 @@ class Button:
     def check_click(self):
         # Check mouse position
         if self.shown and self.rect.collidepoint(pygame.mouse.get_pos()):
-            print('clicked')
             # clicked
             self.clicked = True
             return True

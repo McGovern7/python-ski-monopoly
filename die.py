@@ -46,13 +46,16 @@ class Die:
     def get_vel(self):
         return math.sqrt(self.x_vel**2 + self.y_vel**2)
 
-    def roll(self, counter, value=random.randint(0, 5)):
+    def roll(self, counter, value=None):
         """
 
         :param counter:
         :param value:
         :return:
         """
+
+        if not value:
+            value = random.randint(0, 5)
 
         self.x_vel *= FRICTION
         self.y_vel *= FRICTION
