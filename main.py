@@ -1450,15 +1450,6 @@ def main():
                     turn_summary += 'Player paid taxes'
             # check if there was player movement from previous card pulled
             elif result == '':
-                if active_player.computer:
-                    print('turn summary: ' + str(turn_summary))
-                    # fix spacing if text goes off of line for printing the summary of comp's turn
-                    if len(str(turn_summary)) > 30:
-                        words = turn_summary.split(' ')
-                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
-                        draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
-                    else:
-                        draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
                 #print message about whose movement it is
                 if active_player.computer:
                     draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 910, 200)
@@ -1501,13 +1492,13 @@ def main():
                         else:
                             # PLAYER CHOICE (to end turn)
                             if active_player.computer:
-                                # #fix spacing if text goes off of line for printing the summary of comp's turn
-                                # if len(str(turn_summary)) > 30:
-                                #     words = turn_summary.split(' ')
-                                #     draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
-                                #     draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
-                                # else:
-                                #     draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
+                                #fix spacing if text goes off of line for printing the summary of comp's turn
+                                if len(str(turn_summary)) > 30:
+                                    words = turn_summary.split(' ')
+                                    draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
+                                    draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
+                                else:
+                                    draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
 
                                 if current_time - time_of_roll > 5000:
                                     bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
