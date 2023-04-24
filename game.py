@@ -68,7 +68,7 @@ class Game:
         icon_num = 0
         while not self.available_icons[icon_num]:
             icon_num = (icon_num + 1) % len(self.available_icons)
-        self.players.append(Player(icon_num, 'Player ' + str(self.get_num_players() + 1), .6, []))
+        self.players.append(Player(False, icon_num, 'Player ' + str(self.get_num_players() + 1), 1, []))
         self.available_icons[icon_num] = False
 
     def set_icon(self, player_num, icon_num):

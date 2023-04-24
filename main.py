@@ -1260,7 +1260,7 @@ def main():
                         player1 = Player(False, my_icon, "Player 1", 1, icon_positions)
                         current_screen = screens.get("TURNS")
             elif game_multiplayer:
-                draw_text_center(screen, 'Enter server ip:', medium_v_font, black, 260)
+                draw_text_center(screen, 'Enter server ip:', medium_v_font, black, 250)
 
                 if active:
                     box_color = color_active
@@ -1321,7 +1321,7 @@ def main():
                     draw_text_center(screen, 'You are player ' + str(my_player) + ' of ' + str(game.get_num_players()),
                                      medium_v_font, black, 320)
                     draw_text_center(screen, 'Choose your Piece', medium_v_font, black, 350)
-                    icon_buttons.draw()
+                    icon_buttons.draw(screen)
                     icon1_button.clicked = not game.available_icons[0]
                     icon2_button.clicked = not game.available_icons[1]
                     icon3_button.clicked = not game.available_icons[2]
@@ -1470,8 +1470,8 @@ def main():
                     if not player_has_rolled:
                         turn_roll_button.show()
                         turn_roll_button.draw(screen)
-                        if my_player == game.get_curr_player().name[8]:
-                            turn_roll_button.show()
+                        if my_player == game.get_curr_player().name[7]:
+                            print(keys[pygame.K_SPACE])
                             if keys[pygame.K_SPACE] or turn_roll_button.clicked:  # rolls on a space key or button click
                                 turn_roll_button.clicked = False
                                 game = network.send('roll')
