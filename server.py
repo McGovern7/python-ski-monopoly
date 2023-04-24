@@ -3,7 +3,9 @@ from _thread import *
 import pickle
 from game import Game
 
-server = 'localhost'
+server = socket.gethostname()
+# Localhost server for testing offline
+# server = 'localhost'
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

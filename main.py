@@ -1435,16 +1435,16 @@ def main():
                     icon3_button.clicked = not game.available_icons[2]
                     icon4_button.clicked = not game.available_icons[3]
 
-                    if icon1_button.check_click():
+                    if icon1_button.clicked:
                         my_icon = 0
                         game = network.send('icon0')
-                    elif icon2_button.check_click():
+                    elif icon2_button.clicked:
                         my_icon = 1
                         game = network.send('icon1')
-                    elif icon3_button.check_click():
+                    elif icon3_button.clicked:
                         my_icon = 2
                         game = network.send('icon2')
-                    elif icon4_button.check_click():
+                    elif icon4_button.clicked:
                         my_icon = 3
                         game = network.send('icon3')
                     startgame_button.show()
