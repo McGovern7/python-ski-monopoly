@@ -239,6 +239,49 @@ def get_icon_positions():
         icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
     return icon_positions
 
+def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, card_idx, start_x, start_y):
+    button_x_offset = start_x + 75
+    button_y_offset = start_y + 225
+    mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
+    unmortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
+    mortgage_buttons.append(Button(mortgage_img, button_x_offset, button_y_offset, 'Mortgage', white, 1))
+    unmortgage_buttons.append(Button(unmortgage_img, button_x_offset, button_y_offset, 'Unmortgage', white, 1))
+    if not card.mortgaged:
+        mortgage_buttons[card_idx].draw(screen)
+        if mortgage_buttons[card_idx].check_click():
+            card.mortgage(active_player.bank)
+    else:
+        unmortgage_buttons[card_idx].draw(screen)
+        if unmortgage_buttons[card_idx].check_click():
+            card.remove_mortgage(active_player.bank)
+    return mortgage_buttons, unmortgage_buttons
+
+
+def buy_sell_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
+    button_x_offset = start_x + 36
+    button_y_offset = start_y + 270
+    house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
+    house_buttons.append(Button(house_button_img, button_x_offset, button_y_offset, 'House', white, 1))
+    card.part_of_monopoly = True
+    if not card.mortgaged and card.part_of_monopoly and card.num_houses < 4 and card.num_hotels == 0:
+        house_buttons[card_idx].draw(screen)
+        if house_buttons[card_idx].check_click():
+            card.buy_house(active_player.bank)
+
+    return house_buttons
+
+
+def buy_sell_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x, start_y):
+    button_x_offset = start_x + 114
+    button_y_offset = start_y + 270
+    hotel_button_img = pygame.image.load('images/hotel_button.png').convert_alpha()
+    hotel_buttons.append(Button(hotel_button_img, button_x_offset, button_y_offset, 'Hotel', white, 1))
+    if not card.mortgaged and card.part_of_monopoly and card.num_houses == 4 and card.num_hotels == 0:
+        hotel_buttons[card_idx].draw(screen)
+        if hotel_buttons[card_idx].check_click():
+            card.buy_hotel(active_player.bank)
+
+    return hotel_buttons
 
 def buy_pop_up(screen, active_player, message, properties, option):
     # option 1 is for properties, option 2 is for railroads, option 3 is for utilities
@@ -315,69 +358,23 @@ def buy_pop_up(screen, active_player, message, properties, option):
             else:
                 return 'utility opportunity'
 
-
-def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, card_idx, start_x, start_y):
-    button_x_offset = start_x + 75
-    button_y_offset = start_y + 225
-    mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
-    unmortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
-    mortgage_buttons.append(Button(mortgage_img, button_x_offset, button_y_offset, 'Mortgage', white, 1))
-    unmortgage_buttons.append(Button(unmortgage_img, button_x_offset, button_y_offset, 'Unmortgage', white, 1))
-    if not card.mortgaged:
-        mortgage_buttons[card_idx].draw(screen)
-        if mortgage_buttons[card_idx].check_click():
-            card.mortgage(active_player.bank)
-    else:
-        unmortgage_buttons[card_idx].draw(screen)
-        if unmortgage_buttons[card_idx].check_click():
-            card.remove_mortgage(active_player.bank)
-    return mortgage_buttons, unmortgage_buttons
-
-
-def buy_sell_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
-    button_x_offset = start_x + 36
-    button_y_offset = start_y + 270
-    house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
-    house_buttons.append(Button(house_button_img, button_x_offset, button_y_offset, 'House', white, 1))
-    card.part_of_monopoly = True
-    if not card.mortgaged and card.part_of_monopoly and card.num_houses < 4 and card.num_hotels == 0:
-        house_buttons[card_idx].draw(screen)
-        if house_buttons[card_idx].check_click():
-            card.buy_house(active_player.bank)
-
-    return house_buttons
-
-
-def buy_sell_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x, start_y):
-    button_x_offset = start_x + 114
-    button_y_offset = start_y + 270
-    hotel_button_img = pygame.image.load('images/hotel_button.png').convert_alpha()
-    hotel_buttons.append(Button(hotel_button_img, button_x_offset, button_y_offset, 'Hotel', white, 1))
-    if not card.mortgaged and card.part_of_monopoly and card.num_houses == 4 and card.num_hotels == 0:
-        hotel_buttons[card_idx].draw(screen)
-        if hotel_buttons[card_idx].check_click():
-            card.buy_hotel(active_player.bank)
-
-    return hotel_buttons
-
-
 def card_pop_up(screen, active_player, message):
     #only show pop up if player is human
     if not active_player.computer:
         roll_img = pygame.image.load('images/roll.png').convert_alpha()
-        okay_button = Button(roll_img, 950, 400, 'ok', black, 1)
+        okay_button = Button(roll_img, 950, 300, 'ok', black, 1)
         # draws pop up message
-        pygame.draw.rect(screen, red, (850, 310, 300, 150))
-        pygame.draw.rect(screen, white, (860, 320, 280, 130))
+        pygame.draw.rect(screen, red, (850, 210, 300, 150))
+        pygame.draw.rect(screen, white, (860, 220, 280, 130))
         # remove 'message' part before printing
         message_edit = message[8:]
         # see if we need to split the string
         if message.find('//') != -1:
             messages = message_edit.split('//')
-            draw_text(screen, messages[0], small_cs_font_1, black, 870, 330)
-            draw_text(screen, messages[1], small_cs_font_1, black, 870, 350)
+            draw_text(screen, messages[0], small_cs_font_1, black, 875, 240)
+            draw_text(screen, messages[1], small_cs_font_1, black, 875, 260)
         else:
-            draw_text(screen, message_edit, small_cs_font_1, black, 870, 330)
+            draw_text(screen, message_edit, small_cs_font_1, black, 875, 240)
         okay_button.draw(screen)
     # PLAYER CHOICE (click okay button to move on)
     if active_player.computer:
@@ -430,7 +427,7 @@ def jail_pop_up(screen, active_player):
 
 def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
     #shuffle the cards!
-    random.shuffle(cards)
+    #random.shuffle(cards)
 
     # interaction for properties
     for property in properties:
@@ -624,7 +621,7 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
             pygame.draw.rect(screen, property.region, (90, y_coord - 33, 20, 64))
             pygame.draw.rect(screen, black, (90, y_coord - 33, 20, 64), 1)  # black outline
             # name of property
-            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 34, y_coord - 30)
+            draw_text(screen, property.property_name, small_cs_font_4, black, x_coord - 34, y_coord - 30)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord, y_coord - 10)
 
@@ -676,7 +673,7 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
         if y_coord == 765:
             pygame.draw.rect(screen, property.region, (x_coord - 33, 685, 63.9, 20))
             pygame.draw.rect(screen, black, (x_coord - 33, 685, 63.9, 20), 1)  # black outline
-            draw_text(screen, property.property_name, small_cs_font_3, red, x_coord - (len(property.property_name)/2), y_coord - 55)
+            draw_text(screen, property.property_name, small_cs_font_3, black, x_coord - 30, y_coord - 55)
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
 
@@ -1521,31 +1518,25 @@ def main():
                 # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
                 # draw_text(screen, 'railroads' + str(len(active_player.railroad_list)), medium_v_font, black, 900, 620)
 
-                # draw_text(screen, 'utilities' + str(len(active_player.utility_list)), medium_v_font, black, 900, 640)
-                # print pop-ups if needed (only for human player) - computer gets summary text
-                if result == 'landlord opportunity':
-                    result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
-                    turn_summary += "Player bought property"
-                # pop-up for railroad
-                elif result == 'railroad opportunity':
-                    result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
-                    turn_summary += "Player bought ski lift"
-                # pop-up for utility
-                elif result == 'utility opportunity':
-                    result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
-                    turn_summary += "Player bought machinery"
-                # pop-up for community chest/chance
-                elif str(result)[:8] == 'message:':
-                    # save the message for later use
-                    text = result[7:]
-                    # if the player gets a get out of jail free card, add it to their other cards
-                    if text == 'Get out of jail free.':
-                        active_player.jail_free += 1
-                    # if the player goes to jail
-                    elif text == 'Go to jail.':
-                        active_player.jail = True
-                    result = card_pop_up(screen, active_player, result)
-                    turn_summary += 'Player got a card that said:\n' + text
+            # draw_text(screen, 'utilities' + str(len(active_player.utility_list)), medium_v_font, black, 900, 640)
+            # print pop-ups if needed (only for human player) - computer gets summary text
+            if result == 'landlord opportunity':
+                result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1)
+                turn_summary += "Player bought property"
+            # pop-up for railroad
+            elif result == 'railroad opportunity':
+                result = buy_pop_up(screen, active_player, 'Would you like to buy this railroad?', railroads, 2)
+                turn_summary += "Player bought ski lift"
+            # pop-up for utility
+            elif result == 'utility opportunity':
+                result = buy_pop_up(screen, active_player, 'Would you like to buy this utility?', utilities, 3)
+                turn_summary += "Player bought machinery"
+            # pop-up for community chest/chance
+            elif str(result)[:8] == 'message:':
+                # save the message for later use
+                text = result[8:]
+                result = card_pop_up(screen, active_player, result)
+                turn_summary += 'Player got card: ' + text + ' '
 
                 # pop-up message for paying rent
                 elif str(result)[:3] == 'You':
@@ -1576,44 +1567,52 @@ def main():
                         # interact with the new square
                         result = interact(active_player, players, properties, railroads, utilities, 0, cards)
 
-                # dice and turn
-                if turn == active_player.name:
-                    if not is_rolling:
-                        draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
-                        # print message that player can't roll since they are in jail
-                        if active_player.jail:
-                            draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
-                        # don't roll if player is in jail
-                        if not player_has_rolled:
-                            roll_button.draw(screen)
-                            if active_player.computer:
-                                # computer rolls automatically
+            # dice and turn
+            if turn == active_player.name:
+                if not is_rolling:
+                    #draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
+                    # print message that player can't roll since they are in jail
+                    if active_player.jail:
+                        draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
+                    # don't roll if player is in jail
+                    if not player_has_rolled:
+                        roll_button.draw(screen)
+                        # PLAYER CHOICE (to roll)
+                        if active_player.computer:
+                            # computer rolls automatically
+                            roll_counter = 0
+                            is_rolling = True
+                            #record time that roll starts
+                            time_of_roll = pygame.time.get_ticks()
+                        # player must interact
+                        else:
+                            if keys[pygame.K_SPACE]:  # rolls on a space key or button click
                                 roll_counter = 0
                                 is_rolling = True
-                                # record time that roll starts
-                                time_of_roll = pygame.time.get_ticks()
-                            # player must interact
-                            else:
-                                if keys[pygame.K_SPACE]:  # rolls on a space key or button click
+                            if roll_button.check_new_press():
+                                if roll_button.check_click():
                                     roll_counter = 0
                                     is_rolling = True
-                                if roll_button.check_new_press():
-                                    if roll_button.check_click():
-                                        roll_counter = 0
-                                        is_rolling = True
+                    else:
+                        if doubles:  # keep turn on doubles
+                            has_rolled = False
                         else:
-                            if doubles:  # keep turn on doubles
-                                has_rolled = False
-                            else:
-                                # PLAYER CHOICE (to end turn)
-                                if active_player.computer:
-                                    # fix spacing if text goes off of line for printing the summary of comp's turn
-                                    if len(str(turn_summary)) > 30:
-                                        words = turn_summary.split(' ')
-                                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
-                                        draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
-                                    else:
-                                        draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
+                            # PLAYER CHOICE (to end turn)
+                            if active_player.computer:
+                                # debugging
+                                # print(turn_summary)
+                                # fix spacing if text goes off of line for printing the summary of comp's turn
+                                if len(str(turn_summary)) > 60:
+                                    words = turn_summary.split(' ')
+                                    draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 870, 300)
+                                    draw_text(screen, ' '.join(words[5:10]), medium_v_font, black, 870, 325)
+                                    draw_text(screen, ' '.join(words[10:]), medium_v_font, black, 870, 350)
+                                elif len(str(turn_summary)) > 30 and len(str(turn_summary)) < 60:
+                                    words = turn_summary.split(' ')
+                                    draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
+                                    draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
+                                else:
+                                    draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
 
                                     if current_time - time_of_roll > 5000:
                                         bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
@@ -1656,7 +1655,7 @@ def main():
                                 is_rolling = False
                                 roll = die1_value + die2_value
                                 # TODO -- test spaces here by changing the roll value
-                                #roll = 6
+                                #roll = 7
                                 if die1_value == die2_value:  # check if doubles were rolled
                                     doubles += 1
                                 else:
