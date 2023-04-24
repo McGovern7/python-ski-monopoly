@@ -1215,10 +1215,16 @@ def main():
             # set number of computers
             if num_computers1_button.clicked:
                 num_computers = 1
+                player2.computer = True
             if num_computers2_button.clicked:
                 num_computers = 2
+                player2.computer = True
+                player3.computer = True
             if num_computers3_button.clicked:
                 num_computers = 3
+                player2.computer = True
+                player3.computer = True
+                player4.computer = True
 
             if game_singleplayer:
                 num_players = 1
@@ -1239,20 +1245,21 @@ def main():
                     elif icon2_button.clicked:
                         player_selected = True
                         my_icon = 1
+                        player2.icon_num = 0
                     elif icon3_button.clicked:
                         player_selected = True
                         my_icon = 2
+                        player3.icon_num = 0
                     elif icon4_button.clicked:
                         player_selected = True
                         my_icon = 3
+                        player4.icon_num = 0
 
                     # if startgame button clicked and game setup, move to game screen
                     if player_selected and startgame_button.clicked:
                         player1 = Player(False, my_icon, "Player 1", 1, icon_positions)
                         current_screen = screens.get("TURNS")
             elif game_multiplayer:
-                game_singleplayer = False
-
                 draw_text_center(screen, 'Enter server ip:', medium_v_font, black, 260)
 
                 if active:

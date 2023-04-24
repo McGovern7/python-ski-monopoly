@@ -52,6 +52,8 @@ class Game:
 
     def next_player(self):
         self.player_turn = (self.player_turn + 1) % self.get_num_players()
+        if self.get_curr_player().bankrupt:
+            self.next_player()
 
     def set_screen(self, screen_name):
         self.current_screen = screens.get(screen_name)
