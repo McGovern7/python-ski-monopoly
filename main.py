@@ -3,12 +3,13 @@ import pygame
 from button import Button
 from button_group import ButtonGroup
 from die import Die
-from Property import Property
+from property import Property
 from card import Card
 from player import Player
-from Other_Cards import Railroad
-from Other_Cards import Utility
+from other_cards import Railroad
+from other_cards import Utility
 from network import Network
+import random
 
 
 # Initialize PyGame
@@ -481,8 +482,6 @@ def jail_pop_up(screen, active_player, yes_button, no_button):
     # PLAYER CHOICE (pay to get out of jail)
     if active_player.computer:
         # computer will automatically pay to get out of jail
-        # wait a little so human can read
-        # pygame.time.delay(60)
         bank = active_player.bank
         bank.withdraw(50)
         active_player.jail = False
@@ -518,7 +517,7 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
     :return: a message about which pop-up to show
     '''
     #shuffle the cards!
-    #random.shuffle(cards)
+    random.shuffle(cards)
 
     # interaction for properties
     for property in properties:
@@ -1298,7 +1297,6 @@ def main():
             sys.exit()
 
         if current_screen == screens.get('START'):
-            # game_singleplayer, game_multiplayer = start_screen(screen, game_singleplayer, game_multiplayer)
             screen.fill((135, 206, 235))  # Fill screen background
             draw_text_center(screen, 'Welcome to CS205 Project: Ski Resort Monopoly!', large_v_font, black, 50)
             draw_text(screen, 'Press \'esc\' to close the program', small_v_font, black, 25, 750)
@@ -1688,7 +1686,6 @@ def main():
                 # dice and turn
                 if turn == active_player.name:
                     if not is_rolling:
-                        #draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
                         # print message that player can't roll since they are in jail
                         if active_player.jail:
                             draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
@@ -1719,15 +1716,15 @@ def main():
                                     # fix spacing if text goes off of line for printing the summary of comp's turn
                                     if len(str(turn_summary)) > 65:
                                         words = turn_summary.split(' ')
-                                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 870, 300)
-                                        draw_text(screen, ' '.join(words[5:10]), medium_v_font, black, 870, 325)
-                                        draw_text(screen, ' '.join(words[10:]), medium_v_font, black, 870, 350)
+                                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 850, 300)
+                                        draw_text(screen, ' '.join(words[5:10]), medium_v_font, black, 850, 325)
+                                        draw_text(screen, ' '.join(words[10:]), medium_v_font, black, 850, 350)
                                     elif 35 < len(str(turn_summary)) < 65:
                                         words = turn_summary.split(' ')
-                                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 890, 300)
-                                        draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 890, 320)
+                                        draw_text(screen, ' '.join(words[0:5]), medium_v_font, black, 850, 300)
+                                        draw_text(screen, ' '.join(words[5:]), medium_v_font, black, 850, 320)
                                     else:
-                                        draw_text(screen, turn_summary, medium_v_font, black, 890, 300)
+                                        draw_text(screen, turn_summary, medium_v_font, black, 870, 300)
 
                                     if current_time - time_of_roll > 5000:
                                         bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
@@ -1770,8 +1767,6 @@ def main():
                                 # Both dice are at the start. Reset values
                                 is_rolling = False
                                 roll = die1_value + die2_value
-                                # TODO -- test spaces here by changing the roll value
-                                # roll = 7
                                 if die1_value == die2_value:  # check if doubles were rolled
                                     doubles += 1
                                 else:
@@ -1796,6 +1791,7 @@ def main():
 
                                 # interact with that spot on the board
                                 result = interact(active_player, players, properties, railroads, utilities, roll, cards)
+                                turn_summary = ''
 
                                 die1_value = -1
                                 die2_value = -1

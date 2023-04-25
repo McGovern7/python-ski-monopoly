@@ -1,5 +1,5 @@
 import pygame
-from Bank_Account import Bank_Account
+from bank_account import Bank_Account
 
 pygame.init()
 

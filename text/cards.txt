@@ -18,7 +18,7 @@ Chance,message:Go to jail.,0,10,*
 Chance,message:Get out of jail free.,0,*
 Chance,message:Advance to go (collect $200).,200,0
 Chance,message:Your friends plan a ski trip. //Advance to Vail.,0,39
-Chance,message:The mountain is very windy. //Go back 3 spaces.,0,-3
+Chance,message:The mountain is very windy. //Go forward 3 spaces.,0,+3
 Chance,message:You are going on a family ski trip. //Advance to Bretton Woods.,0,14
 Chance,message:The lift breaks down. //Pay $200.,-200,*
 Chance,message:You are gifted a free lift ticket. //Advance to Arizona Skibowl.,0,1
@@ -27,6 +27,6 @@ Chance,message:The mountain is very icy. //Advance forward 2 spaces.,0,+2
 Chance,message:You win a free ride on the snow groomer. //Advance to the snow groomer.,0,29
 Chance,message:You take a bad fall. Pay $10.,-10,*
 Chance,message:A friend buys you pizza in the lodge. //Collect $15.,15,*
-Chance,message:You try to race everyone to the //bottom of the mountain. //Advance 3 spaces.,0,+3
+Chance,message:You try to race everyone. //Advance 3 spaces.,0,+3
 Chance,message:You take too long to strap into your //snowboard bindings. //Pay $50.,-50,*
 Chance,message:You do a 360 off a jump. Collect $50.,50,*
