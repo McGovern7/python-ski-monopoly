@@ -130,6 +130,13 @@ def create_other_card(screen, x, y, object_name, type):
 
 
 def create_jail_free_card(screen, x, y):
+    '''
+    Function to draw a get out of jail free card
+    :param screen: screen
+    :param x: x coordinate
+    :param y: y coordinate
+    :return:
+    '''
     pygame.draw.rect(screen, white, (x, y, 200, 150))
     lift = pygame.image.load('images/escape.png')
     screen.blit(lift, (x + 120, y + 50))
@@ -195,6 +202,10 @@ def load_properties():
 
 
 def load_cards():
+    '''
+    Function to load all the community chest/chance cards
+    :return:
+    '''
     cards = []
     file = open('text/cards.txt', 'r')
     lines = file.readlines()
@@ -212,6 +223,16 @@ def load_cards():
 
 
 def load_players(total_players, player1, player2, player3, player4, unset_players):
+    '''
+    Function to load the players
+    :param total_players:
+    :param player1:
+    :param player2:
+    :param player3:
+    :param player4:
+    :param unset_players:
+    :return:
+    '''
     unset_players.append(player1)
     unset_players.append(player2)
     if total_players >= 3:
@@ -222,6 +243,10 @@ def load_players(total_players, player1, player2, player3, player4, unset_player
 
 
 def get_icon_positions():
+    '''
+    Function to set the coordinates for the middle of each spot on the board
+    :return: the coordinates in a list
+    '''
     # trying to find the middle of each space's coordinate spot
     # and put each coordinate into list  clockwise starting at bottom left 'GO'
     # first position (start)
@@ -240,6 +265,17 @@ def get_icon_positions():
     return icon_positions
 
 def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_buttons, card_idx, start_x, start_y):
+    '''
+    :param screen:
+    :param card:
+    :param active_player:
+    :param mortgage_buttons:
+    :param unmortgage_buttons:
+    :param card_idx:
+    :param start_x:
+    :param start_y:
+    :return:
+    '''
     button_x_offset = start_x + 75
     button_y_offset = start_y + 225
     mortgage_img = pygame.image.load('images/mortgage.png').convert_alpha()
@@ -258,6 +294,17 @@ def mortgage_card(screen, card, active_player, mortgage_buttons, unmortgage_butt
 
 
 def buy_sell_house(screen, card, active_player, house_buttons, card_idx, start_x, start_y):
+    '''
+    Function to buy or sell a house
+    :param screen: screen
+    :param card: the property card you might buy a hotel on
+    :param active_player: the player whose turn it is
+    :param house_buttons: the button where you can select if you want to buy a house
+    :param card_idx: the index of the card
+    :param start_x: the x coordinate of the first card
+    :param start_y: the y coordinate of the first card
+    :return:
+    '''
     button_x_offset = start_x + 36
     button_y_offset = start_y + 270
     house_button_img = pygame.image.load('images/house_button.png').convert_alpha()
@@ -272,6 +319,17 @@ def buy_sell_house(screen, card, active_player, house_buttons, card_idx, start_x
 
 
 def buy_sell_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x, start_y):
+    '''
+    Function to buy or sell a hotel
+    :param screen: screen
+    :param card: the property card that you might buy a hotel on
+    :param active_player: the player whose turn it is
+    :param hotel_buttons: the button that says hotel
+    :param card_idx: index of the card
+    :param start_x: the x coordinate of the first card
+    :param start_y: the y coordinate of the first card
+    :return:
+    '''
     button_x_offset = start_x + 114
     button_y_offset = start_y + 270
     hotel_button_img = pygame.image.load('images/hotel_button.png').convert_alpha()
@@ -285,6 +343,17 @@ def buy_sell_hotel(screen, card, active_player, hotel_buttons, card_idx, start_x
     return hotel_buttons
 
 def buy_pop_up(screen, active_player, message, properties, option, yes_button, no_button):
+    '''
+    Function to create a pop-up when a player lands on a property to see if they want to buy is
+    :param screen: screen
+    :param active_player: player whose turn it is
+    :param message: message to display
+    :param properties: all the properties in the game
+    :param option: option 1 is for properties, option 2 is for railroads, option 3 is for utilities
+    :param yes_button: button to say yes to buying
+    :param no_button: button to deny buying
+    :return:
+    '''
     # option 1 is for properties, option 2 is for railroads, option 3 is for utilities
     # draws pop up message (only if player is human)
     if not active_player.computer:
@@ -361,6 +430,14 @@ def buy_pop_up(screen, active_player, message, properties, option, yes_button, n
                 return 'utility opportunity'
 
 def card_pop_up(screen, active_player, message, okay_button):
+    '''
+    Function to create a pop-up for the player to interact with the card pulled
+    :param screen: screen played on
+    :param active_player: player whose turn it is
+    :param message: message that the card holds
+    :param okay_button: button to get rid of the pop-up
+    :return: message to trigger pop-up
+    '''
     #only show pop up if player is human
     if not active_player.computer:
         # draws pop up message
@@ -391,6 +468,14 @@ def card_pop_up(screen, active_player, message, okay_button):
 
 
 def jail_pop_up(screen, active_player, yes_button, no_button):
+    '''
+    Function to create a pop-up for the player to interact with about being in jail
+    :param screen: screen
+    :param active_player: player whose turn it is
+    :param yes_button: button to hit yes
+    :param no_button: button to hit no
+    :return: message to trigger pop-up
+    '''
     #only show pop-up if player is human
     if not active_player.computer:
         # draws pop up message
@@ -429,6 +514,17 @@ def jail_pop_up(screen, active_player, yes_button, no_button):
 
 
 def interact(active_player, players, properties, railroads, utilities, dice_roll, cards):
+    '''
+    Function to make the icon interact with the square
+    :param active_player: the player whose turn it is
+    :param players: all the players in the game
+    :param properties: all the properties a player owns
+    :param railroads: the railroads a player owns
+    :param utilities: the utilities a player owns
+    :param dice_roll: the roll the player just had
+    :param cards: the cards in the game
+    :return: a message about which pop-up to show
+    '''
     #shuffle the cards!
     #random.shuffle(cards)
 
@@ -525,7 +621,13 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
         return 'tax'
 
 
-def change_turn(players, active_player, turn):
+def change_turn(players, turn):
+    '''
+    Function to change the turn to the next player in the list
+    :param players: players in the game
+    :param turn: whose turn it is
+    :return: the new active player and whose turn is it
+    '''
     # change the turn
     if turn == 'Player 1':
         # change the turn to the name of the next player in the players list
@@ -680,7 +782,6 @@ def board_screen(screen, icon_positions, properties, railroads, utilities):
             # draw the cost to buy property
             draw_text(screen, '$' + str(property.price), small_cs_font_4, black, x_coord - 24, y_coord - 35)
 
-            # TODO - should we do rectangles or house images?
             # logic to print houses along the bottom row
             houseX = x_coord - 32 + (64 / (property.num_houses + 1)) - 4
             for house in range(property.num_houses):
@@ -874,6 +975,13 @@ def prop_card_screen(screen, font, active_player):
 
 
 def prop_card_screen2(screen, font, active_player):
+    '''
+    Function to create the second screen of properties if a player a lot
+    :param screen: screen were are drawing to
+    :param font: font we are using
+    :param active_player: the player whose turn it is
+    :return: nothing
+    '''
     pygame.display.set_caption('Your cards')
     screen.fill(green)
 
@@ -959,6 +1067,12 @@ def other_card_screen(screen, font, active_player):
         start_x += 210
 
 def check_for_bankruptcy(active_player, bankruptcies):
+    '''
+    Function to check if the active player is bankrupt
+    :param active_player: the player whose turn it is
+    :param bankruptcies: the number of player show are bankrupt
+    :return: the updated number of bankruptcies
+    '''
     bank = active_player.bank
     if int(bank.total) <= 0:
         # if the bankrupt player is player1, human has lost
@@ -1024,9 +1138,6 @@ def main():
     die1_value = -1
     die2_value = -1
     doubles = 0
-    loaded = False  # DEBUGGING VARIABLES
-    rail_loaded = False
-    util_loaded = False
 
     # game type variables
     game_singleplayer = False
@@ -1406,7 +1517,7 @@ def main():
                                 turn_index += square_distance
                                 if turn_index == square_distance * len(unset_players):  # returns player text to beginning
                                     turn_index = 0
-                                turn, active_player = change_turn(unset_players, active_player, turn)
+                                turn, active_player = change_turn(unset_players, turn)
                                 player_has_rolled = False
                                 if len(turn_rolls) == len(unset_players):
                                     # reassign player list to the new order
@@ -1535,7 +1646,7 @@ def main():
                 # if the active player is bankrupt, skip their turn
                 if active_player.bankrupt:
                     print('skipped bankrupt player')
-                    turn, active_player = change_turn(players, active_player, turn)
+                    turn, active_player = change_turn(players, turn)
 
                 board_screen(screen, icon_positions, properties, railroads, utilities)
                 properties_button.show()
@@ -1558,14 +1669,7 @@ def main():
                 # draw players and make sure no one has lost the game
                 for p in players:
                     p.draw(screen)
-                # DEBUGGING
-                # draw_text(screen, 'player ' + str(active_player.name), medium_v_font, black, 900, 300)
-                # draw_text(screen, 'bank ' + str(bank_account.total), medium_v_font, black, 900, 400)
-                # draw_text(screen, 'location ' + str(active_player.location), medium_v_font, black, 900, 500)
-                # draw_text(screen, 'properties ' + str(active_player.property_list), medium_v_font, black, 900, 600)
-                # draw_text(screen, 'railroads' + str(len(active_player.railroad_list)), medium_v_font, black, 900, 620)
 
-                # draw_text(screen, 'utilities' + str(len(active_player.utility_list)), medium_v_font, black, 900, 640)
                 # print pop-ups if needed (only for human player) - computer gets summary text
                 if result == 'landlord opportunity':
                     result = buy_pop_up(screen, active_player, 'Would you like to buy this property?', properties, 1, yes_button, no_button)
@@ -1645,8 +1749,6 @@ def main():
                             else:
                                 # PLAYER CHOICE (to end turn)
                                 if active_player.computer:
-                                    # debugging
-                                    # print(turn_summary)
                                     # fix spacing if text goes off of line for printing the summary of comp's turn
                                     if len(str(turn_summary)) > 60:
                                         words = turn_summary.split(' ')
@@ -1663,7 +1765,7 @@ def main():
                                     if current_time - time_of_roll > 5000:
                                         bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
                                         # end turn
-                                        turn, active_player = change_turn(players, active_player, turn)
+                                        turn, active_player = change_turn(players, turn)
                                         player_has_rolled = False
                                         # clear all pop-ups for next turn
                                         result = ''
@@ -1676,7 +1778,7 @@ def main():
                                         end_button.clicked = False
                                         bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
                                         # change the turn once player hit the end button
-                                        turn, active_player = change_turn(players, active_player, turn)
+                                        turn, active_player = change_turn(players, turn)
                                         player_has_rolled = False
                                         #clear all pop-ups for next turn
                                         result = ''
@@ -1812,10 +1914,6 @@ def main():
         elif current_screen == screens.get('PROPS'):  # shows only first 14 properties
             # Player 1
             if turn == 'Player 1':
-                if not loaded:  # LOADS ALL PROPERTIES INTO PLAYER1
-                    for property in properties:
-                        player1.property_list.append(property)
-                    loaded = True
                 prop_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 prop_card_screen(screen, font, player2)
@@ -1840,10 +1938,6 @@ def main():
         elif current_screen == screens.get('PROPS2'):  # shows remaining properties
             # Player 1
             if turn == 'Player 1':
-                if not loaded:
-                    for property in properties:
-                        player1.property_list.append(property)
-                    loaded = True
                 prop_card_screen2(screen, font, player1)
             elif turn == 'Player 2':
                 prop_card_screen2(screen, font, player2)
@@ -1865,14 +1959,6 @@ def main():
         elif current_screen == screens.get('CARDS'):
             # Player 1
             if turn == 'Player 1':
-                if not rail_loaded:
-                    for railroad in railroads:
-                        player1.railroad_list.append(railroad)
-                        rail_loaded = True
-                if not util_loaded:
-                    for utility in utilities:
-                        player1.utility_list.append(utility)
-                        util_loaded = True
                 other_card_screen(screen, font, player1)
             elif turn == 'Player 2':
                 other_card_screen(screen, font, player2)
