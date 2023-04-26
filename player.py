@@ -152,6 +152,7 @@ class Player:
             # Player passed go
             self.go()
             self.location = (self.location + spaces_moved) % 40
+            self.bank += 200
         else:
             self.location += spaces_moved
 

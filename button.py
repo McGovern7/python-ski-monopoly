@@ -22,7 +22,7 @@ class Button:
         self.text_color = text_color
         self.text_input = text_input
         self.clicked = False
-        self.new_press = False
+        self.new_click = False
         self.shown = False
 
     # draws the button
@@ -54,8 +54,9 @@ class Button:
 
     def check_click(self):
         # Check mouse position
-        if self.shown and self.rect.collidepoint(pygame.mouse.get_pos()):
+        if self.shown and self.rect.collidepoint(pygame.mouse.get_pos()) and not self.clicked:
             # clicked
+            self.new_click = True
             self.clicked = True
             return True
 

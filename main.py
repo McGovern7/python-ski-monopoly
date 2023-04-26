@@ -576,8 +576,8 @@ def turn_screen(screen, total_players):
     screen.fill(lightblue)  # Fill screen background
     pygame.draw.rect(screen, (41, 50, 65), (200, 100, 800, 300))
     pygame.draw.rect(screen, black, (200, 100, 800, 300), 4)
-    draw_text(screen, "Roll To Determine Player Order", medium_v_font, white, 440, 115)
-    draw_text(screen, "Higher Rolls Go First", medium_v_font, white, 500, 140)
+    draw_text_center(screen, "Roll To Determine Player Order", medium_v_font, white, 115)
+    draw_text_center(screen, "Higher Rolls Go First", medium_v_font, white, 140)
     square_distance = 0
     start_x = 640 - 80 * total_players
     for i in range(0, total_players):
@@ -1280,7 +1280,6 @@ def main():
                     # Bad style
                     pygame.display.update()
                     network = Network(ip_address)
-                    # print(n.get_player())
                     if network.get_player() is None:
                         error = True
                         ip_address = ''
@@ -1319,23 +1318,31 @@ def main():
                                      medium_v_font, black, 320)
                     draw_text_center(screen, 'Choose your Piece', medium_v_font, black, 350)
                     icon_buttons.draw(screen)
+
+                    if icon1_button.new_click:
+                        icon1_button.new_click = False
+                        my_icon = '1'
+                        game = network.send('icon0')
+                    elif icon2_button.new_click:
+                        icon2_button.new_click = False
+                        my_icon = '2'
+                        game = network.send('icon1')
+                    elif icon3_button.new_click:
+                        icon3_button.new_click = False
+                        my_icon = '3'
+                        game = network.send('icon2')
+                    elif icon4_button.new_click:
+                        icon4_button.new_click = False
+                        my_icon = '4'
+                        game = network.send('icon3')
+
+                    draw_text_center(screen, 'Selected: ' + str(game.players[my_player-1].icon_num+1), small_v_font, black, 450)
+
                     icon1_button.clicked = not game.available_icons[0]
                     icon2_button.clicked = not game.available_icons[1]
                     icon3_button.clicked = not game.available_icons[2]
                     icon4_button.clicked = not game.available_icons[3]
 
-                    if icon1_button.clicked:
-                        my_icon = 0
-                        game = network.send('icon0')
-                    elif icon2_button.clicked:
-                        my_icon = 1
-                        game = network.send('icon1')
-                    elif icon3_button.clicked:
-                        my_icon = 2
-                        game = network.send('icon2')
-                    elif icon4_button.clicked:
-                        my_icon = 3
-                        game = network.send('icon3')
                     startgame_button.show()
                     startgame_button.draw(screen)
                     if my_player == 1 and game.get_num_players() >= 2:
@@ -1444,62 +1451,76 @@ def main():
                     if total_players == 2:
                         p.draw(screen, (500 + i * square_distance, 190))
                         if p.name == game.get_curr_player().name:
-                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 450 +
-                                      i * square_distance, 268)
+                            if my_player == int(p.name[7]):
+                                draw_text(screen, 'Your Turn', medium_v_font, white, 470 +
+                                          i * square_distance, 268)
+                            else:
+                                draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 450 +
+                                          i * square_distance, 268)
                         elif p.last_roll != -1:
-                            draw_text(screen, str(p.last_roll), medium_v_font, white, 450 + i * square_distance, 268)
+                            draw_text(screen, str(p.last_roll), medium_v_font, white, 510 + i * square_distance, 268)
                     elif total_players == 3:
                         p.draw(screen, (420 + i * square_distance, 190))
                         if p.name == game.get_curr_player().name:
-                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 370 +
-                                      i * square_distance, 268)
+                            if my_player == int(game.get_curr_player().name[7]):
+                                draw_text(screen, 'Your Turn', medium_v_font, white, 390 +
+                                          i * square_distance, 268)
+                            else:
+                                draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 370 +
+                                          i * square_distance, 268)
                         elif p.last_roll != -1:
-                            draw_text(screen, str(p.last_roll), medium_v_font, white, 370 + i * square_distance, 268)
+                            draw_text(screen, str(p.last_roll), medium_v_font, white, 435 + i * square_distance, 268)
                     elif total_players == 4:
                         p.draw(screen, (340 + i * square_distance, 190))
                         if p.name == game.get_curr_player().name:
-                            draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 290 +
-                                      i * square_distance, 268)
+                            if my_player == int(game.get_curr_player().name[7]):
+                                draw_text(screen, 'Your Turn', medium_v_font, white, 310 +
+                                          i * square_distance, 268)
+                            else:
+                                draw_text(screen, game.get_curr_player().name + '\'s Turn', medium_v_font, white, 290 +
+                                          i * square_distance, 268)
                         elif p.last_roll != -1:
-                            draw_text(screen, str(p.last_roll), medium_v_font, white, 290 + i * square_distance, 268)
+                            draw_text(screen, str(p.last_roll), medium_v_font, white, 350 + i * square_distance, 268)
 
-                if not is_rolling:
-                    if not player_has_rolled:
-                        turn_roll_button.show()
-                        turn_roll_button.draw(screen)
-                        if my_player == game.get_curr_player().name[7]:
-                            print(keys[pygame.K_SPACE])
+                if my_player == int(game.get_curr_player().name[7]):
+                    if not is_rolling:
+                        if not player_has_rolled:
+                            turn_roll_button.show()
+                            turn_roll_button.draw(screen)
                             if keys[pygame.K_SPACE] or turn_roll_button.clicked:  # rolls on a space key or button click
                                 turn_roll_button.clicked = False
                                 game = network.send('roll')
                                 roll_counter = 0
                                 is_rolling = True
+                        else:
+                            player_has_rolled = False
+                            turn_roll_button.hide()
+                            game = network.send('done roll')
                     else:
-                        turn_roll_button.hide()
-                        player_has_rolled = False
-                        game = network.send('done roll')
-                else:
-                    if die1_value == -1:
-                        die1_value = die1.roll(roll_counter, value=game.dice_values[0])
-                    if die2_value == -1:
-                        die2_value = die2.roll(roll_counter, value=game.dice_values[1])
-                    if die1_value != -1 and die2_value != -1:
-                        # Both dice are done rolling
-                        player_has_rolled = True
-                        # Return the dice to the start
-                        if not die1.at_start:
-                            die1.reset()
-                        if not die2.at_start:
-                            die2.reset()
-                        if die1.at_start and die2.at_start:
-                            # Both dice are at the start. Reset values
-                            is_rolling = False
-                            turn_roll = die1_value + die2_value
-                            turn_rolls.append(turn_roll)
+                        if die1_value == -1:
+                            die1_value = die1.roll(roll_counter, value=game.dice_values[0])
+                        if die2_value == -1:
+                            die2_value = die2.roll(roll_counter, value=game.dice_values[1])
+                        if die1_value != -1 and die2_value != -1:
+                            # Both dice are done rolling
+                            player_has_rolled = True
+                            # Return the dice to the start
+                            if not die1.at_start:
+                                die1.reset()
+                            if not die2.at_start:
+                                die2.reset()
+                            if die1.at_start and die2.at_start:
+                                # Both dice are at the start. Reset values
+                                is_rolling = False
+                                turn_roll = die1_value + die2_value
+                                turn_rolls.append(turn_roll)
 
-                            die1_value = -1
-                            die2_value = -1
-                    roll_counter += 1
+                                die1_value = -1
+                                die2_value = -1
+                        roll_counter += 1
+                else:
+                    turn_roll_button.hide()
+
                 die1.draw(screen)
                 die2.draw(screen)
                 current_screen = game.current_screen
@@ -1721,16 +1742,22 @@ def main():
                 properties_button.draw(screen)
                 card_button.show()
                 card_button.draw(screen)
+
                 # display bank account money
                 draw_text(screen, 'Money: $', medium_v_font, black, 900, 90)
                 draw_text(screen, str(game.players[my_player-1].bank.total), medium_v_font, black, 995, 90)
-                draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
+                draw_text(screen, 'You are player ' + str(my_player), small_v_font, black, 900, 680)
+                if my_player == int(active_player.name[7]):
+                    draw_text(screen, 'Your turn', medium_v_font, black, 900, 700)
+                else:
+                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
 
-                if my_player == game.get_curr_player().name[8]:
+                if my_player == int(active_player.name[7]):
                     if not is_rolling:
                         # print message that player can't roll since they are in jail
                         if active_player.jail:
                             draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
+
                         if not player_has_rolled:
                             roll_button.show()
                             roll_button.draw(screen)
@@ -1740,6 +1767,7 @@ def main():
                                 roll_counter = 0
                                 is_rolling = True
                         else:
+                            print('done ' + active_player.name + ' roll')
                             roll_button.hide()
                             player_has_rolled = False
                             game = network.send('done roll')
@@ -1768,6 +1796,8 @@ def main():
                 else:
                     roll_button.hide()
 
+                for p in game.players:
+                    p.draw(screen)
                 die1.draw(screen)
                 die2.draw(screen)
                 current_screen = game.current_screen

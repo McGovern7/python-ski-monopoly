@@ -36,18 +36,21 @@ class Game:
         return len(self.players)
 
     def roll(self):
-        self.dice_values = [random.randint(0, 5), random.randint(0, 5)]
+        self.dice_values = [random.randint(1, 6), random.randint(1, 6)]
 
     def done_roll(self, last_roll):
         if self.current_screen == screens.get('TURNS'):
             self.turn_rolls.append(last_roll)
-        if len(self.turn_rolls) == len(self.players):
-            unset_players = self.players.copy()
-            for j in range(0, len(unset_players)):
-                largest = self.turn_rolls.index(max(self.turn_rolls))
-                self.players[j] = unset_players[largest]  # appends correct player to empty list
-                self.turn_rolls[largest] = -1  # get rid of the largest element in list
-            self.current_screen = screens.get('BOARD')
+            if len(self.turn_rolls) == len(self.players):
+                unset_players = self.players.copy()
+                self.players.clear()
+                for j in range(0, len(unset_players)):
+                    largest = self.turn_rolls.index(max(self.turn_rolls))
+                    self.players.append(unset_players[largest])  # appends correct player to empty list
+                    self.turn_rolls[largest] = -1  # get rid of the largest element in list
+                self.current_screen = screens.get('BOARD')
+        elif self.current_screen == screens.get('BOARD'):
+            self.get_curr_player().movement(self.dice_values[0] + self.dice_values[1])
         self.players[self.player_turn].last_roll = last_roll
 
     def next_player(self):
@@ -64,11 +67,29 @@ class Game:
     def get_curr_player(self):
         return self.players[self.player_turn]
 
+    def get_icon_positions(self):
+        # trying to find the middle of each space's coordinate spot
+        # and put each coordinate into list  clockwise starting at bottom left 'GO'
+        # first position (start)
+        icon_positions = [(35, 765)]
+        for i in range(9):
+            icon_positions.append((35, 655 - (575 / 9) * i))  # left row of vertical coords
+        icon_positions.append((35, 35))  # top left
+        for i in range(9):
+            icon_positions.append((142 + (575 / 9) * i, 35))  # top row of horizontal coords
+        icon_positions.append((765, 35))  # top right
+        for i in range(9):
+            icon_positions.append((765, 142 + (575 / 9) * i))  # right row of vertical coords
+        icon_positions.append((765, 765))  # bottom right
+        for i in range(9):
+            icon_positions.append((655 - (575 / 9) * i, 765))  # bottom row of horizontal coords
+        return icon_positions
+
     def add_player(self):
         icon_num = 0
         while not self.available_icons[icon_num]:
             icon_num = (icon_num + 1) % len(self.available_icons)
-        self.players.append(Player(False, icon_num, 'Player ' + str(self.get_num_players() + 1), 1, []))
+        self.players.append(Player(False, icon_num, 'Player ' + str(self.get_num_players() + 1), 1, self.get_icon_positions()))
         self.available_icons[icon_num] = False
 
     def set_icon(self, player_num, icon_num):
@@ -79,7 +100,6 @@ class Game:
         :return:
         """
         player = self.players[player_num]
-
         # Make old icon available for other players
         self.available_icons[player.icon_num] = True
         player.icon_num = icon_num

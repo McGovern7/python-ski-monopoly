@@ -55,7 +55,7 @@ class Die:
         """
 
         if not value:
-            value = random.randint(0, 5)
+            value = random.randint(1, 6)
 
         self.x_vel *= FRICTION
         self.y_vel *= FRICTION
@@ -66,7 +66,7 @@ class Die:
             self.face = self.rolling[random.randint(0, 7)]
 
         if -0.3 < self.get_vel() < 0.3:
-            self.face = self.faces[value]
+            self.face = self.faces[value-1]
             return value + 1
         else:
             return -1

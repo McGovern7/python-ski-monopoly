@@ -16,12 +16,14 @@ class ButtonGroup:
 
     def check_click(self):
         number = -1
+        # Check if one of the buttons were clicked
         for i in range(0, len(self.buttons)):
             if self.buttons[i].check_click():
                 number = i
+        # If one button was clicked, set the others to false
         if number != -1:
             for i in range(0, len(self.buttons)):
-                if i == number:
-                    self.buttons[i].clicked = True
-                else:
+                if i != number:
                     self.buttons[i].clicked = False
+                else:
+                    self.buttons[i].clicked = True

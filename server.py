@@ -3,9 +3,9 @@ from _thread import *
 import pickle
 from game import Game
 
-server = socket.gethostname()
+# server = socket.gethostname()
 # Localhost server for testing offline
-# server = 'localhost'
+server = 'localhost'
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,7 +48,8 @@ def threaded_client(conn, p, game_id):
                         game.roll()
                     elif data == 'done roll':
                         game.done_roll(game.dice_values[0] + game.dice_values[1])
-                        game.next_player()
+                        if game.dice_values[0] != game.dice_values[1]:
+                            game.next_player()
 
                     conn.sendall(pickle.dumps(game))
             else:
@@ -83,5 +84,6 @@ while True:
         if id_count == 1:
             games[game_id] = Game(game_id)
         games[game_id].add_player()
+        print(games[game_id].available_icons)
         conn.send(str.encode(str(id_count)))
         start_new_thread(threaded_client, (conn, id_count, game_id))
