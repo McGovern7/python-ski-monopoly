@@ -3,6 +3,9 @@ import random
 from die import Die
 from player import Player
 from Property import Property
+from Other_Cards import Railroad
+from Other_Cards import Utility
+from card import Card
 
 MAX_PLAYERS = 4
 MIN_PLAYERS = 2
@@ -26,7 +29,14 @@ class Game:
         self.current_screen = screens.get('START')
         self.available_icons = [True, True, True, True]
         self.turn_rolls = []
+        self.cards = self.load_cards()
         self.properties = self.load_properties()
+        self.railroads = [Railroad('Locke Mountain T-bar', 5),
+                          Railroad('Bonaventure Quad', 15),
+                          Railroad('Aerial Tramway', 25),
+                          Railroad('Gondola One', 35)]
+        self.utilities = [Utility('Snow Gun', 12),
+                          Utility('Snow Groomer', 28)]
 
     def get_id(self):
         return self.game_id
@@ -40,9 +50,11 @@ class Game:
     def roll(self):
         self.dice_values = [random.randint(1, 6), random.randint(1, 6)]
 
-    def done_roll(self, last_roll):
+    def done_roll(self, die1_value, die2_value):
+        self.players[self.player_turn].last_roll = die1_value + die2_value
         if self.current_screen == screens.get('TURNS'):
-            self.turn_rolls.append(last_roll)
+            self.turn_rolls.append(die1_value + die2_value)
+            self.next_player()
             if len(self.turn_rolls) == len(self.players):
                 unset_players = self.players.copy()
                 self.players.clear()
@@ -52,8 +64,9 @@ class Game:
                     self.turn_rolls[largest] = -1  # get rid of the largest element in list
                 self.current_screen = screens.get('BOARD')
         elif self.current_screen == screens.get('BOARD'):
-            self.get_curr_player().movement(self.dice_values[0] + self.dice_values[1])
-        self.players[self.player_turn].last_roll = last_roll
+            self.get_curr_player().movement(die1_value + die2_value)
+            if die1_value != die2_value:
+                self.next_player()
 
     def next_player(self):
         self.player_turn = (self.player_turn + 1) % self.get_num_players()
@@ -132,3 +145,23 @@ class Game:
 
         file.close()
         return properties
+
+    def load_cards(self):
+        '''
+        Function to load all the community chest/chance cards
+        :return:
+        '''
+        cards = []
+        file = open('text/cards.txt', 'r')
+        lines = file.readlines()
+        count = 0
+        for line in lines:
+            count += 1
+            # split the line by commas
+            card_features = line.strip().split(',')
+            # create a property object
+            new_card = Card(card_features[0], card_features[1], card_features[2], card_features[3])
+            cards.append(new_card)
+
+        file.close()
+        return cards

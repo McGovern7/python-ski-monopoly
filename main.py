@@ -429,6 +429,77 @@ def buy_pop_up(screen, active_player, message, properties, option, yes_button, n
             else:
                 return 'utility opportunity'
 
+
+def buy_pop_up_multi(screen, active_player, network, message, properties, option, yes_button, no_button):
+    '''
+    Function to create a pop-up when a player lands on a property to see if they want to buy is
+    :param screen: screen
+    :param game: game object
+    :param network: network helps send data to the server
+    :param message: message to display
+    :param properties: all the properties in the game
+    :param option: option 1 is for properties, option 2 is for railroads, option 3 is for utilities
+    :param yes_button: button to say yes to buying
+    :param no_button: button to deny buying
+    :return:
+    '''
+    # option 1 is for properties, option 2 is for railroads, option 3 is for utilities
+    # draws pop up message (only if player is human)
+    pygame.draw.rect(screen, red, (850, 210, 300, 150))
+    pygame.draw.rect(screen, white, (860, 220, 280, 130))
+    draw_text(screen, message, small_cs_font_1, black, 875, 240)
+    yes_button.show()
+    yes_button.draw(screen)
+    no_button.show()
+    no_button.draw(screen)
+    for property in properties:  # draws property landed on
+        if int(active_player.location) == int(property.location):
+            # if option 1, create card
+            if option == 1:
+                create_card(screen, 900, 400, property)
+            # if option 2, create other card (railroad)
+            elif option == 3:
+                create_other_card(screen, 900, 400, property.name, 'railroad')
+            # if option 3, create other card (utility)
+            else:
+                create_other_card(screen, 900, 400, property.name, 'utility')
+    # PLAYER CHOICE (click yes or no for buying)
+    # if 'yes' button is clicked, user buys the property/railroad
+    if yes_button.clicked:
+        yes_button.clicked = False
+        # determine what property player is on
+        for i in range(0, len(properties)):
+            property = properties[i]
+            if int(active_player.location) == int(property.location):
+                # option 1 is buying a property
+                if option == 1:
+                    network.send("prop" + str(i))
+                    return ''
+                # option 2 is buying a railroad
+                elif option == 2:
+                    network.send("rail" + str(i))
+                    return ''
+                # option 3 is buying a utility
+                else:
+                    network.send("util" + str(i))
+                    return ''
+
+    # if no button is clicked, user does not buy the property
+    if no_button.clicked:
+        no_button.clicked = False
+        return ''
+    else:
+        # if property, return landlord opportunity
+        if option == 1:
+            return 'landlord opportunity'
+        # if railroad, return railroad opportunity
+        elif option == 2:
+            return 'railroad opportunity'
+        # if utility, return utility opportunity
+        else:
+            return 'utility opportunity'
+
+
 def card_pop_up(screen, active_player, message, okay_button):
     '''
     Function to create a pop-up for the player to interact with the card pulled
@@ -613,6 +684,114 @@ def interact(active_player, players, properties, railroads, utilities, dice_roll
                 chosen_card = card
                 chosen_card.play(active_player)
                 cards.remove(chosen_card)
+                return chosen_card.message
+
+    # interaction for tax
+    if int(active_player.location) == 4 or int(active_player.location) == 38:
+        active_player.pay_taxes()
+        return 'tax'
+
+
+def interact_multi(active_player, game, dice_roll):
+    '''
+    Function to make the icon interact with the square
+    :param active_player: the player whose turn it is
+    :param players: all the players in the game
+    :param properties: all the properties a player owns
+    :param railroads: the railroads a player owns
+    :param utilities: the utilities a player owns
+    :param dice_roll: the roll the player just had
+    :param cards: the cards in the game
+    :return: a message about which pop-up to show
+    '''
+    #shuffle the cards!
+    #random.shuffle(cards)
+
+    # interaction for properties
+    for property in game.properties:
+        if int(active_player.location) == int(property.location):
+            # check if property is owned by anyone
+            if property.owner == 'NONE':
+                # send message to call pop-up back to main
+                return 'landlord opportunity'
+            # if the property is owned by someone, active player must pay owner rent
+            else:
+                # see who the landlord is
+                for landlord in game.players:
+                    # make sure it is not the active player
+                    if property.owner == landlord.name:
+                        active_player.pay_rent(landlord, property.rent)
+                        # make sure it is not the active player
+                        if property.owner != active_player.name:
+                            message = "You paid $" + str(property.rent) + " in rent!"
+                        else:
+                            message = ''
+                        return message
+
+    # interaction for railroads
+    for railroad in game.railroads:
+        if int(active_player.location) == int(railroad.location):
+            # check if property is owned by anyone
+            if railroad.owner == 'NONE':
+                # send message to call pop-up back to main
+                return 'railroad opportunity'
+            else:
+                # see who the owns the railroad
+                for landlord in game.players:
+                    if railroad.owner == landlord.name:
+                        active_player.pay_rent(landlord, railroad.rent)
+                        # make sure it is not the active player
+                        if railroad.owner != active_player.name:
+                            message = "You paid $" + str(railroad.rent) + " in rent!"
+                        else:
+                            message = ''
+                        return message
+
+    # interation for utilities
+    for utility in game.utilities:
+        if int(active_player.location) == int(utility.location):
+            # check if property is owned by anyone
+            if utility.owner == 'NONE':
+                # send message to call pop-up back to main
+                return 'utility opportunity'
+            else:
+                # see who the owns the utility
+                for landlord in game.players:
+                    if utility.owner == landlord.name:
+                        rent = utility.calculate_rent(landlord, dice_roll)
+                        active_player.pay_rent(landlord, rent)
+                        # make sure it is not the active player
+                        if utility.owner != active_player.name:
+                            message = "You paid $" + str(rent) + " in rent!"
+                        else:
+                            message = ''
+                        return message
+
+    # interaction for go to jail spot (send player to jail)
+    if int(active_player.location) == 30:
+        active_player.go_to_jail()
+        return 'jail'
+    # interaction for if you are in jail
+    if int(active_player.location) == 10 and active_player.jail:
+        # will return 'jail' unless it is the person's third time rolling
+        result = active_player.go_to_jail()
+        return result
+    # interaction for community chest
+    if int(active_player.location) == 2 or int(active_player.location) == 17 or int(active_player.location) == 33:
+        for card in game.cards:
+            if card.kind == 'Community Chest':
+                chosen_card = card
+                chosen_card.play(active_player)
+                game.cards.remove(chosen_card)
+                return chosen_card.message
+
+    # interaction for chance
+    if int(active_player.location) == 7 or int(active_player.location) == 22 or int(active_player.location) == 36:
+        for card in game.cards:
+            if card.kind == 'Chance':
+                chosen_card = card
+                chosen_card.play(active_player)
+                game.cards.remove(chosen_card)
                 return chosen_card.message
 
     # interaction for tax
@@ -1849,18 +2028,55 @@ def main():
                 draw_text(screen, 'Money: $', medium_v_font, black, 900, 90)
                 draw_text(screen, str(game.players[my_player-1].bank.total), medium_v_font, black, 995, 90)
                 draw_text(screen, 'You are player ' + str(my_player), small_v_font, black, 900, 680)
-                if my_player == int(active_player.name[7]):
-                    draw_text(screen, 'Your turn', medium_v_font, black, 900, 700)
-                else:
-                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
+
+                # # print pop-ups if needed (only for human player) - computer gets summary text
+                # if result == 'landlord opportunity':
+                #     result = buy_pop_up_multi(screen, game.players[my_player-1], network,
+                #                               'Would you like to buy this property?', properties, 1, yes_button, no_button)
+                #     turn_summary += "Player bought property"
+                # # pop-up for railroad
+                # elif result == 'railroad opportunity':
+                #     result = buy_pop_up_multi(screen, game.players[my_player-1], network,
+                #                               'Would you like to buy this railroad?', railroads, 2, yes_button, no_button)
+                #     turn_summary += "Player bought ski lift"
+                # # pop-up for utility
+                # elif result == 'utility opportunity':
+                #     result = buy_pop_up_multi(screen, game.players[my_player-1], network,
+                #                               'Would you like to buy this utility?', utilities, 3, yes_button, no_button)
+                #     turn_summary += "Player bought machinery"
+                # # pop-up for community chest/chance
+                # elif str(result)[:8] == 'message:':
+                #     # save the message for later use
+                #     text = result[8:]
+                #     result = card_pop_up(screen, active_player, result, okay_button)
+                #     turn_summary += 'Player got card: ' + text + ' '
+                #
+                # # pop-up message for paying rent
+                # elif str(result)[:3] == 'You':
+                #     # change message if player is computer
+                #     if not active_player.computer:
+                #         draw_text(screen, result, medium_v_font, black, 900, 300)
+                #     else:
+                #         turn_summary += str(active_player.name) + str(result)[3:]
+                # # pop-up message to tell you if you are in jail
+                # elif result == 'jail':
+                #     result = jail_pop_up(screen, active_player, yes_button, no_button)
+                #     turn_summary += 'Player paid $50 to get out of jail'
+                # # pop-up message for paying taxes
+                # elif result == 'tax':
+                #     if not active_player.computer:
+                #         draw_text(screen, "Taxes due!", medium_v_font, black, 900, 300)
+                #     else:
+                #         turn_summary += 'Player paid taxes'
 
                 if my_player == int(active_player.name[7]):
+                    draw_text(screen, 'Your turn', medium_v_font, black, 900, 700)
                     if not is_rolling:
                         # print message that player can't roll since they are in jail
                         if active_player.jail:
                             draw_text(screen, 'You are in jail.', medium_v_font, black, 920, 450)
 
-                        if not player_has_rolled:
+                        elif not player_has_rolled:
                             roll_button.show()
                             roll_button.draw(screen)
                             if keys[pygame.K_SPACE] or roll_button.clicked:  # rolls on a space key or button click
@@ -1871,6 +2087,20 @@ def main():
                         else:
                             roll_button.hide()
                             player_has_rolled = False
+                            # if game.dice_values[0] != game.dice_values[1]:
+                            #     end_button.show()
+                            #     end_button.draw(screen)
+                            #     if end_button.clicked:  # rolls on a space key or button click
+                            #         end_button.clicked = False
+                            #         bankruptcies = check_for_bankruptcy(active_player, bankruptcies)
+                            #         # change the turn once player hit the end button
+                            #         turn, active_player = change_turn(players, turn)
+                            #         player_has_rolled = False
+                            #         # clear all pop-ups for next turn
+                            #         result = ''
+                            #         turn_summary = ''
+                            #         game = network.send('end turn')
+                            # result = interact_multi(active_player, game, 0)
                             game = network.send('done roll')
                     else:
                         if die1_value == -1:
@@ -1895,6 +2125,7 @@ def main():
                                 die2_value = -1
                         roll_counter += 1
                 else:
+                    draw_text(screen, str(active_player.name) + '\'s turn', medium_v_font, black, 900, 700)
                     roll_button.hide()
 
                 for p in game.players:

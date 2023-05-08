@@ -47,9 +47,17 @@ def threaded_client(conn, p, game_id):
                     elif data == 'roll':
                         game.roll()
                     elif data == 'done roll':
-                        game.done_roll(game.dice_values[0] + game.dice_values[1])
-                        if game.dice_values[0] != game.dice_values[1]:
-                            game.next_player()
+                        game.done_roll(game.dice_values[0], game.dice_values[1])
+                        if game.players[p-1].location == 27:
+                            game.players[p-1].go_to_jail()
+                    elif data == 'end turn':
+                        game.next_player()
+                    elif data[:4] == 'prop':
+                        game.players[p - 1].buy_property(game.properties[data[4]])
+                    elif data[:4] == 'rail':
+                        game.players[p - 1].buy_railroad(game.railroads[data[4]])
+                    elif data[:4] == 'util':
+                        game.players[p - 1].buy_utility(game.utilities[data[4]])
 
                     conn.sendall(pickle.dumps(game))
             else:
