@@ -1803,7 +1803,7 @@ def main():
                                 # Both dice are at the start. Reset values
                                 is_rolling = False
                                 roll = die1_value + die2_value
-                                # TODO -- test spaces here by changing the roll value
+                                # test spaces here by changing the roll value
                                 # roll = 7
                                 if die1_value == die2_value:  # check if doubles were rolled
                                     doubles += 1
@@ -1869,7 +1869,6 @@ def main():
                                 roll_counter = 0
                                 is_rolling = True
                         else:
-                            print('done ' + active_player.name + ' roll')
                             roll_button.hide()
                             player_has_rolled = False
                             game = network.send('done roll')
@@ -1912,15 +1911,19 @@ def main():
                 current_screen = screens.get('CARDS')
 
         elif current_screen == screens.get('PROPS'):  # shows only first 14 properties
-            # Player 1
-            if turn == 'Player 1':
-                prop_card_screen(screen, font, player1)
-            elif turn == 'Player 2':
-                prop_card_screen(screen, font, player2)
-            elif turn == 'Player 3':
-                prop_card_screen(screen, font, player3)
-            else:
-                prop_card_screen(screen, font, player4)
+            if game_singleplayer:
+                # Player 1
+                if turn == 'Player 1':
+                    prop_card_screen(screen, font, player1)
+                elif turn == 'Player 2':
+                    prop_card_screen(screen, font, player2)
+                elif turn == 'Player 3':
+                    prop_card_screen(screen, font, player3)
+                else:
+                    prop_card_screen(screen, font, player4)
+            elif game_multiplayer:
+                game = network.send("get")
+                prop_card_screen(screen, font, game.get_players()[my_player-1])
             board_return_button.show()
             board_return_button.draw(screen)
             if len(active_player.property_list) > 13:  # move to next properties screen if too many cards to show

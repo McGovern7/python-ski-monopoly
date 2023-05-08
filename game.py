@@ -2,6 +2,7 @@ import random
 
 from die import Die
 from player import Player
+from Property import Property
 
 MAX_PLAYERS = 4
 MIN_PLAYERS = 2
@@ -25,6 +26,7 @@ class Game:
         self.current_screen = screens.get('START')
         self.available_icons = [True, True, True, True]
         self.turn_rolls = []
+        self.properties = self.load_properties()
 
     def get_id(self):
         return self.game_id
@@ -105,3 +107,28 @@ class Game:
         player.icon_num = icon_num
         # Make new icon unavailable
         self.available_icons[icon_num] = False
+
+    def load_properties(self):
+        '''
+        Function to load in property information and create objects of Property class
+        :return: list of property objects
+        '''
+        # initialize list to put properties in
+        properties = []
+        file = open('text/property_cards.txt', 'r')
+        lines = file.readlines()
+        count = 0
+        # Strips the newline character
+        for line in lines:
+            count += 1
+            # split the line by commas
+            property_features = line.split(',')
+            # create a property object
+            new_prop = Property(property_features[0], property_features[1], property_features[2], property_features[3],
+                                property_features[4], property_features[5], property_features[6], property_features[7],
+                                property_features[8], property_features[9], property_features[10],
+                                property_features[11])
+            properties.append(new_prop)
+
+        file.close()
+        return properties

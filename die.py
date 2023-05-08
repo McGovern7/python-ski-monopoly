@@ -67,7 +67,7 @@ class Die:
 
         if -0.3 < self.get_vel() < 0.3:
             self.face = self.faces[value-1]
-            return value + 1
+            return value
         else:
             return -1
 
